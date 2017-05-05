@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2017 | Hexo</title>
+  <title>shell-io-redirect &amp;&amp; pipe | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/archives/2017/index.html">
+  <meta name="description" content="IO重定向及管道程序IO数据流有三种： &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;输入数据流：&amp;lt;–标准输入（stdin），默认键盘 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;输出数据流：–&amp;gt;标准输出（stdout），默认显示器 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;错误输出流：–&amp;gt;错误输出（stderr），默认显示器 fd: file descriptor">
+<meta name="keywords" content="bash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shell-io-redirect && pipe">
+<meta property="og:url" content="http://yoursite.com/2017/04/30/shell-io-redirect && pipe/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="IO重定向及管道程序IO数据流有三种： &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;输入数据流：&amp;lt;–标准输入（stdin），默认键盘 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;输出数据流：–&amp;gt;标准输出（stdout），默认显示器 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;错误输出流：–&amp;gt;错误输出（stderr），默认显示器 fd: file descriptor">
+<meta property="og:updated_time" content="2017-05-04T14:06:54.239Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="shell-io-redirect && pipe">
+<meta name="twitter:description" content="IO重定向及管道程序IO数据流有三种： &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;输入数据流：&amp;lt;–标准输入（stdin），默认键盘 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;输出数据流：–&amp;gt;标准输出（stdout），默认显示器 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;错误输出流：–&amp;gt;错误输出（stderr），默认显示器 fd: file descriptor">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -149,112 +154,87 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-shell-io-redirect &amp;&amp; pipe" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/05/03/user-group-manage2/" class="archive-article-date">
-  	<time datetime="2017-05-03T05:52:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-03</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/05/03/user-group-manage2/">user-group-manage2</a>
+    <h1 class="article-title" itemprop="name">
+      shell-io-redirect &amp;&amp; pipe
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">user&group</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/05/03/user-group-manage1/" class="archive-article-date">
-  	<time datetime="2017-05-03T01:52:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/05/03/user-group-manage1/">user-group-manage1</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">user&group</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/04/30/shell-io-redirect && pipe/" class="archive-article-date">
+        
+        <a href="/2017/04/30/shell-io-redirect && pipe/" class="archive-article-date">
   	<time datetime="2017-04-30T14:54:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-30</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/30/shell-io-redirect && pipe/">shell-io-redirect &amp;&amp; pipe</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="IO重定向及管道"><a href="#IO重定向及管道" class="headerlink" title="IO重定向及管道"></a>IO重定向及管道</h2><p>程序IO数据流有三种：</p>
+<p>&ensp;&ensp;&ensp;&ensp;输入数据流：&lt;–标准输入（stdin），默认键盘</p>
+<p>&ensp;&ensp;&ensp;&ensp;输出数据流：–&gt;标准输出（stdout），默认显示器</p>
+<p>&ensp;&ensp;&ensp;&ensp;错误输出流：–&gt;错误输出（stderr），默认显示器</p>
+<p>fd: file descriptor (文件描述符)：打开的文件都有一个文件描述符</p>
+<p>&ensp;&ensp;&ensp;&ensp;标准输入：0</p>
+<p>&ensp;&ensp;&ensp;&ensp;标准输出：1</p>
+<p>&ensp;&ensp;&ensp;&ensp;错误输出：2</p>
+<h3 id="IO重定向"><a href="#IO重定向" class="headerlink" title="IO重定向"></a>IO重定向</h3><h5 id="ensp-ensp-输出重定向："><a href="#ensp-ensp-输出重定向：" class="headerlink" title="&ensp;&ensp;输出重定向："></a>&ensp;&ensp;输出重定向：</h5><p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&gt; （覆盖输出）</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&gt;&gt; （追加输出）</p>
+<p>为了防止覆盖输出，shell提供了set命令用来限制</p>
+<p>禁止覆盖输出重定向到已存在的文件：set -C<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/passwd &gt;/tmp/passwd1</span></div><div class="line">[root@centos7 ~]<span class="comment"># set -C</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/passwd &gt;/tmp/passwd1</span></div><div class="line">-bash: /tmp/passwd1: cannot overwrite existing file</div></pre></td></tr></table></figure></p>
+<p>但此时也可使用强制覆盖输出：&gt;|<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/passwd &gt;|/tmp/passwd1</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/passwd &gt;/tmp/passwd1</span></div><div class="line">-bash: /tmp/passwd1: cannot overwrite existing file</div></pre></td></tr></table></figure></p>
+<p>关闭禁止覆盖输出：set +C</p>
+<h5 id="ensp-ensp-错误输出重定向："><a href="#ensp-ensp-错误输出重定向：" class="headerlink" title="&ensp;&ensp;错误输出重定向："></a>&ensp;&ensp;错误输出重定向：</h5><p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;2&gt; （覆盖错误输出）</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;2&gt;&gt; （追加错误输出）</p>
+<p>&ensp;&ensp;&ensp;&ensp;合并正常输出和错误输出的二种方式：</p>
+<p>&ensp;&ensp;&ensp;&ensp;方式一：</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&amp;&gt;：</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&amp;&gt;&gt;：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># ls -l /varr</span></div><div class="line">ls: cannot access /varr: No such file or directory</div><div class="line">[root@centos7 ~]<span class="comment"># ls -l /varr &amp;&gt;/tmp/var.out</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /tmp/var.out </span></div><div class="line">ls: cannot access /varr: No such file or directory</div><div class="line">[root@centos7 ~]<span class="comment"># ls -l /var &amp;&gt;&gt;/tmp/var.out</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /tmp/var.out </span></div><div class="line">ls: cannot access /varr: No such file or directory</div><div class="line">total 12</div><div class="line">drwxr-xr-x.  2 root root    6 Aug 12  2015 adm</div><div class="line">drwxr-xr-x.  6 root root   55 Apr 26 10:35 cache</div><div class="line">drwxr-xr-x.  2 root root    6 Nov 21  2015 crash</div><div class="line">drwxr-xr-x.  3 root root   32 Apr 26 10:35 db</div></pre></td></tr></table></figure></p>
+<p>&ensp;&ensp;&ensp;&ensp;方式二：</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;COMMAND &gt;/PATH/TO/SOMEFILE 2&gt;&amp;1</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;COMMAND &gt;&gt;/PATH/TO/SOMEFILE 2&gt;&amp;1<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># ls /varr &gt;/tmp/var.out 2&gt;&amp;1</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /tmp/var.out </span></div><div class="line">ls: cannot access /varr: No such file or directory</div><div class="line">[root@centos7 ~]<span class="comment"># ls /var &gt;&gt;/tmp/var.out 2&gt;&amp;1</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /tmp/var.out </span></div><div class="line">ls: cannot access /varr: No such file or directory</div><div class="line">adm</div><div class="line">cache</div><div class="line">crash</div><div class="line">db</div><div class="line">empty</div></pre></td></tr></table></figure></p>
+<h5 id="ensp-ensp-输入重定向："><a href="#ensp-ensp-输入重定向：" class="headerlink" title="&ensp;&ensp;输入重定向："></a>&ensp;&ensp;输入重定向：</h5><p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt; （标准输出）</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;&lt; （Here document）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># tr 'a-z' 'A-Z' &lt;/etc/issue</span></div><div class="line">\S</div><div class="line">KERNEL \R ON AN \M</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/issue</span></div><div class="line">\S</div><div class="line">Kernel \r on an \m</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># tr -d 'a-l' &lt;/etc/issue</span></div><div class="line">\S</div><div class="line">Krn \r on n \m</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/issue</span></div><div class="line">\S</div><div class="line">Kernel \r on an \m</div></pre></td></tr></table></figure>
+<p>Here document的用法：</p>
+<p>&ensp;&ensp;&ensp;&ensp;cat &lt;&lt; EOF</p>
+<p>&ensp;&ensp;&ensp;&ensp;cat &gt; /PATH/TO/SOMEFILE &lt;&lt;EOF</p>
+<p>&ensp;&ensp;&ensp;&ensp;EOF：为结束标识符<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cat &lt;&lt; EOF</span></div><div class="line">&gt; how are you</div><div class="line">&gt; what are you doning</div><div class="line">&gt; EOF</div><div class="line">how are you</div><div class="line">what are you doning</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cat &gt;/tmp/eof.out &lt;&lt;EOF</span></div><div class="line">&gt; how are you</div><div class="line">&gt; what are you doning here</div><div class="line">&gt; EOF</div><div class="line">[root@centos7 ~]<span class="comment"># cat /tmp/eof.out </span></div><div class="line">how are you</div><div class="line">what are you doning here</div></pre></td></tr></table></figure>
+<h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>管道是一个连接程序，实现将前一个命令的输出作为后一个命令的输入<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/fstab |tr 'a-z' 'A-Z'</span></div><div class="line"></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># /ETC/FSTAB</span></div><div class="line"><span class="comment"># CREATED BY ANACONDA ON WED APR 26 10:31:47 2017</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># ACCESSIBLE FILESYSTEMS, BY REFERENCE, ARE MAINTAINED UNDER '/DEV/DISK'</span></div><div class="line"><span class="comment"># SEE MAN PAGES FSTAB(5), FINDFS(8), MOUNT(8) AND/OR BLKID(8) FOR MORE INFO</span></div><div class="line"><span class="comment">#</span></div><div class="line">/DEV/MAPPER/VGOS-ROOT   /                       XFS     DEFAULTS        0 0</div><div class="line">UUID=224A4923-A78D-4BDE-B962-AA921A15DB50 /BOOT                   XFS     DEFAULTS        0 0</div><div class="line">UUID=3F6338AB-2C10-422C-9A5C-6A783C5795E8 SWAP                    SWAP    DEFAULTS        0 0</div></pre></td></tr></table></figure></p>
 
-        <div class="article-info info-on-right">
-          
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -266,133 +246,98 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/04/30/shell-io-redirect && pipe/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/04/30/shell-glob/" class="archive-article-date">
-  	<time datetime="2017-04-30T13:34:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-30</time>
-</a>
-        </div>
-    	 
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/30/shell-glob/">shell-glob</a>
-    </h1>
+    <a href="/2017/04/30/shell-glob/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          shell-glob
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/05/03/user-group-manage1/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">user-group-manage1</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">bash</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/04/29/command-help-man/" class="archive-article-date">
-  	<time datetime="2017-04-29T10:02:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/29/command-help-man/">command-help-man</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">man</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/04/29/history/" class="archive-article-date">
-  	<time datetime="2017-04-29T08:34:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/29/history/">histor</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">command</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -415,8 +360,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
