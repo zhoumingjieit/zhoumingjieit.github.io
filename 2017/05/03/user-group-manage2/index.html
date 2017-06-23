@@ -6,19 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>user-group-manage2 | Hexo</title>
+  <title>用户和组管理 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="linux用户和组用户管理相关命令创建用户组：groupadd&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;groupadd - create a new group 命令格式：1groupadd [options] group 命令常用选项：    选项 长选项 选项说明     -g –gid 指定一个组ID   -r –system 创建一个系统组    实例：12345678910创建一">
+  <meta name="description" content="linux用户和组组管理相关命令创建用户组：groupadd&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;groupadd - create a new group 命令格式：1groupadd [options] group 命令常用选项：    选项 长选项 选项说明     -g –gid 指定一个组ID   -r –system 创建一个系统组    实例： 12345678910创建一">
 <meta name="keywords" content="user&group">
 <meta property="og:type" content="article">
-<meta property="og:title" content="user-group-manage2">
+<meta property="og:title" content="用户和组管理">
 <meta property="og:url" content="http://yoursite.com/2017/05/03/user-group-manage2/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="linux用户和组用户管理相关命令创建用户组：groupadd&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;groupadd - create a new group 命令格式：1groupadd [options] group 命令常用选项：    选项 长选项 选项说明     -g –gid 指定一个组ID   -r –system 创建一个系统组    实例：12345678910创建一">
-<meta property="og:updated_time" content="2017-05-04T14:05:19.270Z">
+<meta property="og:description" content="linux用户和组组管理相关命令创建用户组：groupadd&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;groupadd - create a new group 命令格式：1groupadd [options] group 命令常用选项：    选项 长选项 选项说明     -g –gid 指定一个组ID   -r –system 创建一个系统组    实例： 12345678910创建一">
+<meta property="og:updated_time" content="2017-05-26T16:35:09.518Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="user-group-manage2">
-<meta name="twitter:description" content="linux用户和组用户管理相关命令创建用户组：groupadd&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;groupadd - create a new group 命令格式：1groupadd [options] group 命令常用选项：    选项 长选项 选项说明     -g –gid 指定一个组ID   -r –system 创建一个系统组    实例：12345678910创建一">
+<meta name="twitter:title" content="用户和组管理">
+<meta name="twitter:description" content="linux用户和组组管理相关命令创建用户组：groupadd&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;groupadd - create a new group 命令格式：1groupadd [options] group 命令常用选项：    选项 长选项 选项说明     -g –gid 指定一个组ID   -r –system 创建一个系统组    实例： 12345678910创建一">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -161,7 +161,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      user-group-manage2
+      用户和组管理
     </h1>
   
 
@@ -174,7 +174,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="linux用户和组"><a href="#linux用户和组" class="headerlink" title="linux用户和组"></a>linux用户和组</h2><h4 id="用户管理相关命令"><a href="#用户管理相关命令" class="headerlink" title="用户管理相关命令"></a>用户管理相关命令</h4><h5 id="创建用户组：groupadd"><a href="#创建用户组：groupadd" class="headerlink" title="创建用户组：groupadd"></a>创建用户组：groupadd</h5><p>&ensp;&ensp;&ensp;&ensp;groupadd - create a new group</p>
+        <h2 id="linux用户和组"><a href="#linux用户和组" class="headerlink" title="linux用户和组"></a>linux用户和组</h2><h4 id="组管理相关命令"><a href="#组管理相关命令" class="headerlink" title="组管理相关命令"></a>组管理相关命令</h4><h5 id="创建用户组：groupadd"><a href="#创建用户组：groupadd" class="headerlink" title="创建用户组：groupadd"></a>创建用户组：groupadd</h5><p>&ensp;&ensp;&ensp;&ensp;groupadd - create a new group</p>
 <p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">groupadd [options] group</div></pre></td></tr></table></figure></p>
 <p>命令常用选项：</p>
 <table>
@@ -198,7 +198,8 @@
 </tr>
 </tbody>
 </table>
-<p>实例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">创建一个组ID为2000的组mygroup</div><div class="line">[root@centos6-lab ~]<span class="comment"># groupadd -g 2000 mygroup</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># tail -2 /etc/group</span></div><div class="line">slocate:x:21:</div><div class="line">mygroup:x:2000:</div><div class="line"></div><div class="line">创建一个系统组sysgroup</div><div class="line">[root@centos6-lab ~]<span class="comment"># groupadd -r sysgroup</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># tail -1 /etc/group</span></div><div class="line">sysgroup:x:499:</div></pre></td></tr></table></figure></p>
+<p>实例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">创建一个组ID为2000的组mygroup</div><div class="line">[root@centos6-lab ~]<span class="comment"># groupadd -g 2000 mygroup</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># tail -2 /etc/group</span></div><div class="line">slocate:x:21:</div><div class="line">mygroup:x:2000:</div><div class="line"></div><div class="line">创建一个系统组sysgroup</div><div class="line">[root@centos6-lab ~]<span class="comment"># groupadd -r sysgroup</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># tail -1 /etc/group</span></div><div class="line">sysgroup:x:499:</div></pre></td></tr></table></figure>
 <h5 id="修改用户组：groupmod"><a href="#修改用户组：groupmod" class="headerlink" title="修改用户组：groupmod"></a>修改用户组：groupmod</h5><p>&ensp;&ensp;&ensp;&ensp;groupmod - modify a group definition on the system</p>
 <p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">groupmod [options] GROUP</div></pre></td></tr></table></figure></p>
 <p>命令常用选项：</p>
@@ -227,7 +228,7 @@
 <h5 id="删除用户组：groupdel"><a href="#删除用户组：groupdel" class="headerlink" title="删除用户组：groupdel"></a>删除用户组：groupdel</h5><p>&ensp;&ensp;&ensp;&ensp;groupdel - delete a group</p>
 <p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">groupdel [options] GROUP</div></pre></td></tr></table></figure></p>
 <p>实例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">删除系统组sysgroup</div><div class="line">[root@centos6-lab ~]<span class="comment"># groupdel sysgroup</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># tail -2 /etc/group</span></div><div class="line">slocate:x:21:</div><div class="line">mygrg:x:2001:</div></pre></td></tr></table></figure></p>
-<h5 id="创建用户：useadd"><a href="#创建用户：useadd" class="headerlink" title="创建用户：useadd"></a>创建用户：useadd</h5><p>&ensp;&ensp;&ensp;&ensp;useradd - create a new user or update default new user information</p>
+<h4 id="用户管理相关命令"><a href="#用户管理相关命令" class="headerlink" title="用户管理相关命令"></a>用户管理相关命令</h4><h5 id="创建用户：useadd"><a href="#创建用户：useadd" class="headerlink" title="创建用户：useadd"></a>创建用户：useadd</h5><p>&ensp;&ensp;&ensp;&ensp;useradd - create a new user or update default new user information</p>
 <p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">useradd [options] LOGIN</div><div class="line">useradd -D</div><div class="line">useradd -D [options]</div></pre></td></tr></table></figure></p>
 <p>命令常用选项：</p>
 <table>
@@ -382,7 +383,7 @@
 </tbody>
 </table>
 <p>实例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">删除用户gentoo连同家目录一起删除</div><div class="line">[root@centos6-lab ~]<span class="comment"># userdel -r gentoo</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># id gentoo</span></div><div class="line">id: gentoo: No such user</div><div class="line">[root@centos6-lab ~]<span class="comment"># ls -l /tmp</span></div><div class="line">total 4</div><div class="line">drwx------. 2 tom tom 4096 May  4 14:37 tom</div></pre></td></tr></table></figure></p>
-<h5 id="修改用户密码属性：passwd"><a href="#修改用户密码属性：passwd" class="headerlink" title="修改用户密码属性：passwd"></a>修改用户密码属性：passwd</h5><p>&ensp;&ensp;&ensp;&ensp;passwd - update user’s authentication tokens</p>
+<h4 id="密码管理相关命令"><a href="#密码管理相关命令" class="headerlink" title="密码管理相关命令"></a>密码管理相关命令</h4><h5 id="修改用户密码属性：passwd"><a href="#修改用户密码属性：passwd" class="headerlink" title="修改用户密码属性：passwd"></a>修改用户密码属性：passwd</h5><p>&ensp;&ensp;&ensp;&ensp;passwd - update user’s authentication tokens</p>
 <p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">passwd [-k] [<span class="_">-l</span>] [-u [<span class="_">-f</span>]] [<span class="_">-d</span>] [<span class="_">-e</span>] [-n mindays] [-x maxdays] [-w warndays] [-i inactivedays] [-S] [--stdin] [username]</div></pre></td></tr></table></figure></p>
 <p>命令常用选项：</p>
 <table>
@@ -462,6 +463,7 @@
 </tbody>
 </table>
 <p>实例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">给tom用户添加一个附加组</div><div class="line">[root@centos6-lab ~]<span class="comment"># id tom</span></div><div class="line">uid=2000(tom) gid=2000(tom) groups=2000(tom),2002(testgroup)</div><div class="line">[root@centos6-lab ~]<span class="comment"># gpasswd -a tom archlinux</span></div><div class="line">Adding user tom to group archlinux</div><div class="line">[root@centos6-lab ~]<span class="comment"># id tom</span></div><div class="line">uid=2000(tom) gid=2000(tom) groups=2000(tom),2002(testgroup),2004(archlinux)</div><div class="line"></div><div class="line">添加tom用户的一个附加组</div><div class="line">[root@centos6-lab ~]<span class="comment"># id tom</span></div><div class="line">uid=2000(tom) gid=2000(tom) groups=2000(tom),2002(testgroup),2004(archlinux)</div><div class="line">[root@centos6-lab ~]<span class="comment"># </span></div><div class="line">[root@centos6-lab ~]<span class="comment"># </span></div><div class="line">[root@centos6-lab ~]<span class="comment"># gpasswd -d tom testgroup</span></div><div class="line">Removing user tom from group testgroup</div><div class="line">[root@centos6-lab ~]<span class="comment"># id tom</span></div><div class="line">uid=2000(tom) gid=2000(tom) groups=2000(tom),2004(archlinux)</div></pre></td></tr></table></figure>
 <h5 id="newgrp-登录到一个新的group"><a href="#newgrp-登录到一个新的group" class="headerlink" title="newgrp 登录到一个新的group"></a>newgrp 登录到一个新的group</h5><p>&ensp;&ensp;&ensp;&ensp;newgrp - log in to a new group</p>
 <p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">newgrp [-] [group]</div></pre></td></tr></table></figure></p>
 <p>实例:</p>
@@ -635,11 +637,16 @@
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          user-group-manage1
+          用户和组管理相关说明
         
       </div>
     </a>
   
+  
+    <a href="/2017/05/13/file-privilege-manage/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">文件权限管理</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 
@@ -742,7 +749,7 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -750,7 +757,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">privilege</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">user&group</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
             
             <div class="clearfix"></div>

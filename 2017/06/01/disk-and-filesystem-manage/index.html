@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>磁盘分区及文件系统管理 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="磁盘分类：按接口类型：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;IDE：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SATA:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SCSI:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SAS:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;FC: 按磁盘类别：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;机械磁盘：&amp;ensp;&amp;ensp;">
+<meta name="keywords" content="command">
+<meta property="og:type" content="article">
+<meta property="og:title" content="磁盘分区及文件系统管理">
+<meta property="og:url" content="http://yoursite.com/2017/06/01/disk-and-filesystem-manage/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="磁盘分类：按接口类型：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;IDE：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SATA:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SCSI:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SAS:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;FC: 按磁盘类别：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;机械磁盘：&amp;ensp;&amp;ensp;">
+<meta property="og:updated_time" content="2017-06-03T09:50:47.976Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="磁盘分区及文件系统管理">
+<meta name="twitter:description" content="磁盘分类：按接口类型：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;IDE：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SATA:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SCSI:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;SAS:&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;FC: 按磁盘类别：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;机械磁盘：&amp;ensp;&amp;ensp;">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-disk-and-filesystem-manage" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      磁盘分区及文件系统管理
+    </h1>
+  
+
+        
+        <a href="/2017/06/01/disk-and-filesystem-manage/" class="archive-article-date">
+  	<time datetime="2017-06-01T02:50:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="磁盘分类："><a href="#磁盘分类：" class="headerlink" title="磁盘分类："></a>磁盘分类：</h3><h5 id="按接口类型："><a href="#按接口类型：" class="headerlink" title="按接口类型："></a>按接口类型：</h5><p>&ensp;&ensp;&ensp;&ensp;IDE：<br>&ensp;&ensp;&ensp;&ensp;SATA:<br>&ensp;&ensp;&ensp;&ensp;SCSI:<br>&ensp;&ensp;&ensp;&ensp;SAS:<br>&ensp;&ensp;&ensp;&ensp;FC:</p>
+<h5 id="按磁盘类别："><a href="#按磁盘类别：" class="headerlink" title="按磁盘类别："></a>按磁盘类别：</h5><p>&ensp;&ensp;&ensp;&ensp;机械磁盘：<br>&ensp;&ensp;&ensp;&ensp;固态磁盘：</p>
+<h4 id="机械磁盘："><a href="#机械磁盘：" class="headerlink" title="机械磁盘："></a>机械磁盘：</h4><p>盘片：platters<br>轴：spindle<br>读写头：read/write head<br>扇区：sector（512字节）<br>磁道：track<br>柱面：cylinder<br>寻道时间：磁头切换柱面寻找数据时所花的时间。磁盘转的越快，寻道时间越短，磁盘性能越好。</p>
+<h4 id="设备类型："><a href="#设备类型：" class="headerlink" title="设备类型："></a>设备类型：</h4><p>设备文件：<br>&ensp;&ensp;&ensp;&ensp;b: 按块(block)为单位，随机访问的设备；（硬盘）<br>&ensp;&ensp;&ensp;&ensp;c：按字符(character)为单位，线性设备；（键盘）<br>/dev下设备号：<br>&ensp;&ensp;&ensp;&ensp;主设备号(major number):区分设备类型；用于标明设备所需要的驱动程序<br>&ensp;&ensp;&ensp;&ensp;次设备号(minor number):区分同种类型下的不同的设备；是特定设备的访问入口<br>/dev/zero：<br>&ensp;&ensp;&ensp;&ensp;是一个输入设备，你可你用它来初始化文件，该设备无穷尽地提供0(是ASCII 0)，熟称冒泡设备<br>/dev/null：<br>&ensp;&ensp;&ensp;&ensp;该设备是空设备，也称为位桶（bit bucket）外号叫无底洞，任何写入它的输出都会被抛弃<br>创建设备文件：<br>mknod命令：make block or character special files<br>命令格式：<br>&ensp;&ensp;&ensp;&ensp;mknod  [OPTION]…  NAME  TYPE  [MAJOR  MINOR]<br>命令选项：<br>&ensp;&ensp;&ensp;&ensp;-m MODE：创建后的设备文件的访问权限；</p>
+<h4 id="磁盘在Linux下设备类型："><a href="#磁盘在Linux下设备类型：" class="headerlink" title="磁盘在Linux下设备类型："></a>磁盘在Linux下设备类型：</h4><p>IDE:/dev/hd[a-z]<br>&ensp;&ensp;&ensp;&ensp;例如:/dev/hda,/dev/hdb<br>SCSI,SATA,SAS,USB:/dev/sd[a-z]<br>&ensp;&ensp;&ensp;&ensp;例如:/dev/sda,/dev/sdb</p>
+<h3 id="磁盘分区："><a href="#磁盘分区：" class="headerlink" title="磁盘分区："></a>磁盘分区：</h3><p>主分区：<br>&ensp;&ensp;&ensp;&ensp; 一个硬盘只能创建4个主分区，为了创建多个分区：所以有了扩展分区<br>扩展分区：<br>&ensp;&ensp;&ensp;&ensp;扩展分区里面就是一个指针指向整个磁盘中一个额外更换大的分区。<br>主分区和扩展分区的标识：1-4<br>逻辑分区：在扩展分区下创建的分区：<br>逻辑分区标识：5+<br>磁盘分区方式：<br>&ensp;&ensp;&ensp;&ensp;主+扩展 &lt;= 4 （扩展分区只能有一个）<br>注意：CentOS6及以前磁盘分区是按柱面划分的,CentOS7磁盘分区是按扇区划分的.</p>
+<h3 id="磁盘分区内部结构："><a href="#磁盘分区内部结构：" class="headerlink" title="磁盘分区内部结构："></a>磁盘分区内部结构：</h3><p>硬盘一个分区内部结构剖析：<br>一个分区划分成二个区域：<br>元数据存储区：<br>&ensp;&ensp;&ensp;&ensp;inode条目：条目中都是每一个文件条目，每一个文件条目都有一个inode和对应的数据块位置<br>&ensp;&ensp;&ensp;&ensp;inode: index node（inode号,对应文件权限，属主属组，时间戳，大小，对应文件存储的磁盘块.信息…）里面未存放文件名。文件名存放在哪里？（通过根目录一层一层根据inode号和对应磁盘块里的表信息向下找，最终找到文件名。每个磁盘块都有一个inode和文件名对应的信息表）<br>&ensp;&ensp;&ensp;&ensp;inode位图：每个条目都对应一个位图，方便找空闲条目<br>&ensp;&ensp;&ensp;&ensp;块位图：（每个存储块在这里面都有一个对应的位0或1），加速查找空闲块的机制。<br>数据存储区：<br>&ensp;&ensp;&ensp;&ensp;逻辑存储单元（存储块）</p>
+<p>一个分区划分成多个块组：<br>一个磁盘分区由于多个块组组成，每个块组上又都包括：元数据存储区，数据存储区.任何分区的第一个块为Boot Block。<br>超级块:（super block）一般都存储在第一个块组中<br>&ensp;&ensp;&ensp;&ensp;保存整个分区的全局信息（有多少个块组，每个块组上包含多少个块，块大小，空闲磁盘块，已用磁盘块，空闲inode,已用inode…..）<br>块大小：block size一般为（1024byte,2048,4096）<br>块组描述符表：GDT,保存当前块组上的相关信息</p>
+<p>磁盘分区类型：MBR、GPT<br>MBR：Master Boot Record，保存在0扇区(sector)<br>分为三部分：<br>&ensp;&ensp;&ensp;&ensp;446bytes：bootloader, 程序，引导启动操作系统的程序；<br>&ensp;&ensp;&ensp;&ensp;64bytes：分区表，每16bytes标识一个分区，一共只能有4个分区；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;4主分区<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;3主1扩展、2主1扩展、1主1扩展：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;n逻辑分区<br>&ensp;&ensp;&ensp;&ensp;2bytes：MBR区域的有效性标识；55AA为有效；</p>
+<h3 id="磁盘分区工具：fdisk、parted"><a href="#磁盘分区工具：fdisk、parted" class="headerlink" title="磁盘分区工具：fdisk、parted"></a>磁盘分区工具：fdisk、parted</h3><h4 id="fdisk-工具：fdisk-小于2T的磁盘分区"><a href="#fdisk-工具：fdisk-小于2T的磁盘分区" class="headerlink" title="fdisk 工具：fdisk(小于2T的磁盘分区)"></a>fdisk 工具：fdisk(小于2T的磁盘分区)</h4><p>查看磁盘分区信息：<br>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fdisk <span class="_">-l</span> [-u] [device...]   列出指定磁盘设备上的分区情况</div></pre></td></tr></table></figure></p>
+<p>实例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># fdisk -l /dev/sda</span></div><div class="line"></div><div class="line">Disk /dev/sda: 128.8 GB, 128849018880 bytes, 251658240 sectors</div><div class="line">Units = sectors of 1 * 512 = 512 bytes</div><div class="line">Sector size (logical/physical): 512 bytes / 512 bytes</div><div class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</div><div class="line">Disk label <span class="built_in">type</span>: dos</div><div class="line">Disk identifier: 0x0002628e</div><div class="line"></div><div class="line">   Device Boot      Start         End      Blocks   Id  System</div><div class="line">/dev/sda1   *        2048     1026047      512000   83  Linux</div><div class="line">/dev/sda2         1026048     5220351     2097152   82  Linux swap / Solaris</div><div class="line">/dev/sda3         5220352    47171583    20975616   8e  Linux LVM</div></pre></td></tr></table></figure></p>
+<p>管理磁盘分区：<br>&ensp;&ensp;&ensp;&ensp;fdisk提供了一个交互式接口来管理分区，它有许多子命令，分别用于不同的管理功能；所有的操作均在内存中完成，没有直接同步到磁盘,直到使用w命令保存至磁盘上<br>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fdisk [-uc] [-b sectorsize] [-C cyls] [-H heads] [-S sects] device</div></pre></td></tr></table></figure></p>
+<p>实例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># fdisk /dev/sda</span></div><div class="line">Welcome to fdisk (util-linux 2.23.2).</div><div class="line"></div><div class="line">Changes will remain <span class="keyword">in</span> memory only, until you decide to write them.</div><div class="line">Be careful before using the write command.</div><div class="line"></div><div class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): m</div><div class="line">Command action</div><div class="line">   a   toggle a bootable flag</div><div class="line">   b   edit bsd disklabel</div><div class="line">   c   toggle the dos compatibility flag</div><div class="line">   d   delete a partition</div><div class="line">   g   create a new empty GPT partition table</div><div class="line">   G   create an IRIX (SGI) partition table</div><div class="line">   l   list known partition types</div><div class="line">   m   <span class="built_in">print</span> this menu</div><div class="line">   n   add a new partition</div><div class="line">   o   create a new empty DOS partition table</div><div class="line">   p   <span class="built_in">print</span> the partition table</div><div class="line">   q   quit without saving changes</div><div class="line">   s   create a new empty Sun disklabel</div><div class="line">   t   change a partition<span class="string">'s system id</span></div><div class="line">   u   change display/entry units</div><div class="line">   v   verify the partition table</div><div class="line">   w   write table to disk and exit</div><div class="line">   x   extra functionality (experts only)</div><div class="line"></div><div class="line">Command (m for help):</div></pre></td></tr></table></figure></p>
+<p>常用Command action：<br>&ensp;&ensp;&ensp;&ensp;n：创建新分区<br>&ensp;&ensp;&ensp;&ensp;d：删除已有分区<br>&ensp;&ensp;&ensp;&ensp;t：修改分区类型<br>&ensp;&ensp;&ensp;&ensp;l：查看所有已经ID<br>&ensp;&ensp;&ensp;&ensp;w：保存并退出<br>&ensp;&ensp;&ensp;&ensp;q：不保存并退出<br>&ensp;&ensp;&ensp;&ensp;m：查看帮助信息<br>&ensp;&ensp;&ensp;&ensp;p：显示现有分区信息</p>
+<p>注意：在已经分区并且已经挂载其中某个分区的磁盘设备上创建的新分区，内核可能在创建完成后无法直接识别</p>
+<p>查看分区是否已经通知内核并加载创建的新分区：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /proc/partitions</div></pre></td></tr></table></figure></p>
+<p>手动通知内核强制重读磁盘分区表：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">CentOS 5：partprobe [device]</div><div class="line">CentOS 6,7：partx, kpartx</div><div class="line">            partx <span class="_">-a</span> [device]</div><div class="line">            kpartx -af [device]</div></pre></td></tr></table></figure></p>
+<h4 id="parted-工具：parted-一般用于大于2T的磁盘分区"><a href="#parted-工具：parted-一般用于大于2T的磁盘分区" class="headerlink" title="parted 工具：parted 一般用于大于2T的磁盘分区"></a>parted 工具：parted 一般用于大于2T的磁盘分区</h4><p>Parted工具使用有两种模式：命令行模式和交互模式<br>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">parted [options] [device [<span class="built_in">command</span> [options...]...]]</div></pre></td></tr></table></figure></p>
+<p>命令选项：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># parted</span></div><div class="line">GNU Parted 3.1</div><div class="line">Using /dev/sda</div><div class="line">Welcome to GNU Parted! Type <span class="string">'help'</span> to view a list of commands.</div><div class="line">(parted) <span class="built_in">help</span>                                                             </div><div class="line">  align-check TYPE N                        check partition N <span class="keyword">for</span> TYPE(min|opt) alignment</div><div class="line">  <span class="built_in">help</span> [COMMAND]                           <span class="built_in">print</span> general <span class="built_in">help</span>, or <span class="built_in">help</span> on COMMAND</div><div class="line">  mklabel,mktable LABEL-TYPE               create a new disklabel (partition table)</div><div class="line">  mkpart PART-TYPE [FS-TYPE] START END     make a partition</div><div class="line">  name NUMBER NAME                         name partition NUMBER as NAME</div><div class="line">  <span class="built_in">print</span> [devices|free|list,all|NUMBER]     display the partition table, available devices, free </div><div class="line">                                           space,all found partitions, or a particular partition</div><div class="line">  quit                                     <span class="built_in">exit</span> program</div><div class="line">  rescue START END                         rescue a lost partition near START and END</div><div class="line">  rm NUMBER                                delete partition NUMBER</div><div class="line">  select DEVICE                            choose the device to edit</div><div class="line">  disk_set FLAG STATE                      change the FLAG on selected device</div><div class="line">  disk_toggle [FLAG]                       toggle the state of FLAG on selected device</div><div class="line">  <span class="built_in">set</span> NUMBER FLAG STATE                    change the FLAG on partition NUMBER</div><div class="line">  toggle [NUMBER [FLAG]]                   toggle the state of FLAG on partition NUMBER</div><div class="line">  unit UNIT                                <span class="built_in">set</span> the default unit to UNIT</div><div class="line">  version                                  display the version number and copyright information of </div><div class="line">                                           GNU Parted</div><div class="line">  子命令<span class="built_in">help</span>:</div><div class="line">  (parted) <span class="built_in">help</span> mklabel</div><div class="line">   mklabel,mktable LABEL-TYPE               create a new disklabel (partition table)</div><div class="line">  (parted) <span class="built_in">help</span> mkpart</div><div class="line">   mkpart PART-TYPE [FS-TYPE] START END     make a partition</div></pre></td></tr></table></figure></p>
+<p>常用命令选项：<br>&ensp;&ensp;&ensp;&ensp;mklabel:指定一个分区类型<br>&ensp;&ensp;&ensp;&ensp;mkpart:创建一个分区<br>&ensp;&ensp;&ensp;&ensp;select：选择一个磁盘,如：select /dev/sdb<br>&ensp;&ensp;&ensp;&ensp;unit:设备选择的磁盘显示单位(kB,MB,Gb,TB,%,chs,compact…..) 如：unit GB<br>&ensp;&ensp;&ensp;&ensp;print:显示当前分区情况</p>
+<p>mklabel选项：<br>&ensp;&ensp;&ensp;&ensp;mklabel,mktable LABEL-TYPE<br>&ensp;&ensp;&ensp;&ensp;LABEL-TYPE：loop (raw disk access),gpt….<br>例如：<br>&ensp;&ensp;&ensp;&ensp;(parted) mklabel gpt</p>
+<p>mkpart选项：<br>&ensp;&ensp;&ensp;&ensp;mkpart PART-TYPE [FS-TYPE] START END<br>&ensp;&ensp;&ensp;&ensp;PART-TYPE：primary, logical, extended<br>                    &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;（‘primary’, ‘extended’ or ‘logical’, and may be specified only with ‘msdos’ or ‘dvh’ partition tables）<br>&ensp;&ensp;&ensp;&ensp;FS-TYPE：btrfs, ext4, ext3, ext2, fat32, fat16, hfs, jfs, ntfs, reiserfs，xfs，linux-swap….<br>&ensp;&ensp;&ensp;&ensp;START and END:如：4GB or 10%，0表示起止，-1表示结尾.<br>例如：<br>&ensp;&ensp;&ensp;&ensp;mkpart primary ext4 0% 3GB<br>&ensp;&ensp;&ensp;&ensp;mkpart primary ext4 0GB 3GB</p>
+<p>实例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">更换磁盘分区类型为：gpt</div><div class="line">[root@centos7 ~]<span class="comment"># parted /dev/sdb mklabel gpt yes</span></div><div class="line">创建一个大小为3GB的分区</div><div class="line">[root@centos7 ~]<span class="comment"># parted /dev/sdb mkpart xfs 0% 3GB</span></div><div class="line">创建第二个为3GB的分区</div><div class="line">[root@centos7 ~]<span class="comment"># parted /dev/sdb mkpart xfs 3GB 6GB</span></div><div class="line">划分整个磁盘大小给一个分区</div><div class="line">[root@centos7 ~]<span class="comment"># parted /dev/sdb mkpart xfs 0% 100%</span></div><div class="line">交互模式：</div><div class="line">root@centos7 ~]<span class="comment"># parted /dev/sdb</span></div><div class="line">GNU Parted 3.1</div><div class="line">Using /dev/sdb</div><div class="line">Welcome to GNU Parted! Type <span class="string">'help'</span> to view a list of commands.</div><div class="line">(parted) mkpart</div><div class="line">Partition name?  []?                                                      </div><div class="line">File system <span class="built_in">type</span>?  [ext2]? xfs                                            </div><div class="line">Start? 0%                                                                 </div><div class="line">End? 100%                                                                 </div><div class="line">(parted) <span class="built_in">print</span>                                                            </div><div class="line">Model: VMware, VMware Virtual S (scsi)</div><div class="line">Disk /dev/sdb: 10.7GB</div><div class="line">Sector size (logical/physical): 512B/512B</div><div class="line">Partition Table: gpt</div><div class="line">Disk Flags: </div><div class="line"></div><div class="line">Number  Start   End     Size    File system  Name  Flags</div><div class="line"> 1      1049kB  10.7GB  10.7GB</div></pre></td></tr></table></figure></p>
+<h3 id="文件系统管理-："><a href="#文件系统管理-：" class="headerlink" title="文件系统管理 ："></a>文件系统管理 ：</h3><p>文件系统：<br>一个分区划分成二个区域：<br>元数据存储区：<br>&ensp;&ensp;&ensp;&ensp;inode条目：条目中都是每一个文件条目，每一个文件条目都有一个inode号和对应的数据块位置<br>&ensp;&ensp;&ensp;&ensp;index node(inode号,对应文件权限，属主属组，时间戳，大小，对应文件存储的磁盘块.信息…)，但里面未存放文件名。<br>&ensp;&ensp;&ensp;&ensp;文件名存放在哪里？<br>&ensp;&ensp;&ensp;&ensp;（通过根目录一层一层根据inode号和对应磁盘块里的表信息向下找，最终找到文件名.每个磁盘块上都有一个inode和文件名对应的信息表）<br>&ensp;&ensp;&ensp;&ensp;位图索引：（每个条目都对应一个位图，方便找空闲条目）<br>&ensp;&ensp;&ensp;&ensp;块位图：（每个存储块在这里面都有一个对应的位0或1），加速查找空闲块的机制。<br>数据存储区：<br>&ensp;&ensp;&ensp;&ensp;逻辑存储单元（存储块）</p>
+<h4 id="新建一个文件过程："><a href="#新建一个文件过程：" class="headerlink" title="新建一个文件过程："></a>新建一个文件过程：</h4><p>&ensp;&ensp;&ensp;&ensp;前提要有一个目录存在，首先扫描编目位图，找一个空闲条目（inode）,于是占用这个inode号，先找到目录对应inode,然后再找到这个inode对应的磁盘块，再在这个磁盘块中找到对应的表，在这个表上建立要新建的文件，然后把之前占用的inode号于这个新建的文件对应好存在这个表中。最后向文件中存数据，这时扫描块位图，找到空间块分配相应空间。</p>
+<h4 id="删除一个文件过程："><a href="#删除一个文件过程：" class="headerlink" title="删除一个文件过程："></a>删除一个文件过程：</h4><p>先找到文件在磁盘块中对应的表中的条目信息，删除文件条目，然后在编目位图中所这个条目对应的inode号标记空。然后找到对应的块，在块位图中把所对应的块标记为空。块里面的数据并为删除（只要这些块没有被再次使用，这些数据就存在）直到这些块被再次使用。</p>
+<h4 id="复制一个文件过程：速度慢"><a href="#复制一个文件过程：速度慢" class="headerlink" title="复制一个文件过程：速度慢"></a>复制一个文件过程：速度慢</h4><p>复制一个文件的过程和新建一个文件过程一样。</p>
+<h4 id="剪切一个文件过程"><a href="#剪切一个文件过程" class="headerlink" title="剪切一个文件过程"></a>剪切一个文件过程</h4><p>同一个分区剪切一个文件过程：速度快，剪切一个文件，如果在同一个文件系统（同一个分区）来说，只是把文件对应的路径移到其它目录下面，但inode还原来的inode,数据块还是原来的数据块。<br>跨分区剪切一个文件过程：速度慢，跨分区会先把文件复制到另一个分区上，然后删除原分区上的相关信息，所以会非常慢。</p>
+<h3 id="VFS-Virtual-File-System"><a href="#VFS-Virtual-File-System" class="headerlink" title="VFS: Virtual File System"></a>VFS: Virtual File System</h3><p>&ensp;&ensp;&ensp;&ensp;是内核中的一种文件系统，它将不同的文件系统统一起来为用户提供文件系统功能，用户管理文件系统时<br>只要访问VFS文件系统，然后VFS文件系统再调用内核功能去完成相关功能。<br>&ensp;&ensp;&ensp;&ensp;Linux的文件系统: ext2(无日志功能), ext3, ext4, xfs, reiserfs, btrfs<br>&ensp;&ensp;&ensp;&ensp;光盘：iso9660<br>&ensp;&ensp;&ensp;&ensp;网络文件系统：nfs, cifs<br>&ensp;&ensp;&ensp;&ensp;集群文件系统：gfs2, ocfs2<br>&ensp;&ensp;&ensp;&ensp;内核级分布式文件系统：ceph<br>&ensp;&ensp;&ensp;&ensp;windows的文件系统：vfat, ntfs<br>&ensp;&ensp;&ensp;&ensp;伪文件系统：proc, sysfs, tmpfs, hugepagefs<br>&ensp;&ensp;&ensp;&ensp;Unix的文件系统：UFS， FFS， JFS<br>&ensp;&ensp;&ensp;&ensp;交换文件系统：swap<br>&ensp;&ensp;&ensp;&ensp;用户空间的分布式文件系统：mogilefs, moosefs, glusterfs</p>
+<h4 id="日志文件系统："><a href="#日志文件系统：" class="headerlink" title="日志文件系统："></a>日志文件系统：</h4><p>&ensp;&ensp;&ensp;&ensp;journal file system（加快文件系统修复速度），先把inode区存放到日志文件系统区，等数据块存放完后再把inode区放回到元数据区</p>
+<h4 id="链接文件：硬链接和符号链接"><a href="#链接文件：硬链接和符号链接" class="headerlink" title="链接文件：硬链接和符号链接"></a>链接文件：硬链接和符号链接</h4><p> 硬链接：<br>&ensp;&ensp;&ensp;&ensp;直接指向同一个inode的不同路径<br>&ensp;&ensp;&ensp;&ensp;删除文件其中一个硬链接只是把这个硬链接对应inode号的这条路径删除了，对inode号和文件内容没有影响。<br>&ensp;&ensp;&ensp;&ensp;只能对文件创建，不能应用于目录<br>&ensp;&ensp;&ensp;&ensp;不能跨文件系统<br>&ensp;&ensp;&ensp;&ensp;创建硬链接会增加文件被链接的次数<br>创建硬链接：<br>&ensp;&ensp;&ensp;&ensp;ln     src    link_file</p>
+<p>符号链接：<br>&ensp;&ensp;&ensp;&ensp;符号链接指向的是另一个文件的路径，大小等于指向文件的字符长度，访问文件的权限和符号链接的权限无关，<br>&ensp;&ensp;&ensp;&ensp;所以符号链接的权限都是777。权限和指向的文件权限有关。<br>&ensp;&ensp;&ensp;&ensp;是两个各自独立的文件，各自有自己的inode号。<br>&ensp;&ensp;&ensp;&ensp;能应用于目录<br>&ensp;&ensp;&ensp;&ensp;可以跨文件系统<br>&ensp;&ensp;&ensp;&ensp;创建硬链接不会增加文件被链接的次数<br>创建符号链接：<br>&ensp;&ensp;&ensp;&ensp;ln   -s   src    link_file<br>&ensp;&ensp;&ensp;&ensp;-v   显示创建过程</p>
+<h4 id="内核级文件系统的组成部分："><a href="#内核级文件系统的组成部分：" class="headerlink" title="内核级文件系统的组成部分："></a>内核级文件系统的组成部分：</h4><p>文件系统驱动：由内核提供<br>文件系统箮理工具：由用户空间的应用程序提供</p>
+<h3 id="文件系统管理工具："><a href="#文件系统管理工具：" class="headerlink" title="文件系统管理工具："></a>文件系统管理工具：</h3><p>创建文件系统的工具<br>    mkfs<br>&ensp;&ensp;&ensp;&ensp;mkfs.ext2, mkfs.ext3, mkfs.ext4, mkfs.xfs, mkfs.vfat, …<br>检测及修复文件系统的工具<br>    fsck<br>&ensp;&ensp;&ensp;&ensp;fsck.ext2, fsck.ext3, …<br>查看其属性的工具<br>    dumpe2fs, tune2fs<br>调整文件系统特性：<br>    tune2fs</p>
+<h4 id="ext系列文件系统的管理工具："><a href="#ext系列文件系统的管理工具：" class="headerlink" title="ext系列文件系统的管理工具："></a>ext系列文件系统的管理工具：</h4><p>两种方式创建文件系统<br>&ensp;&ensp;&ensp;&ensp;mkfs.ext2, mkfs.ext3, mkfs.ext4<br>&ensp;&ensp;&ensp;&ensp;mkfs -t ext2 = mkfs.ext2</p>
+<h4 id="ext系列文件系统专用管理工具：mke2fs"><a href="#ext系列文件系统专用管理工具：mke2fs" class="headerlink" title="ext系列文件系统专用管理工具：mke2fs"></a>ext系列文件系统专用管理工具：mke2fs</h4><p>mke2fs [OPTIONS]  device<br>&ensp;&ensp;&ensp;&ensp;-t {ext2|ext3|ext4}：指明要创建的文件系统类型<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;mkfs.ext4 = mkfs -t ext4 = mke2fs -t ext4<br>&ensp;&ensp;&ensp;&ensp;-b {1024|2048|4096}：指明文件系统的块大小；<br>&ensp;&ensp;&ensp;&ensp;-L LABEL：指明卷标；<br>&ensp;&ensp;&ensp;&ensp;-j：创建有日志功能的文件系统ext3；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;mke2fs -j = mke2fs -t ext3 = mkfs -t ext3 = mkfs.ext3<br>&ensp;&ensp;&ensp;&ensp;-i #：bytes-per-inode，指明inode与字节的比率；即每多少字节创建一个Indode;<br>&ensp;&ensp;&ensp;&ensp;-N #：直接指明要给此文件系统创建的inode的数量；<br>&ensp;&ensp;&ensp;&ensp;-m #：指定预留的空间，百分比；<br>&ensp;&ensp;&ensp;&ensp;-O [^]FEATURE：以指定的特性创建目标文件系统； </p>
+<h4 id="e2label命令：卷标的查看与设定"><a href="#e2label命令：卷标的查看与设定" class="headerlink" title="e2label命令：卷标的查看与设定"></a>e2label命令：卷标的查看与设定</h4><p>&ensp;&ensp;&ensp;&ensp;查看：e2label device<br>&ensp;&ensp;&ensp;&ensp;设定：e2label device LABEL</p>
+<h4 id="tune2fs命令：查看或修改ext系列文件系统的某些属性"><a href="#tune2fs命令：查看或修改ext系列文件系统的某些属性" class="headerlink" title="tune2fs命令：查看或修改ext系列文件系统的某些属性"></a>tune2fs命令：查看或修改ext系列文件系统的某些属性</h4><p>注意：块大小创建后不可修改；<br>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tune2fs [OPTIONS] device</div></pre></td></tr></table></figure></p>
+<p>查看超级块的内容:<br>&ensp;&ensp;&ensp;&ensp;-l：查看超级块的内容<br>修改指定文件系统的属性:<br>&ensp;&ensp;&ensp;&ensp;-j：ext2 –&gt; ext3；<br>&ensp;&ensp;&ensp;&ensp;-L LABEL：修改卷标；<br>&ensp;&ensp;&ensp;&ensp;-m #：调整预留空间百分比；<br>&ensp;&ensp;&ensp;&ensp;-O [^]FEATHER：开启或关闭某种特性；<br>&ensp;&ensp;&ensp;&ensp;-o [^]mount_options：开启或关闭某种默认挂载选项.如：acl、^acl</p>
+<h4 id="dumpe2fs命令：显示ext系列文件系统的属性信息"><a href="#dumpe2fs命令：显示ext系列文件系统的属性信息" class="headerlink" title="dumpe2fs命令：显示ext系列文件系统的属性信息"></a>dumpe2fs命令：显示ext系列文件系统的属性信息</h4><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dumpe2fs  [-h] device</div></pre></td></tr></table></figure></p>
+<h4 id="文件系统检测的工具"><a href="#文件系统检测的工具" class="headerlink" title="文件系统检测的工具"></a>文件系统检测的工具</h4><p>因进程意外中止或系统崩溃等 原因导致定稿操作非正常终止时，可能会造成文件损坏；此时，应该检测并修复文件系统； 建议，离线进行； </p>
+<h4 id="ext系列文件系统的专用工具："><a href="#ext系列文件系统的专用工具：" class="headerlink" title="ext系列文件系统的专用工具："></a>ext系列文件系统的专用工具：</h4><p>e2fsck : check a Linux ext2/ext3/ext4 file system<br>命令格式：<br>e2fsck [OPTIONS]  device<br>&ensp;&ensp;&ensp;&ensp;-y：对所有问题自动回答为yes;<br>&ensp;&ensp;&ensp;&ensp;-f：即使文件系统处于clean状态，也要强制进行检测；</p>
+<p>fsck：check and repair a Linux file system<br>命令格式：<br>fsck [OPTIONS]  device<br>&ensp;&ensp;&ensp;&ensp;-t fstype：指明文件系统类型；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;fsck -t ext4 = fsck.ext4<br>&ensp;&ensp;&ensp;&ensp;-a：无须交互而自动修复所有错误；<br>&ensp;&ensp;&ensp;&ensp;-r：交互式修复；        </p>
+<p>注意：CentOS 6如何使用xfs文件系统：<br>首先要安装xfs软件包<br>yum  -y  install  xfsprogs        </p>
+<p>注意：Windows无法识别Linux的文件系统； 因此，存储设备需要两种系统之间交叉使用时，应该使用windows和Linux同时支持的文件系统：fat32(vfat);<br>创建vfat文件系统类型：<br>&ensp;&ensp;&ensp;&ensp;mkfs.vfat device    </p>
+<h4 id="swap文件系统："><a href="#swap文件系统：" class="headerlink" title="swap文件系统："></a>swap文件系统：</h4><p>Linux上的交换分区必须使用独立的文件系统；且文件系统的System ID必须为82；<br>创建swap设备：mkswap命令<br>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkswap [OPTIONS]  device</div></pre></td></tr></table></figure></p>
+<p>&ensp;&ensp;&ensp;&ensp;-L LABEL：指明一个卷标<br>&ensp;&ensp;&ensp;&ensp;-f：表示强制创建</p>
+<h4 id="交换分区的启用和禁用："><a href="#交换分区的启用和禁用：" class="headerlink" title="交换分区的启用和禁用："></a>交换分区的启用和禁用：</h4><p>启用：swapon<br>&ensp;&ensp;&ensp;&ensp;swapon  [OPTION]  [DEVICE]<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;-a：启用定义在/etc/fstab文件中的所有swap设备；<br>禁用：swapoff<br>&ensp;&ensp;&ensp;&ensp;swapoff DEVICE</p>
+<h4 id="blkid命令：查看文件系统类型、UUID、LABEL"><a href="#blkid命令：查看文件系统类型、UUID、LABEL" class="headerlink" title="blkid命令：查看文件系统类型、UUID、LABEL"></a>blkid命令：查看文件系统类型、UUID、LABEL</h4><p>命令使用：<br>&ensp;&ensp;&ensp;&ensp;blkid device<br>&ensp;&ensp;&ensp;&ensp;blkid  -L LABEL：根据LABEL定位设备<br>&ensp;&ensp;&ensp;&ensp;blkid  -U  UUID：根据UUID定位设备 </p>
+<h4 id="文件系统的使用："><a href="#文件系统的使用：" class="headerlink" title="文件系统的使用："></a>文件系统的使用：</h4><p>mount命令和umount命令：</p>
+<p>根文件系统这外的其它文件系统要想能够被访问，都必须通过“关联”至根文件系统上的某个目录来实现，此关联操作即为“挂载”；此目录即为“挂载点”；</p>
+<p>挂载点：mount_point，用于作为另一个文件系统的访问入口；<br>&ensp;&ensp;&ensp;&ensp;(1) 事先存在；<br>&ensp;&ensp;&ensp;&ensp;(2) 应该使用未被或不会被其它进程使用到的目录；<br>&ensp;&ensp;&ensp;&ensp;(3) 挂载点下原有的文件将会被隐藏；</p>
+<h5 id="mount命令："><a href="#mount命令：" class="headerlink" title="mount命令："></a>mount命令：</h5><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mount  [-nrw]  [-t vfstype]  [-o options]  device  dir</div></pre></td></tr></table></figure></p>
+<p>命令选项：<br>&ensp;&ensp;&ensp;&ensp;-r：readonly，只读挂载；<br>&ensp;&ensp;&ensp;&ensp;-w：read and write, 读写挂载；<br>&ensp;&ensp;&ensp;&ensp;-n：默认情况下，设备挂载或卸载的操作会同步更新至/etc/mtab文件中；-n用于禁止此特性；<br>&ensp;&ensp;&ensp;&ensp;-t vfstype：指明要挂载的设备上的文件系统的类型；多数情况下可省略，此时mount会通过blkid来判断要挂载的设备的文件系统类型；<br>&ensp;&ensp;&ensp;&ensp;-L LABEL：挂载时以卷标的方式指明设备；<br>&ensp;&ensp;&ensp;&ensp;如：mount -L LABEL dir<br>&ensp;&ensp;&ensp;&ensp;-U UUID：挂载时以UUID的方式指明设备；<br>&ensp;&ensp;&ensp;&ensp;如：mount -U UUID dir<br>&ensp;&ensp;&ensp;&ensp;-a：可自动挂载定义在/etc/fstab中的所支持自动挂载的设备；</p>
+<p>-o options：挂载选项<br>&ensp;&ensp;&ensp;&ensp;sync/async：同步/异步操作；<br>&ensp;&ensp;&ensp;&ensp;atime/noatime：文件或目录在被访问时是否更新其访问时间戳；<br>&ensp;&ensp;&ensp;&ensp;diratime/nodiratime：目录在被访问时是否更新其访问时间戳；<br>&ensp;&ensp;&ensp;&ensp;remount：重新挂载；<br>&ensp;&ensp;&ensp;&ensp;acl：支持使用facl功能；<br>&ensp;&ensp;&ensp;&ensp;如：mount -o acl  device dir<br>&ensp;&ensp;&ensp;&ensp;如：tune2fs  -o  acl  device<br>&ensp;&ensp;&ensp;&ensp;ro：只读<br>&ensp;&ensp;&ensp;&ensp;rw：读写<br>&ensp;&ensp;&ensp;&ensp;dev/nodev：此设备上是否允许创建设备文件；<br>&ensp;&ensp;&ensp;&ensp;exec/noexec：是否允许运行此设备上的程序文件；<br>&ensp;&ensp;&ensp;&ensp;auto/noauto：禁止程序自动运行<br>&ensp;&ensp;&ensp;&ensp;user/nouser：是否允许普通用户挂载此文件系统；<br>&ensp;&ensp;&ensp;&ensp;suid/nosuid：是否允许程序文件上的suid和sgid特殊权限生效；<br>&ensp;&ensp;&ensp;&ensp;defaults：Use default options: rw, suid, dev, exec, auto, nouser, async, and relatime.</p>
+<h5 id="使用技巧："><a href="#使用技巧：" class="headerlink" title="使用技巧："></a>使用技巧：</h5><p>可以实现将目录绑定至另一个目录上，作为其临时访问入口；<br>&ensp;&ensp;&ensp;&ensp;mount –bind  源目录  目标目录</p>
+<h5 id="查看当前系统所有已挂载的设备："><a href="#查看当前系统所有已挂载的设备：" class="headerlink" title="查看当前系统所有已挂载的设备："></a>查看当前系统所有已挂载的设备：</h5><p>&ensp;&ensp;&ensp;&ensp;mount<br>&ensp;&ensp;&ensp;&ensp;cat  /etc/mtab<br>&ensp;&ensp;&ensp;&ensp;cat  /proc/mounts</p>
+<h5 id="挂载光盘："><a href="#挂载光盘：" class="headerlink" title="挂载光盘："></a>挂载光盘：</h5><p>&ensp;&ensp;&ensp;&ensp;mount  -r  /dev/cdrom  mount_point<br>&ensp;&ensp;&ensp;&ensp;光盘设备文件：/dev/cdrom, /dev/dvd</p>
+<h5 id="挂载本地的回环设备："><a href="#挂载本地的回环设备：" class="headerlink" title="挂载本地的回环设备："></a>挂载本地的回环设备：</h5><p>&ensp;&ensp;&ensp;&ensp;mount  -o  loop  /PATH/TO/SOME_LOOP_FILE   MOUNT_POINT </p>
+<h5 id="umount命令："><a href="#umount命令：" class="headerlink" title="umount命令："></a>umount命令：</h5><p>命令格式：<br>&ensp;&ensp;&ensp;&ensp;umount  device|dir</p>
+<p>注意：正在被进程访问到的挂载点无法被卸载；<br>查看被哪个或哪些进程所战用：<br>&ensp;&ensp;&ensp;&ensp;lsof  MOUNT_POINT<br>&ensp;&ensp;&ensp;&ensp;fuser -v  MOUNT_POINT<br>终止所有正在访问某挂载点的进程：<br>&ensp;&ensp;&ensp;&ensp;fuser  -km  MOUNT_POINT</p>
+<h4 id="设定除根文件系统以外的其它文件系统能够开机时自动挂载：-etc-fstab文件"><a href="#设定除根文件系统以外的其它文件系统能够开机时自动挂载：-etc-fstab文件" class="headerlink" title="设定除根文件系统以外的其它文件系统能够开机时自动挂载：/etc/fstab文件"></a>设定除根文件系统以外的其它文件系统能够开机时自动挂载：/etc/fstab文件</h4><p>每行定义一个要挂载的文件系统及相关属性：分别都对应以下6个字段<br>&ensp;&ensp;&ensp;&ensp;(1) 要挂载的设备：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;设备文件；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;LABEL<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;UUID<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;伪文件系统：如sysfs, proc, tmpfs等<br>&ensp;&ensp;&ensp;&ensp;(2) 挂载点<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;swap类型的设备的挂载点为swap；<br>&ensp;&ensp;&ensp;&ensp;(3) 文件系统类型；<br>&ensp;&ensp;&ensp;&ensp;(4) 挂载选项<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;defaults：使用默认挂载选项；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;如果要同时指明多个挂载选项，彼此间以事情分隔；(defaults,acl,noatime,noexec)<br>&ensp;&ensp;&ensp;&ensp;(5) 转储频率<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;0：从不备份；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;1：每天备份；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;2：每隔一天备份；<br>&ensp;&ensp;&ensp;&ensp;(6) 自检次序<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;0：不自检；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;1：首先自检，通常只能是根文件系统可用1；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;2：次级自检</p>
+<p>实例：<br>1、创建一个10G分区，并格式为ext4文件系统；<br>(1) 要求其block大小为2048, 预留空间百分比为2, 卷标为MYDATA, 默认挂载属性包含acl；<br>(2) 挂载至/data/mydata目录，要求挂载时禁止程序自动运行，且不更新文件的访问时间戳；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div></pre></td><td class="code"><pre><div class="line">创建一个10的分区：</div><div class="line">[root@centos7 ~]<span class="comment"># fdisk -l /dev/sdb</span></div><div class="line">Disk /dev/sdb: 10.7 GB, 10737418240 bytes, 20971520 sectors</div><div class="line">Units = sectors of 1 * 512 = 512 bytes</div><div class="line">Sector size (logical/physical): 512 bytes / 512 bytes</div><div class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</div><div class="line">Disk label <span class="built_in">type</span>: dos</div><div class="line">Disk identifier: 0x0009ae81</div><div class="line">   Device Boot      Start         End      Blocks   Id  System</div><div class="line">/dev/sdb1            2048    20971519    10484736   83  Linux</div><div class="line">root@centos7 ~]<span class="comment"># cat /proc/partitions</span></div><div class="line">   8       16   10485760 sdb</div><div class="line">   8       17   10484736 sdb1</div><div class="line"></div><div class="line">创建文件系统：</div><div class="line">[root@centos7 ~]<span class="comment"># mke2fs -t ext4 -b 2048 -m 2 -L MYDATA /dev/sdb1</span></div><div class="line">mke2fs 1.42.9 (28-Dec-2013)</div><div class="line">Filesystem label=MYDATA</div><div class="line">OS <span class="built_in">type</span>: Linux</div><div class="line">Block size=2048 (<span class="built_in">log</span>=1)</div><div class="line">Fragment size=2048 (<span class="built_in">log</span>=1)</div><div class="line">Stride=0 blocks, Stripe width=0 blocks</div><div class="line">655360 inodes, 5242368 blocks</div><div class="line">104847 blocks (2.00%) reserved <span class="keyword">for</span> the super user</div><div class="line">First data block=0</div><div class="line">Maximum filesystem blocks=273678336</div><div class="line">320 block groups</div><div class="line">16384 blocks per group, 16384 fragments per group</div><div class="line">2048 inodes per group</div><div class="line">Superblock backups stored on blocks: </div><div class="line">	16384, 49152, 81920, 114688, 147456, 409600, 442368, 802816, 1327104, </div><div class="line">	2048000, 3981312</div><div class="line">Allocating group tables: <span class="keyword">done</span>                            </div><div class="line">Writing inode tables: <span class="keyword">done</span>                            </div><div class="line">Creating journal (32768 blocks): <span class="keyword">done</span></div><div class="line">Writing superblocks and filesystem accounting information: <span class="keyword">done</span>  </div><div class="line"></div><div class="line">修改挂载属性：</div><div class="line">[root@centos7 ~]<span class="comment"># tune2fs -o acl /dev/sdb1</span></div><div class="line">tune2fs 1.42.9 (28-Dec-2013)</div><div class="line"></div><div class="line">查看属性：</div><div class="line">[root@centos7 ~]<span class="comment"># tune2fs -l /dev/sdb1</span></div><div class="line">tune2fs 1.42.9 (28-Dec-2013)</div><div class="line">Filesystem volume name:   MYDATA</div><div class="line">Last mounted on:          &lt;not available&gt;</div><div class="line">Filesystem UUID:          f525<span class="built_in">fc</span>11<span class="_">-f</span>9ff-4125-9966-61a7ea37dc53</div><div class="line">Filesystem magic number:  0xEF53</div><div class="line">Filesystem revision <span class="comment">#:    1 (dynamic)</span></div><div class="line">Filesystem features:      has_journal ext_attr resize_inode dir_index filetype extent 64bit flex_bg sparse_super huge_file uninit_bg dir_nlink extra_isize</div><div class="line">Filesystem flags:         signed_directory_hash </div><div class="line">Default mount options:    user_xattr acl</div><div class="line">Filesystem state:         clean</div><div class="line">Errors behavior:          Continue</div><div class="line">Filesystem OS <span class="built_in">type</span>:       Linux</div><div class="line">Inode count:              655360</div><div class="line">Block count:              5242368</div><div class="line">Reserved block count:     104847</div><div class="line">Free blocks:              5120754</div><div class="line">Free inodes:              655349</div><div class="line">First block:              0</div><div class="line">Block size:               2048</div><div class="line">Fragment size:            2048</div><div class="line">Group descriptor size:    64</div><div class="line">Reserved GDT blocks:      512</div><div class="line">Blocks per group:         16384</div><div class="line">Fragments per group:      16384</div><div class="line">Inodes per group:         2048</div><div class="line">Inode blocks per group:   256</div><div class="line">Flex block group size:    16</div><div class="line">Filesystem created:       Sat Jun  3 08:18:36 2017</div><div class="line">Last mount time:          n/a</div><div class="line">Last write time:          Sat Jun  3 08:19:18 2017</div><div class="line">Mount count:              0</div><div class="line">Maximum mount count:      -1</div><div class="line">Last checked:             Sat Jun  3 08:18:36 2017</div><div class="line">Check interval:           0 (&lt;none&gt;)</div><div class="line">Lifetime writes:          65 MB</div><div class="line">Reserved blocks uid:      0 (user root)</div><div class="line">Reserved blocks gid:      0 (group root)</div><div class="line">First inode:              11</div><div class="line">Inode size:	          256</div><div class="line">Required extra isize:     28</div><div class="line">Desired extra isize:      28</div><div class="line">Journal inode:            8</div><div class="line">Default directory <span class="built_in">hash</span>:   half_md4</div><div class="line">Directory Hash Seed:      b6f27284-7d76-495e-96ba-7690e2e6ce48</div><div class="line">Journal backup:           inode blocks</div><div class="line"></div><div class="line"></div><div class="line">(2) 挂载至/data/mydata目录，要求挂载时禁止程序自动运行，且不更新文件的访问时间戳；</div><div class="line">[root@centos7 ~]<span class="comment"># mkdir -p /data/mydata</span></div><div class="line">[root@centos7 ~]<span class="comment"># mount -o noauto,noatime /dev/sdb1 /data/mydata/</span></div><div class="line">[root@centos7 ~]<span class="comment"># mount</span></div><div class="line">/dev/sdb1 on /data/mydata <span class="built_in">type</span> ext4 (rw,noatime,seclabel,data=ordered)</div><div class="line">[root@centos7 ~]<span class="comment"># df -h</span></div><div class="line">Filesystem             Size  Used Avail Use% Mounted on</div><div class="line">/dev/sdb1              9.8G   13M  9.6G   1% /data/mydata</div></pre></td></tr></table></figure>
+<p>2、创建一个大小为1G的swap分区，并创建好文件系统，并启用之；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">创建一个swap分区：</div><div class="line">[root@centos6-lab ~]<span class="comment"># fdisk -l /dev/sdb</span></div><div class="line">Disk /dev/sdb: 21.5 GB, 21474836480 bytes</div><div class="line">255 heads, 63 sectors/track, 2610 cylinders</div><div class="line">Units = cylinders of 16065 * 512 = 8225280 bytes</div><div class="line">Sector size (logical/physical): 512 bytes / 512 bytes</div><div class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</div><div class="line">Disk identifier: 0x978fa7e4</div><div class="line"></div><div class="line">   Device Boot      Start         End      Blocks   Id  System</div><div class="line">/dev/sdb1               1         132     1060258+  82  Linux swap / Solaris</div><div class="line"></div><div class="line">创建swap文件系统：</div><div class="line">[root@centos6-lab ~]<span class="comment"># mkswap /dev/sdb1</span></div><div class="line">Setting up swapspace version 1, size = 1060252 KiB</div><div class="line">no label, UUID=95bf1f6d-8e76-46a1-89e6<span class="_">-a</span>91965c4905f</div><div class="line"></div><div class="line">启用swap：</div><div class="line">[root@centos6-lab ~]<span class="comment"># swapon /dev/sdb1</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># free -m</span></div><div class="line">             total       used       free     shared    buffers     cached</div><div class="line">Mem:           980        137        843          0          7         34</div><div class="line">-/+ buffers/cache:         95        885</div><div class="line">Swap:         3083          0       3083</div><div class="line">[root@centos6-lab ~]<span class="comment"># swapoff /dev/sdb1</span></div><div class="line">[root@centos6-lab ~]<span class="comment"># free -m</span></div><div class="line">             total       used       free     shared    buffers     cached</div><div class="line">Mem:           980        137        843          0          7         34</div><div class="line">-/+ buffers/cache:         94        886</div><div class="line">Swap:         2047          0       2047</div><div class="line"></div><div class="line">加入开机自启动：</div><div class="line">vim /etc/fstab</div><div class="line">/dev/sdb1               swap                    swap    defaults        0 0</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">command</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/06/01/disk-and-filesystem-manage/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/05/30/rpm-manage/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Linux程序包管理之rpm包管理功能全解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/02/yum-manage/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Linux程序包管理之yum仓库管理功能全解</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">man</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">privilege</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">user&group</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
