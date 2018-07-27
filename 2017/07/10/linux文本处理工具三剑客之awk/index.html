@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>Linux三剑客之gawk | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本章内容：◆ awk介绍◆ awk基本用法◆ awk变量◆ awk格式化◆ awk操作符◆ awk条件判断◆ awk循环◆ awk数组◆ awk函数◆ 调用系统命令 AWK介绍★ Linux 文本处理工具三剑客:grep、sed、awk。其中grep是一种文本过滤工具；sed是文本行编辑器，而awk是一种报表生成器，就是对文件进行格式化处理的，但这里的格式化不是文件系统的格式化，而是对文件内容进行">
+<meta name="keywords" content="linux中文本处理工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux三剑客之gawk">
+<meta property="og:url" content="http://yoursite.com/2017/07/10/linux文本处理工具三剑客之awk/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本章内容：◆ awk介绍◆ awk基本用法◆ awk变量◆ awk格式化◆ awk操作符◆ awk条件判断◆ awk循环◆ awk数组◆ awk函数◆ 调用系统命令 AWK介绍★ Linux 文本处理工具三剑客:grep、sed、awk。其中grep是一种文本过滤工具；sed是文本行编辑器，而awk是一种报表生成器，就是对文件进行格式化处理的，但这里的格式化不是文件系统的格式化，而是对文件内容进行">
+<meta property="og:updated_time" content="2017-07-27T03:03:05.034Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux三剑客之gawk">
+<meta name="twitter:description" content="本章内容：◆ awk介绍◆ awk基本用法◆ awk变量◆ awk格式化◆ awk操作符◆ awk条件判断◆ awk循环◆ awk数组◆ awk函数◆ 调用系统命令 AWK介绍★ Linux 文本处理工具三剑客:grep、sed、awk。其中grep是一种文本过滤工具；sed是文本行编辑器，而awk是一种报表生成器，就是对文件进行格式化处理的，但这里的格式化不是文件系统的格式化，而是对文件内容进行">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-linux文本处理工具三剑客之awk" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux三剑客之gawk
+    </h1>
+  
+
+        
+        <a href="/2017/07/10/linux文本处理工具三剑客之awk/" class="archive-article-date">
+  	<time datetime="2017-07-10T02:50:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="本章内容："><a href="#本章内容：" class="headerlink" title="本章内容："></a>本章内容：</h3><p>◆ awk介绍<br>◆ awk基本用法<br>◆ awk变量<br>◆ awk格式化<br>◆ awk操作符<br>◆ awk条件判断<br>◆ awk循环<br>◆ awk数组<br>◆ awk函数<br>◆ 调用系统命令</p>
+<h3 id="AWK介绍"><a href="#AWK介绍" class="headerlink" title="AWK介绍"></a>AWK介绍</h3><p>★ Linux 文本处理工具三剑客:<br>grep、sed、awk。其中grep是一种文本过滤工具；sed是文本行编辑器，而awk是一种报表生成器，就是对文件进行格式化处理的，但这里的格式化不是文件系统的格式化，而是对文件内容进行各种“排版”，进而格式化显示；<br>&ensp;&ensp;&ensp;&ensp;◆grep，egrep，fgrep：文本过滤工具：partten<br>&ensp;&ensp;&ensp;&ensp;◆sed：行编辑器；模式空间、保持空间<br>&ensp;&ensp;&ensp;&ensp;◆awk：报告生成器，格式化文本输出；</p>
+<p>★ Linux之上GUN awk:<br>GNU awk 简称gawk，并且gawk就是awk的链接文件，因此系统上使用的awk和gawk是一样的。我们通过man<br>gawk可以获得gawk的相关功能说明—gawk-pattern scanning and processing language（模式扫描及处理语言），gawk是一种过程式编程语言。gawk还支持条件判断、数组、循环等编程语言中所有可以使用的功能，因此还可以把gawk称为一种脚本语言解释器。<br>&ensp;&ensp;&ensp;&ensp;◆AWK(Aho, Weinberger, Kernighan)三个人名字首字母缩写，报告生成器，格式化文本输出;<br>&ensp;&ensp;&ensp;&ensp;◆有多种版本：New awk（nawk），GNU awk（gawk）;<br>&ensp;&ensp;&ensp;&ensp;◆gawk：模式扫描和处理语言;</p>
+<h3 id="AWK基本用法"><a href="#AWK基本用法" class="headerlink" title="AWK基本用法"></a>AWK基本用法</h3><p>★ 用法格式：<br>&ensp;&ensp;&ensp;&ensp;awk [options] ‘program’ var=value file…<br>&ensp;&ensp;&ensp;&ensp;awk [options] -f programfile var=value file…<br>&ensp;&ensp;&ensp;&ensp;awk [options] ‘BEGIN{ action;… } pattern{ action;… } END{ action;… }’ file …<br>◆ awk程序组成：<br>&ensp;&ensp;&ensp;&ensp;awk程序通常由：BEGIN语句块、能够使用模式匹配的通用语句块、END语句块，共3部分组成</p>
+<p>★ 用法说明：<br>◆ 基本格式：awk [options] ‘program’ file…<br>◆ program（编程语言）：PATTERN{ACTION STATEMENT;..}，通常是在单引号和双引号中；<br>&ensp;&ensp;&ensp;&ensp;PARTTERN： 模式；部分决定动作语句何时触发及触发事件（BEGIN,END）<br>&ensp;&ensp;&ensp;&ensp;ACTION STATEMENT：动作语句，可以由多个语句组成，各语句之间使用分号分隔：如print，printf<br>◆ options（选项）：<br>&ensp;&ensp;&ensp;&ensp;-F：指明输入时用到的字段分隔符；<br>&ensp;&ensp;&ensp;&ensp;-v var=value: 自定义变量<br>◆ 分割符、域和记录<br>&ensp;&ensp;&ensp;&ensp;awk执行时，由分隔符分隔的字段（域）；标记$1,$2..$n称为域标识。$0为所有域，注意：和shell中变量$符含义不同<br>&ensp;&ensp;&ensp;&ensp;文件的每一行称为记录<br>&ensp;&ensp;&ensp;&ensp;省略action，则默认执行print $0 的操作。</p>
+<p>★ awk工作原理<br>&ensp;&ensp;&ensp;&ensp;awk在处理文本时也是一次读取一行文本，然后根据输入分隔符（默认为空格字符）进行切片，切成n个片段，然后将每一片都赋予awk内部的一个变量当中进行保存，这些变量名为$1,$2,$3…等等一直到最后一个，awk就可以对这些片段进行单独处理，比如显示某一段，特定段，甚至可以对某些片段进行额外的的加工处理，比如计数、运算等。<br>◆ 具体工作原理如下：<br>&ensp;&ensp;&ensp;&ensp;第一步：执行BEGIN{action;… }语句块中的语句；<br>&ensp;&ensp;&ensp;&ensp;第二步：从文件或标准输入(stdin)读取一行，然后执行pattern{ action;… };语句块，它逐行扫描文件，从第一行到最后一行重复这个过程，直到文件全部被读取完毕。<br>&ensp;&ensp;&ensp;&ensp;第三步：当读至输入流末尾时，执行END{action;…}语句块<br>&ensp;&ensp;&ensp;&ensp;BEGIN语句块在awk开始从输入流中读取行之前被执行，这是一个可选的语句块，比如变量初始化、打印输出表格的表头等语句通常可以写在BEGIN语句块中<br>&ensp;&ensp;&ensp;&ensp;END语句块在awk从输入流中读取完所有的行之后即被执行，比如打印所有行的分析结果这类信息汇总都是在END语句块中完成，它也是一个可选语句块<br>&ensp;&ensp;&ensp;&ensp;pattern语句块中的通用命令是最重要的部分，也是可选的。如果没有提供pattern语句块，则默认执行{ print }，即打印每一个读取到的行，awk读取的每一行都会执行该语句块。</p>
+<p>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># tail -2 /etc/fstab</span></div><div class="line">UUID=224a4923<span class="_">-a</span>78d-4bde-b962-aa921a15db50 /boot                   xfs     defaults        0 0</div><div class="line">UUID=3f6338ab-2c10-422c-9a5c-6a783c5795e8 swap                    swap    defaults        0 0</div><div class="line">[root@centos7 ~]<span class="comment"># tail -2 /etc/fstab|awk '&#123;print $2,$3&#125;'</span></div><div class="line">/boot xfs</div><div class="line">swap swap</div><div class="line">[root@centos7 ~]<span class="comment"># tail -2 /etc/fstab|awk '&#123;print "Hello",$2,$3&#125;'</span></div><div class="line">Hello /boot xfs</div><div class="line">Hello swap swap</div></pre></td></tr></table></figure></p>
+<p>★ 输出命令：print<br>◆ print格式：print item1, item2, …<br>☉ 要点：<br>&ensp;&ensp;&ensp;&ensp;逗号(,)分隔符；<br>&ensp;&ensp;&ensp;&ensp;输出的各item可以是字符串，也可以是数值、当前记录的字段、变量或awk的表达式；<br>&ensp;&ensp;&ensp;&ensp;如省略item，相当于print $0 </p>
+<p>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;print "Hello,awk"&#125;'  #不管你输出什么只打印</span></div><div class="line">adgg</div><div class="line">Hello,awk</div><div class="line">agaj</div><div class="line">Hello,awk</div><div class="line">ljlj</div><div class="line">Hello,awk</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;print&#125;' /etc/passwd  #打印出/etc/passwd中每一行</span></div><div class="line">root:x:0:0:root:/root:/bin/bash</div><div class="line">bin:x:1:1:bin:/bin:/sbin/nologin</div><div class="line">daemon:x:2:2:daemon:/sbin:/sbin/nologin</div><div class="line">adm:x:3:4:adm:/var/adm:/sbin/nologin</div><div class="line">lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</div><div class="line">sync:x:5:0:sync:/sbin:/bin/sync</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;print "jack"&#125;' /etc/passwd #/etc/passwd中每一行输入进行后都打印成jack</span></div><div class="line">jack</div><div class="line">jack</div><div class="line">jack</div><div class="line">jack</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;print $1&#125;' /etc/passwd #以:为分隔符，打印每一行的第一个字段</span></div><div class="line">root</div><div class="line">bin</div><div class="line">daemon</div><div class="line">adm</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;print "Hello",$1&#125;' /etc/passwd #自己加一个字段，且打印出每一个字段</span></div><div class="line">Hello root</div><div class="line">Hello bin</div><div class="line">Hello daemon</div><div class="line">Hello adm</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;print $1"\t"$3&#125;' /etc/passwd  #可以用其它分隔符显示，但指定的分隔符要要双引号</span></div><div class="line">root	0</div><div class="line">bin	1</div><div class="line">daemon	2</div><div class="line">adm	3</div><div class="line">lp	4</div><div class="line">sync	5</div></pre></td></tr></table></figure></p>
+<h3 id="awk变量"><a href="#awk变量" class="headerlink" title="awk变量"></a>awk变量</h3><p>★ 内置和自定义变量<br>★ 内置变量<br> ◆FS：输入字段分隔符，默认为空白字符<br>&ensp;&ensp;&ensp;&ensp;awk -v FS=’:’  ‘{print $1,$3,$7}’ /etc/passwd<br>&ensp;&ensp;&ensp;&ensp;awk –F: ‘{print $1,$3,$7}’ /etc/passwd<br> ◆OFS：输出字段分隔符，默认为空白字符<br>&ensp;&ensp;&ensp;&ensp;awk -v FS=’:’ -v OFS=’:’ ‘{print $1,$2,$3}’ /etc/passwd<br> ◆RS：输入记录分隔符，指定输入时的换行符，原换行符仍有效<br>&ensp;&ensp;&ensp;&ensp;awk -v RS=’ ‘ ‘{print }’ /etc/passwd<br> ◆ORS：输出记录分隔符，输出时用指定符号代替换行符<br>&ensp;&ensp;&ensp;&ensp;awk-v RS=’ ‘ -v ORS=’###’‘{print }’ /etc/passwd<br> ◆NF：字段数量<br>&ensp;&ensp;&ensp;&ensp;awk -F：‘{print NF}’ /etc/fstab, 引用内置变量不用$<br>&ensp;&ensp;&ensp;&ensp;awk -F: ‘{print $(NF-1)}’ /etc/passwd<br> ◆NR：行号<br>&ensp;&ensp;&ensp;&ensp;awk ‘{print NR}’ /etc/fstab; awk END’{print NR}’ /etc/fstab<br> ◆FNR：各文件分别计数,行号<br>&ensp;&ensp;&ensp;&ensp;awk ‘{print FNR}’ /etc/fstab /etc/inittab<br> ◆FILENAME：当前文件名<br>&ensp;&ensp;&ensp;&ensp;awk ‘{print FILENAME}’ /etc/fstab<br> ◆ARGC：命令行参数的个数<br>&ensp;&ensp;&ensp;&ensp;awk ‘{print ARGC}’ /etc/fstab /etc/inittab<br>&ensp;&ensp;&ensp;&ensp;awk ‘BEGIN {print ARGC}’ /etc/fstab /etc/inittab<br> ◆ARGV：数组，保存的是命令行所给定的各参数<br>&ensp;&ensp;&ensp;&ensp;awk ‘BEGIN {print ARGV[0]}’ /etc/fstab /etc/inittab<br>&ensp;&ensp;&ensp;&ensp;awk ‘BEGIN {print ARGV[1]}’ /etc/fstab /etc/inittab<br>★ 自定义变量<br>◆-v var=value<br>变量名区分字符大小写<br>◆在program中直接定义<br>&ensp;&ensp;&ensp;&ensp;awk -v test=’hello gawk’ ‘{print test}’ /etc/fstab<br>&ensp;&ensp;&ensp;&ensp;awk -v test=’hello gawk’ ‘BEGIN{print test}’<br>&ensp;&ensp;&ensp;&ensp;awk’BEGIN{test=”hello,gawk”;print test}’</p>
+<p>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># awk -F: -v OFS='=&gt;' '&#123;print $1,$3,$7&#125;' /etc/passwd  #指明输入，输出分隔符</span></div><div class="line">root=&gt;0=&gt;/bin/bash</div><div class="line">bin=&gt;1=&gt;/sbin/nologin</div><div class="line">daemon=&gt;2=&gt;/sbin/nologin</div><div class="line">adm=&gt;3=&gt;/sbin/nologin</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -v ORS='@@' '&#123;print&#125;' /etc/passwd  #指明输出时的换行符</span></div><div class="line">root:x:0:0:root:/root:/bin/bash@@bin:x:1:1:bin:/bin:/sbin/nologin@@daemon:x:2:2:daemon:/sbin:</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;print NF&#125;' /etc/passwd  #以：为分隔符，打印每一行的字段数量</span></div><div class="line">7</div><div class="line">7</div><div class="line">7</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;print $NF&#125;' /etc/passwd #这里的$NF表示最后一个字段，所以打印出最后一个字段</span></div><div class="line">/bin/bash</div><div class="line">/sbin/nologin</div><div class="line">/sbin/nologin</div><div class="line">/sbin/nologin</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;print NR&#125;' /etc/passwd  #显示/etc/passwd文件内容的行号</span></div><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;print FNR&#125;' /etc/fstab /etc/issue  #如果后面跟多个文件的话，要想显示每个文件的行数，变量为FNR，如果不加F，则行号累加</span></div><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk END'&#123;print NR&#125;' /etc/fstab    #显示最后一行的行号</span></div><div class="line">11</div><div class="line">[root@centos7 ~]<span class="comment"># awk END'&#123;print FNR&#125;' /etc/fstab /etc/issue</span></div><div class="line">3</div><div class="line">[root@centos7 ~]<span class="comment"># awk END'&#123;print NR&#125;' /etc/fstab /etc/issue   #显示两个文件行累加最后一行的行号</span></div><div class="line">14</div><div class="line">[root@centos7 ~]<span class="comment"># awk 'END &#123;print NR&#125;' /etc/fstab /etc/issue</span></div><div class="line">14</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;print FILENAME&#125;' /etc/passwd  #显示当前文件名</span></div><div class="line">/etc/passwd</div><div class="line">/etc/passwd</div><div class="line">/etc/passwd</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;print ARGC&#125;' /etc/fstab    #显示命令行参数个数，但会输入的每行都会显示一遍</span></div><div class="line">2</div><div class="line">2</div><div class="line">2</div><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;print ARGC&#125;' /etc/fstab /etc/issue</span></div><div class="line">3</div><div class="line">3</div><div class="line">3</div><div class="line">[root@centos7 ~]<span class="comment"># awk BEGIN'&#123;print ARGC&#125;' /etc/fstab /etc/issue   #只显示一次命令行参数个数</span></div><div class="line">3</div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;print ARGC&#125;' /etc/fstab /etc/issue</span></div><div class="line">3</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;print ARGV[0]&#125;' /etc/fstab /etc/issue   #数组，显示的是命令行的第几个参数</span></div><div class="line">awk</div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;print ARGV[1]&#125;' /etc/fstab /etc/issue</span></div><div class="line">/etc/fstab</div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;print ARGV[2]&#125;' /etc/fstab /etc/issue</span></div><div class="line">/etc/issue</div></pre></td></tr></table></figure></p>
+<p>★ 自定义变量演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># awk -v test='Hello,awk' '&#123;print test&#125;' /etc/issue</span></div><div class="line">Hello,awk</div><div class="line">Hello,awk</div><div class="line">Hello,awk</div><div class="line">[root@centos7 ~]<span class="comment"># awk -v test='Hello,awk' 'BEGIN&#123;print test&#125;' /etc/issue</span></div><div class="line">Hello,awk</div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;test="Hello,awk";print test&#125;'</span></div><div class="line">Hello,awk</div></pre></td></tr></table></figure></p>
+<p>★ 输出命令：printf<br>◆ 格式化输出：printf“FORMAT”, item1, item2, …<br>&ensp;&ensp;&ensp;&ensp;必须指定FORMAT；<br>&ensp;&ensp;&ensp;&ensp;不会自动换行，需要显式给出换行控制符，\n；<br>&ensp;&ensp;&ensp;&ensp;FORMAT中需要分别为后面每个item指定格式符；<br>◆ 格式符：与item一一对应<br>&ensp;&ensp;&ensp;&ensp;%c：显示字符的ASCII码；<br>&ensp;&ensp;&ensp;&ensp;%d, %i：显示十进制整数；<br>&ensp;&ensp;&ensp;&ensp;%e, %E：科学计数法数值显示；<br>&ensp;&ensp;&ensp;&ensp;%f：显示为浮点数；<br>&ensp;&ensp;&ensp;&ensp;%g, %G：以科学计数法或浮点形式显示数值；<br>&ensp;&ensp;&ensp;&ensp;%s：显示字符串；<br>&ensp;&ensp;&ensp;&ensp;%u：无符号整数；<br>&ensp;&ensp;&ensp;&ensp;%%： 显示%自身；<br>◆ 修饰符：<br>&ensp;&ensp;&ensp;&ensp;#[.#]：第一个数字控制显示的宽度；第二个#表示小数点后精度，%3.1f<br>&ensp;&ensp;&ensp;&ensp;-：左对齐（默认右对齐）%-15s<br>&ensp;&ensp;&ensp;&ensp;+：显示数值的正负符号%+d</p>
+<p>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">%s%s%s%[root@centos7 ~]<span class="comment"># awk -F: '&#123;printf "%s",$1&#125;' /etc/passwd  #把第一个字段的内容以字符串的形式成行显示出来</span></div><div class="line">rootbindaemonadmlpsyncshutdownhaltmailoperatorgamesftpnobodyavahi-autoipdsystemd-bus-proxysystemd-networkdbuspolkitdabrttsspostfixsshdgentoouser1user2jackzmjtcpdumpuseruser100user101user102user103user104user105user106user107user108user109user110abc1abc2abc3abc4abc5abc6abc7abc8ab2</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;printf "%s\n",$1&#125;' /etc/passwd  #以换行的方式显示</span></div><div class="line">root</div><div class="line">bin</div><div class="line">daemon</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;printf "Username: %s\n",$1&#125;' /etc/passwd  #添加字符串显示</span></div><div class="line">Username: root</div><div class="line">Username: bin</div><div class="line">Username: daemon</div><div class="line"></div><div class="line"><span class="comment">#格式和条目片段是对应的，每个片段会套在其对应的格式上</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;printf "Username:%s UID:%d\n",$1,$3&#125;' /etc/passwd  </span></div><div class="line">Username:root UID:0</div><div class="line">Username:bin UID:1</div><div class="line">Username:daemon UID:2</div><div class="line"></div><div class="line"><span class="comment"># 添加修饰符，显示宽度为15字符，默认为右对齐</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;printf "Username:%15s UID:%d\n",$1,$3&#125;' /etc/passwd</span></div><div class="line">Username:           root UID:0</div><div class="line">Username:            bin UID:1</div><div class="line">Username:         daemon UID:2</div><div class="line"></div><div class="line"><span class="comment"># 左对齐方式显示</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;printf "Username:%-15s UID:%d\n",$1,$3&#125;' /etc/passwd</span></div><div class="line">Username:root            UID:0</div><div class="line">Username:bin             UID:1</div><div class="line">Username:daemon          UID:2</div></pre></td></tr></table></figure></p>
+<h3 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h3><p>★ 算数操作符：<br>&ensp;&ensp;&ensp;&ensp;x+y, x-y, x<em>y, x/y, x^y（x的y次方）, x%y<br>&ensp;&ensp;&ensp;&ensp;-x：转换为负数；<br>&ensp;&ensp;&ensp;&ensp;+x：转换为数值；<br>★ 字符串操作符：<br>&ensp;&ensp;&ensp;&ensp;没有符号的操作符，字符串连接；<br>★ 赋值操作符：<br>&ensp;&ensp;&ensp;&ensp;=, +=, -=, </em>=, /=, %=, ^=<br>&ensp;&ensp;&ensp;&ensp;++, –<br>★ 比较操作符：<br>&ensp;&ensp;&ensp;&ensp;&gt;, &gt;=, &lt;, &lt;=, !=, ==<br>★ 模式匹配符：<br>&ensp;&ensp;&ensp;&ensp;~：左边是否和右边匹配包含<br>&ensp;&ensp;&ensp;&ensp;!~：是否不匹配<br>◆ 示例：<br>&ensp;&ensp;&ensp;&ensp;cat /etc/passwd |awk ‘$0 ~ /root/‘ |wc -l<br>&ensp;&ensp;&ensp;&ensp;cat /etc/passwd |awk ‘$0 !~ /root/‘ |wc -l<br>★ 逻辑操作符：<br>&ensp;&ensp;&ensp;&ensp;&amp;&amp;，||，!<br>◆ 示例：<br>&ensp;&ensp;&ensp;&ensp;awk –F: ‘$3&gt;=0 &amp;&amp; $3&lt;=1000 {print $1}’ /etc/passwd<br>&ensp;&ensp;&ensp;&ensp;awk -F: ‘$3 ==0 || $3&gt;=1000 {print $1}’ /etc/passwd<br>&ensp;&ensp;&ensp;&ensp;awk -F: ‘!($3==0){print $1}’ /etc/passwd<br>&ensp;&ensp;&ensp;&ensp;awk -F: ‘!($3&gt;=500) {print $3}}’ /etc/passwd<br>★ 函数调用：<br>&ensp;&ensp;&ensp;&ensp;function_name(argu1, argu2, …)<br>★ 条件表达式：<br>&ensp;&ensp;&ensp;&ensp;selector?if-true-expression:if-false-expression</p>
+<p>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 显示用户的UID如果大等于1000则为普通用户，否则为管理员或系统用户，并定义格式输出</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;$3&gt;=1000?usertype="Common User":usertype="Sysadmin or SysUser";printf"%15s:%-s\n",$1,usertype&#125;' /etc/passwd</span></div><div class="line">           root:Sysadmin or SysUser</div><div class="line">            bin:Sysadmin or SysUser</div><div class="line">         daemon:Sysadmin or SysUser</div><div class="line">            adm:Sysadmin or SysUser</div><div class="line">             lp:Sysadmin or SysUser</div><div class="line">           sync:Sysadmin or SysUser</div><div class="line">       shutdown:Sysadmin or SysUser</div><div class="line">           halt:Sysadmin or SysUser</div><div class="line">           mail:Sysadmin or SysUser</div><div class="line">       operator:Sysadmin or SysUser</div><div class="line">          games:Sysadmin or SysUser</div><div class="line">            ftp:Sysadmin or SysUser</div><div class="line">         nobody:Sysadmin or SysUser</div><div class="line">  avahi-autoipd:Sysadmin or SysUser</div><div class="line">systemd-bus-proxy:Sysadmin or SysUser</div><div class="line">systemd-network:Sysadmin or SysUser</div><div class="line">           dbus:Sysadmin or SysUser</div><div class="line">        polkitd:Sysadmin or SysUser</div><div class="line">           abrt:Sysadmin or SysUser</div><div class="line">            tss:Sysadmin or SysUser</div><div class="line">        postfix:Sysadmin or SysUser</div><div class="line">           sshd:Sysadmin or SysUser</div><div class="line">         gentoo:Common User</div><div class="line">          user1:Common User</div><div class="line">          user2:Common User</div><div class="line">           jack:Common User</div><div class="line">            zmj:Common User</div></pre></td></tr></table></figure></p>
+<h3 id="模式：pattern"><a href="#模式：pattern" class="headerlink" title="模式：pattern"></a>模式：pattern</h3><p>PATTERN:根据pattern条件，过滤匹配的行，再做处理<br>★ 如果未指定：<br>&ensp;&ensp;&ensp;&ensp;空模式，匹配每一行<br>★ /regular expression/：仅处理能够模式匹配到的行，需要用/ /括起来；<br>&ensp;&ensp;&ensp;&ensp;awk ‘/^UUID/{print $1}’ /etc/fstab<br>&ensp;&ensp;&ensp;&ensp;awk ‘!/^UUID/{print $1}’ /etc/fstab<br>★ relational expression: 关系表达式；<br>结果有“真”有“假”；结果为“真”才会被处理；<br>&ensp;&ensp;&ensp;&ensp;真：结果为非0值，非空字符串；<br>&ensp;&ensp;&ensp;&ensp;假：结果为空字符串；<br>★ line ranges：行范围<br>startline,endline：/pat1/,/pat2/不支持直接给出数字格式<br>&ensp;&ensp;&ensp;&ensp;awk -F: ‘/^root/,/^nobody/{print $1}’ /etc/passwd<br>&ensp;&ensp;&ensp;&ensp;awk -F: ‘(NR&gt;=2&amp;&amp;NR&lt;=10){print $1}’ /etc/passwd<br>★ BEGIN/END 模式<br>&ensp;&ensp;&ensp;&ensp;BEGIN{}: 仅在开始处理文件中的文本之前执行一次<br>&ensp;&ensp;&ensp;&ensp;END{}：仅在文本处理完成之后执行一次<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 处理模式匹配到的内容</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk '/^UUID/&#123;print $1&#125;' /etc/fstab</span></div><div class="line">UUID=224a4923<span class="_">-a</span>78d-4bde-b962-aa921a15db50</div><div class="line">UUID=3f6338ab-2c10-422c-9a5c-6a783c5795e8</div><div class="line"></div><div class="line"><span class="comment"># 对匹配到的模式取反</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk '!/^UUID/&#123;print $1&#125;' /etc/fstab</span></div><div class="line"></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#</span></div><div class="line">/dev/mapper/vgos-root</div><div class="line"></div><div class="line"><span class="comment"># 如果UID大于等于1000，则打印用户名和UID</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '$3&gt;=1000&#123;print $1,$3&#125;' /etc/passwd</span></div><div class="line">gentoo 1000</div><div class="line">user1 1001</div><div class="line">user2 1002</div><div class="line">jack 1003</div><div class="line"></div><div class="line"><span class="comment"># 表示最后一个片段等于/bin/bash，然后符合的打印出用户名和UID及对应shell</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '$NF=="/bin/bash"&#123;print $1,$3,$NF&#125;' /etc/passwd</span></div><div class="line">root 0 /bin/bash</div><div class="line">gentoo 1000 /bin/bash</div><div class="line">user1 1001 /bin/bash</div><div class="line">user2 1002 /bin/bash</div><div class="line"></div><div class="line"><span class="comment"># 表示左边的值能够被右边的模式所匹配</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '$NF~/bash/&#123;print $1,$NF&#125;' /etc/passwd</span></div><div class="line">root /bin/bash</div><div class="line">gentoo /bin/bash</div><div class="line">user1 /bin/bash</div><div class="line"></div><div class="line"><span class="comment"># 打印1-10之间的奇数</span></div><div class="line">[root@centos7 ~]<span class="comment"># seq 1 2 10</span></div><div class="line">1</div><div class="line">3</div><div class="line">5</div><div class="line">7</div><div class="line">9</div><div class="line">[root@centos7 ~]<span class="comment"># seq 10|awk 'i=!i'</span></div><div class="line">1</div><div class="line">3</div><div class="line">5</div><div class="line">7</div><div class="line">9</div><div class="line">[root@centos7 ~]<span class="comment"># seq 10|sed -n '1~2p'</span></div><div class="line">1</div><div class="line">3</div><div class="line">5</div><div class="line">7</div><div class="line">9</div><div class="line"></div><div class="line"><span class="comment"># 打印出第一次被/^root/模式匹配到的行开始，到第一次被/^nobody/模式匹配到的行结束</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '/^root/,/^nobody/&#123;print $1&#125;' /etc/passwd</span></div><div class="line">root</div><div class="line">bin</div><div class="line">daemon</div><div class="line">adm</div><div class="line">lp</div><div class="line">sync</div><div class="line">shutdown</div><div class="line">halt</div><div class="line">mail</div><div class="line">operator</div><div class="line">games</div><div class="line">ftp</div><div class="line">nobody</div><div class="line"></div><div class="line"><span class="comment"># 打印出第二行到第十行之间的用户名</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '(NR&gt;=2&amp;&amp;NR&lt;=10)&#123;print $1&#125;' /etc/passwd</span></div><div class="line">bin</div><div class="line">daemon</div><div class="line">adm</div><div class="line">lp</div><div class="line">sync</div><div class="line">shutdown</div><div class="line">halt</div><div class="line">mail</div><div class="line">operator</div><div class="line"></div><div class="line"><span class="comment"># 打印表头</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: 'BEGIN&#123;print "   username   uid   \n----------------------"&#125;'</span></div><div class="line">   username   uid   </div><div class="line">----------------------</div><div class="line"></div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment">#  awk -F: 'BEGIN&#123;print "           username   uid   \n--------------------------"&#125;&#123;printf "%18s %5d\n",$1,$3&#125;' /etc/passwd</span></div><div class="line">           username   uid   </div><div class="line">--------------------------</div><div class="line">              root     0</div><div class="line">               bin     1</div><div class="line">            daemon     2</div><div class="line">               adm     3</div><div class="line">                lp     4</div><div class="line">              sync     5</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment">#  awk -F: 'BEGIN&#123;print "           username   uid   \n--------------------------"&#125;&#123;printf "%18s %5d\n",$1,$3&#125;END&#123;print "-------------------------\n        END"&#125;' /etc/passwd</span></div><div class="line">           username   uid   </div><div class="line">--------------------------</div><div class="line">              root     0</div><div class="line">               bin     1</div><div class="line">            daemon     2</div><div class="line">               adm     3</div><div class="line">                lp     4</div><div class="line">              sync     5</div><div class="line">          shutdown     6</div><div class="line">-------------------------</div><div class="line">             END</div></pre></td></tr></table></figure></p>
+<h3 id="常用的action："><a href="#常用的action：" class="headerlink" title="常用的action："></a>常用的action：</h3><p>◆ Expressions：算术，比较表达式等<br>◆ Control statements： 控制语句 if, while等<br>◆ Compound statements： 组合语句<br>◆ input statements：输入语句<br>◆ output statements： 输出语句 print等</p>
+<h3 id="awk控制语句："><a href="#awk控制语句：" class="headerlink" title="awk控制语句："></a>awk控制语句：</h3><p>◆ { statements;… } 组合语句<br>◆ if(condition) {statements;…}<br>◆ if(condition) {statements;…} else {statements;…}<br>◆ while(conditon) {statments;…}<br>◆ do {statements;…} while(condition)<br>◆ for(expr1;expr2;expr3) {statements;…}<br>◆ break<br>◆ continue<br>◆ delete array[index]<br>◆ delete array<br>◆ exit</p>
+<p>★ awk控制语句：if-else<br>◆ 语法：<br>&ensp;&ensp;&ensp;&ensp;if(condition) statement [else statement]<br>&ensp;&ensp;&ensp;&ensp;if(condition1){statement1} else if(condition2){statement 2} else{statement3}<br>◆ 使用场景：<br>&ensp;&ensp;&ensp;&ensp;对awk取得的整行或某个字段做条件判断<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line">单分支语句：</div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;if($3&gt;=1000)print $1,$3&#125;' /etc/passwd</span></div><div class="line">gentoo 1000</div><div class="line">user1 1001</div><div class="line">user2 1002</div><div class="line">jack 1003</div><div class="line"></div><div class="line">双分支语句，一定注意语法书写格式！！！</div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;if($3&gt;=1000)&#123;printf "Common user: %s\n",$1&#125;else&#123;printf "root or sysuser: %s\n",$1&#125;&#125;' /etc/passwd</span></div><div class="line">root or sysuser: root</div><div class="line">root or sysuser: bin</div><div class="line">root or sysuser: daemon</div><div class="line">root or sysuser: adm</div><div class="line">Common user: gentoo</div><div class="line">Common user: user1</div><div class="line"></div><div class="line">对某个字段做条件判断</div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;if($NF=="/bin/bash") print $1&#125;' /etc/passwd</span></div><div class="line">root</div><div class="line">gentoo</div><div class="line">user1</div><div class="line">user2</div><div class="line"></div><div class="line">以空格为分隔符，取字段大于5的所有行</div><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;if(NF&gt;5)print $0&#125;' /etc/fstab</span></div><div class="line"><span class="comment"># Created by anaconda on Wed Apr 26 10:31:47 2017</span></div><div class="line"><span class="comment"># Accessible filesystems, by reference, are maintained under '/dev/disk'</span></div><div class="line"><span class="comment"># See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info</span></div><div class="line">/dev/mapper/vgos-root   /                       xfs     defaults        0 0</div><div class="line">UUID=224a4923<span class="_">-a</span>78d-4bde-b962-aa921a15db50 /boot                   xfs     defaults        0 0</div><div class="line">UUID=3f6338ab-2c10-422c-9a5c-6a783c5795e8 swap                    swap    defaults        0 0</div><div class="line"></div><div class="line">取磁盘利用率：</div><div class="line">[root@centos7 ~]<span class="comment"># df -h</span></div><div class="line">Filesystem             Size  Used Avail Use% Mounted on</div><div class="line">/dev/mapper/vgos-root   20G  1.7G   19G   9% /</div><div class="line">devtmpfs               479M     0  479M   0% /dev</div><div class="line">tmpfs                  489M     0  489M   0% /dev/shm</div><div class="line">tmpfs                  489M  6.7M  483M   2% /run</div><div class="line">tmpfs                  489M     0  489M   0% /sys/fs/cgroup</div><div class="line">/dev/sda1              497M  108M  390M  22% /boot</div><div class="line">tmpfs                   98M     0   98M   0% /run/user/0</div><div class="line">[root@centos7 ~]<span class="comment"># df -h|awk -F"%" '&#123;print $1&#125;'</span></div><div class="line">Filesystem             Size  Used Avail Use</div><div class="line">/dev/mapper/vgos-root   20G  1.7G   19G   9</div><div class="line">devtmpfs               479M     0  479M   0</div><div class="line">tmpfs                  489M     0  489M   0</div><div class="line">tmpfs                  489M  6.7M  483M   2</div><div class="line">tmpfs                  489M     0  489M   0</div><div class="line">/dev/sda1              497M  108M  390M  22</div><div class="line">tmpfs                   98M     0   98M   0</div><div class="line">[root@centos7 ~]<span class="comment"># df -h|awk -F[%] '&#123;print $1&#125;'</span></div><div class="line">Filesystem             Size  Used Avail Use</div><div class="line">/dev/mapper/vgos-root   20G  1.7G   19G   9</div><div class="line">devtmpfs               479M     0  479M   0</div><div class="line">tmpfs                  489M     0  489M   0</div><div class="line">tmpfs                  489M  6.7M  483M   2</div><div class="line">tmpfs                  489M     0  489M   0</div><div class="line">/dev/sda1              497M  108M  390M  22</div><div class="line">tmpfs                   98M     0   98M   0</div><div class="line"></div><div class="line">模式匹配，匹配 以/dev开头的行，注意这里要对/ 转义，模式匹配一定要写在 “/ /”中</div><div class="line">[root@centos7 ~]<span class="comment"># df -h|awk -F"%" '/^\/dev/&#123;print $1&#125;'|awk '&#123;print $1,$NF&#125;'</span></div><div class="line">/dev/mapper/vgos-root 9</div><div class="line">/dev/sda1 22</div><div class="line"></div><div class="line">如果利用率大于等于20，就打印第一字段</div><div class="line">[root@centos7 ~]<span class="comment"># df -h|awk -F"%" '/^\/dev/&#123;print $1&#125;'|awk '&#123;if($NF&gt;20)print $1&#125;'</span></div><div class="line">/dev/sda1</div></pre></td></tr></table></figure></p>
+<p>★ awk控制语句：while循环<br>◆ 语法：<br>&ensp;&ensp;&ensp;&ensp;while(condition) statement<br>◆ 条件“真”，进入循环；条件“假”，退出循环；<br>◆ 使用场景：<br>&ensp;&ensp;&ensp;&ensp;对一行内的多个字段逐一类似处理时使用；<br>&ensp;&ensp;&ensp;&ensp;对数组中的各元素逐一处理时使用；<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">取文件模式所匹配的行</div><div class="line">[root@centos7 ~]<span class="comment"># awk '/[[:space:]]*linux16/&#123;print&#125;' /etc/grub2.cfg</span></div><div class="line">	linux16 /vmlinuz-3.10.0-327.el7.x86_64 root=/dev/mapper/vgos-root ro rd.lvm.lv=vgos/root rhgb quiet LANG=en_US.UTF-8</div><div class="line">	linux16 /vmlinuz-0-rescue-15e65d64f8<span class="built_in">cd</span>44aba7ea49bae9f5aa74 root=/dev/mapper/vgos-root ro rd.lvm.lv=vgos/root rhgb quiet</div><div class="line"></div><div class="line">取所匹配行的字段数量</div><div class="line">[root@centos7 ~]<span class="comment">#  awk '/[[:space:]]*linux16/&#123;print NF&#125;' /etc/grub2.cfg</span></div><div class="line">8</div><div class="line">7</div><div class="line"></div><div class="line">对每一行字段中包含的字符长度做统计</div><div class="line">[root@centos7 ~]<span class="comment"># awk '/[[:space:]]*linux16/&#123;i=1;while(i&lt;=NF) &#123;print $i,length($i);i++ &#125;&#125;' /etc/grub2.cfg</span></div><div class="line">linux16 7</div><div class="line">/vmlinuz-3.10.0-327.el7.x86_64 30</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">ro 2</div><div class="line">rd.lvm.lv=vgos/root 19</div><div class="line">rhgb 4</div><div class="line">quiet 5</div><div class="line">LANG=en_US.UTF-8 16</div><div class="line">linux16 7</div><div class="line">/vmlinuz-0-rescue-15e65d64f8<span class="built_in">cd</span>44aba7ea49bae9f5aa74 50</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">ro 2</div><div class="line">rd.lvm.lv=vgos/root 19</div><div class="line">rhgb 4</div><div class="line">quiet 5</div><div class="line"></div><div class="line">只打印字段字符长度大于7的字符长度</div><div class="line">[root@centos7 ~]<span class="comment"># awk '/[[:space:]]*linux16/&#123;i=1;while(i&lt;=NF) &#123;if(length($i)&gt;=7) &#123;print $i,length($i)&#125;;i++&#125;&#125;' /etc/grub2.cfg</span></div><div class="line">linux16 7</div><div class="line">/vmlinuz-3.10.0-327.el7.x86_64 30</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">rd.lvm.lv=vgos/root 19</div><div class="line">LANG=en_US.UTF-8 16</div><div class="line">linux16 7</div><div class="line">/vmlinuz-0-rescue-15e65d64f8<span class="built_in">cd</span>44aba7ea49bae9f5aa74 50</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">rd.lvm.lv=vgos/root 19</div></pre></td></tr></table></figure></p>
+<p>★ awk控制语句：do-while循环<br>◆ 语法：<br>&ensp;&ensp;&ensp;&ensp;do statement while(condition)<br>◆ 意义：<br>&ensp;&ensp;&ensp;&ensp;无论真假，至少执行一次循环体<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">计算100以内所有数之和：</div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123; total=0;i=0;do&#123;total+=i;i++;&#125;while(i&lt;=100);print total&#125;'</span></div><div class="line">5050</div></pre></td></tr></table></figure></p>
+<p>★ awk控制语句：for循环<br>◆ 语法：for(expr1;expr2;expr3) statement<br>&ensp;&ensp;&ensp;&ensp;for(variable assignment;condition;iterationprocess) {for-body}<br>◆ 特殊用法：能够遍历数组中的元素；<br>&ensp;&ensp;&ensp;&ensp;语法：for(varin array) {for-body}<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">对每一行字段中包含的字符长度做统计</div><div class="line">[root@centos7 ~]<span class="comment"># awk '/[[:space:]]*linux16/&#123;for(i=1;i&lt;=NF;i++) &#123;print $i,length($i)&#125;&#125;' /etc/grub2.cfg</span></div><div class="line">linux16 7</div><div class="line">/vmlinuz-3.10.0-327.el7.x86_64 30</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">ro 2</div><div class="line">rd.lvm.lv=vgos/root 19</div><div class="line">rhgb 4</div><div class="line">quiet 5</div><div class="line">LANG=en_US.UTF-8 16</div><div class="line">linux16 7</div><div class="line">/vmlinuz-0-rescue-15e65d64f8<span class="built_in">cd</span>44aba7ea49bae9f5aa74 50</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">ro 2</div><div class="line">rd.lvm.lv=vgos/root 19</div><div class="line">rhgb 4</div><div class="line">quiet 5</div><div class="line"></div><div class="line">只打印字段字符长度大于7的字符长度</div><div class="line">[root@centos7 ~]<span class="comment"># awk '/[[:space:]]*linux16/ &#123;for(i=1;i&lt;=NF;i++) &#123;if(length($i)&gt;=7) print $i,length($i)&#125;&#125;' /etc/grub2.cfg</span></div><div class="line">linux16 7</div><div class="line">/vmlinuz-3.10.0-327.el7.x86_64 30</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">rd.lvm.lv=vgos/root 19</div><div class="line">LANG=en_US.UTF-8 16</div><div class="line">linux16 7</div><div class="line">/vmlinuz-0-rescue-15e65d64f8<span class="built_in">cd</span>44aba7ea49bae9f5aa74 50</div><div class="line">root=/dev/mapper/vgos-root 26</div><div class="line">rd.lvm.lv=vgos/root 19</div></pre></td></tr></table></figure></p>
+<p>★ awk控制语句：switch语句<br>◆ 语法：<br>&ensp;&ensp;&ensp;&ensp;switch(expression) {case VALUE1 or /REGEXP/: statement; case VALUE2 or /REGEXP2/: statement; …; default: statement}</p>
+<p>★ awk控制语句：break和continue<br>&ensp;&ensp;&ensp;&ensp;break [n]<br>&ensp;&ensp;&ensp;&ensp;continue [n]</p>
+<p>★ awk控制语句：next<br>◆ 提前结束对本行处理而直接进入下一行处理（awk自身循环）<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">表示用户的ID号如果不为偶数，就提前终止这一行，直接进入下一行处理</div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;if($3%2!=0) next; print $1,$3&#125;' /etc/passwd</span></div><div class="line">root 0</div><div class="line">daemon 2</div><div class="line">lp 4</div><div class="line">shutdown 6</div><div class="line">mail 8</div><div class="line">games 12</div><div class="line">和上面表示的结果是相同的，但方法和意义不同</div><div class="line">[root@centos7 ~]<span class="comment"># awk -F: '&#123;if($3%2==0) print $1,$3&#125;' /etc/passwd</span></div><div class="line">root 0</div><div class="line">daemon 2</div><div class="line">lp 4</div><div class="line">shutdown 6</div><div class="line">mail 8</div><div class="line">games 12</div></pre></td></tr></table></figure></p>
+<h3 id="awk数组"><a href="#awk数组" class="headerlink" title="awk数组"></a>awk数组</h3><p>★ 关联数组：<br>&ensp;&ensp;&ensp;&ensp;array [index-expression]<br>◆ index-expression:<br>&ensp;&ensp;&ensp;&ensp;可使用任意字符串；字符串要使用双引号括起来<br>&ensp;&ensp;&ensp;&ensp;如果某数组元素事先不存在，在引用时，awk会自动创建此元素，并将其值初始化为“空串”<br>◆ 若要判断数组中是否存在某元素，要使用“index in array”格式进行遍历<br>◆ 若要遍历数组中的每个元素，要使用for循环<br>&ensp;&ensp;&ensp;&ensp;for(varin array) {for-body}<br>◆ 注意：var会遍历array的每个索引<br>◆ 示例：<br>&ensp;&ensp;&ensp;&ensp;awk’{ip[$1]++}END{for(i in ip) {print i,ip[i]}}’ /var/log/httpd/access_log<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;weekdays["mon"]="Monday";weekdays["tue"]="Tuesday";print weekdays["mon"]&#125;'</span></div><div class="line">Monday</div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;weekdays["mon"]="Monday";weekdays["tue"]="Tuesday";print weekdays["tue"]&#125;'</span></div><div class="line">Tuesday</div><div class="line">遍历数组中的每个元素：<span class="keyword">for</span></div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;weekdays["mon"]="Monday";weekdays["tue"]="Tuesday";for(i in weekdays) &#123;print i,weekdays[i]&#125;&#125;'</span></div><div class="line">tue Tuesday</div><div class="line">mon Monday</div><div class="line"></div><div class="line">第二种情况，数组元素事先不存在，在引用时，awk会自动创建此元素，其初始值为“空串”也就是0。题目中，<span class="variable">$NF</span></div><div class="line">变量作为数组的索引下标，其个数，出现一次就自加，自加的结果为数组元素的值；定义的<span class="keyword">for</span>循环中的变量i为数组中的索引下标，state[i]才是数组中元素的值，最后打印数组中的索引下标和数组元素</div><div class="line">[root@centos7 ~]<span class="comment"># netstat -tan|awk '/^tcp\&gt;/&#123;print&#125;'</span></div><div class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     </div><div class="line">tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN     </div><div class="line">tcp        0     52 192.168.2.140:22        192.168.2.1:64020       ESTABLISHED</div><div class="line">[root@centos7 ~]<span class="comment"># netstat -tan|awk '/^tcp\&gt;/&#123;state[$NF]++&#125;END&#123;for (i in state)&#123;print i,state[i]&#125;&#125;'</span></div><div class="line">LISTEN 2</div><div class="line">ESTABLISHED 1</div></pre></td></tr></table></figure></p>
+<p>★ 练习：<br>统计/etc/fstab文件中每个文件系统类型出现的次数<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># awk '/^UUID/&#123;print&#125;' /etc/fstab</span></div><div class="line">UUID=224a4923<span class="_">-a</span>78d-4bde-b962-aa921a15db50 /boot                   xfs     defaults        0 0</div><div class="line">UUID=3f6338ab-2c10-422c-9a5c-6a783c5795e8 swap                    swap    defaults        0 0</div><div class="line">[root@centos7 ~]<span class="comment"># awk '/^UUID/&#123;fs[$3]++&#125;END&#123;for(i in fs)&#123;print i,fs[i]&#125;&#125;' /etc/fstab</span></div><div class="line">swap 1</div><div class="line">xfs 1</div></pre></td></tr></table></figure></p>
+<p>统计指定文件中每个单词出现的次数（行内字段遍历）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># awk '&#123;for(i=1;i&lt;=NF;i++)&#123;count[$i]++&#125;&#125;END&#123;for(i in count)&#123;print i,count[i]&#125;&#125;' /etc/fstab</span></div><div class="line">swap 2</div><div class="line">fstab(5), 1</div><div class="line">filesystems, 1</div><div class="line">26 1</div><div class="line">on 1</div><div class="line">/etc/fstab 1</div><div class="line">UUID=3f6338ab-2c10-422c-9a5c-6a783c5795e8 1</div><div class="line">/boot 1</div><div class="line">UUID=224a4923<span class="_">-a</span>78d-4bde-b962-aa921a15db50 1</div><div class="line">more 1</div><div class="line">mount(8) 1</div><div class="line">pages 1</div><div class="line"><span class="string">'/dev/disk'</span> 1</div><div class="line">10:31:47 1</div><div class="line">Apr 1</div><div class="line">blkid(8) 1</div><div class="line">See 1</div><div class="line">/dev/mapper/vgos-root 1</div><div class="line"><span class="keyword">for</span> 1</div><div class="line">and/or 1</div><div class="line">anaconda 1</div><div class="line">/ 1</div><div class="line">findfs(8), 1</div><div class="line">under 1</div><div class="line">Created 1</div><div class="line">0 6</div><div class="line">info 1</div><div class="line">Accessible 1</div><div class="line"><span class="comment"># 7</span></div><div class="line">defaults 3</div><div class="line">xfs 2</div><div class="line">man 1</div><div class="line">are 1</div><div class="line">reference, 1</div><div class="line">by 2</div><div class="line">maintained 1</div><div class="line">2017 1</div><div class="line">Wed 1</div></pre></td></tr></table></figure></p>
+<h3 id="awk函数"><a href="#awk函数" class="headerlink" title="awk函数"></a>awk函数</h3><p>★ 数值处理：<br>&ensp;&ensp;&ensp;&ensp;rand()：返回0和1之间一个随机数<br>★ 字符串处理：<br>&ensp;&ensp;&ensp;&ensp;length([s])：返回指定字符串的长度<br>&ensp;&ensp;&ensp;&ensp;sub(r,s,[t])：在t字符串搜索能够被r表示的模式所匹配的内容，并将第一个匹配的内容替换为s；<br>&ensp;&ensp;&ensp;&ensp;gsub(r,s,[t])：对t字符串进行搜索r表示的模式匹配的内容，并全部替换为s所表示的内容<br>&ensp;&ensp;&ensp;&ensp;split(s,array,[r])：以r为分隔符切割字符s，并将切割后的结果保存至array所表示的数组中<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;print rand()&#125;'</span></div><div class="line">0.237788</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># awk 'BEGIN&#123;srand(); for (i=1;i&lt;=10;i++)print int(rand()*100) &#125;'</span></div><div class="line">98</div><div class="line">10</div><div class="line">85</div><div class="line">68</div><div class="line">44</div><div class="line">33</div><div class="line">55</div><div class="line">78</div><div class="line">20</div><div class="line">32</div><div class="line"><span class="comment">#把第一个字段（2008:08:08）中第一次查找到的 ：替换为“”空，</span></div><div class="line">[root@centos7 ~]<span class="comment"># echo "2008:08:08 08:08:08" | awk 'sub(/:/,"",$1)'</span></div><div class="line">200808:08 08:08:08</div><div class="line"><span class="comment">#把第一个字段中所有的 ：替换为空</span></div><div class="line">[root@centos7 ~]<span class="comment"># echo "2008:08:08 08:08:08" | awk 'gsub(/:/,"",$1)'</span></div><div class="line">20080808 08:08:08</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># netstat -tan|awk '/^tcp\&gt;/'</span></div><div class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     </div><div class="line">tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN     </div><div class="line">tcp        0     52 192.168.2.140:22        192.168.2.1:53207       ESTABLISHED</div><div class="line"><span class="comment">#split说明:以":"为分隔符切割$5,把切割结果放到数组ip里</span></div><div class="line">[root@centos7 ~]<span class="comment"># netstat -tan|awk '/^tcp\&gt;/&#123;split($5,ip,":");print ip[1]&#125;'</span></div><div class="line">0.0.0.0</div><div class="line">0.0.0.0</div><div class="line">192.168.2.1</div><div class="line"><span class="comment">#对输出的结果做统计</span></div><div class="line">[root@centos7 ~]<span class="comment"># netstat -tan|awk '/^tcp\&gt;/&#123;split($5,ip,":");count[ip[1]]++&#125;END&#123;for(i in count)&#123;print i,count[i]&#125;&#125;'</span></div><div class="line">0.0.0.0 2</div><div class="line">192.168.2.1 1</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">linux中文本处理工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/07/10/linux文本处理工具三剑客之awk/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/07/08/linux系统管理之systemd/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Systemd
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/15/加密-解密-数字签名-SSL-CA/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">加密解密、数字签名、SSL、CA技术</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

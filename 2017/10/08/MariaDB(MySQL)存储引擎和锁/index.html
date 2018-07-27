@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>MariaDB(MySQL)存储引擎和锁 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="存储引擎：1.介绍★存储引擎：Storage Engine（负责向下管理文件，向上提供关系模型）&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;MySQL中的数据用各种不同的技术存储在文件（或者内存）中。这些技术中的每一种技术都使用不同的存储机制、索引技巧、锁定水平并且最终提供广泛的不同的功能和能力。通过选择不同的技术，你能够获得额外的速度或者功能，从而改善你的应用的整体功能；&amp;ensp;&amp;ens">
+<meta name="keywords" content="MariaDB(MySQL)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MariaDB(MySQL)存储引擎和锁">
+<meta property="og:url" content="http://yoursite.com/2017/10/08/MariaDB(MySQL)存储引擎和锁/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="存储引擎：1.介绍★存储引擎：Storage Engine（负责向下管理文件，向上提供关系模型）&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;MySQL中的数据用各种不同的技术存储在文件（或者内存）中。这些技术中的每一种技术都使用不同的存储机制、索引技巧、锁定水平并且最终提供广泛的不同的功能和能力。通过选择不同的技术，你能够获得额外的速度或者功能，从而改善你的应用的整体功能；&amp;ensp;&amp;ens">
+<meta property="og:updated_time" content="2017-10-22T09:09:19.357Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MariaDB(MySQL)存储引擎和锁">
+<meta name="twitter:description" content="存储引擎：1.介绍★存储引擎：Storage Engine（负责向下管理文件，向上提供关系模型）&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;MySQL中的数据用各种不同的技术存储在文件（或者内存）中。这些技术中的每一种技术都使用不同的存储机制、索引技巧、锁定水平并且最终提供广泛的不同的功能和能力。通过选择不同的技术，你能够获得额外的速度或者功能，从而改善你的应用的整体功能；&amp;ensp;&amp;ens">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-MariaDB(MySQL)存储引擎和锁" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MariaDB(MySQL)存储引擎和锁
+    </h1>
+  
+
+        
+        <a href="/2017/10/08/MariaDB(MySQL)存储引擎和锁/" class="archive-article-date">
+  	<time datetime="2017-10-08T02:50:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="存储引擎："><a href="#存储引擎：" class="headerlink" title="存储引擎："></a>存储引擎：</h3><h4 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h4><p>★存储引擎：Storage Engine（负责向下管理文件，向上提供关系模型）<br>&ensp;&ensp;&ensp;&ensp;MySQL中的数据用各种不同的技术存储在文件（或者内存）中。这些技术中的每一种技术都使用不同的存储机制、索引技巧、锁定水平并且最终提供广泛的不同的功能和能力。通过选择不同的技术，你能够获得额外的速度或者功能，从而改善你的应用的整体功能；<br>&ensp;&ensp;&ensp;&ensp;表类型：表级别概念，不建议在同一个库中的表上使用不同的ENGINE；<br>★常见的存储引擎：<br>&ensp;&ensp;&ensp;&ensp;MyISAM, Aria, InnoDB, MRG_MYISAM, CSV, BLACKHOLE, MEMORY, PERFORMANCE_SCHEMA, ARCHIVE, FEDERATED<br>★查看数据库支持的存储引擎种类：<br>&ensp;&ensp;&ensp;&ensp;mysql&gt; SHOW ENGINES;<br>★查看默认的存储引擎：<br>&ensp;&ensp;&ensp;&ensp;mysql&gt; SHOW GLOBA|[SESSION] VARIABLES [LIKE clause];<br>★查看指定表的存储引擎：<br>&ensp;&ensp;&ensp;&ensp;mysql&gt; SHOW TABLE STATUS LIKE clause;<br>★创建表时设定其存储引擎的方法：<br>&ensp;&ensp;&ensp;&ensp;CREATE TABLE … ENGINE[=]STORAGE_ENGINE_NAME …</p>
+<h4 id="演示："><a href="#演示：" class="headerlink" title="演示："></a>演示：</h4><p>1.查看mysql所支持的存储引擎；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">MariaDB [mysql]&gt; show engines;</div><div class="line">+--------------------+---------+----------------------------------------------------------------------------+--------------+------+------------+</div><div class="line">| Engine             | Support | Comment                                                                    | Transactions | XA   | Savepoints |</div><div class="line">+--------------------+---------+----------------------------------------------------------------------------+--------------+------+------------+</div><div class="line">| InnoDB             | DEFAULT | Percona-XtraDB, Supports transactions, row-level locking, and foreign keys | YES          | YES  | YES        |</div><div class="line">| CSV                | YES     | CSV storage engine                                                         | NO           | NO   | NO         |</div><div class="line">| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                                      | NO           | NO   | NO         |</div><div class="line">| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears)             | NO           | NO   | NO         |</div><div class="line">| MEMORY             | YES     | Hash based, stored <span class="keyword">in</span> memory, useful <span class="keyword">for</span> temporary tables                  | NO           | NO   | NO         |</div><div class="line">| PERFORMANCE_SCHEMA | YES     | Performance Schema                                                         | NO           | NO   | NO         |</div><div class="line">| ARCHIVE            | YES     | Archive storage engine                                                     | NO           | NO   | NO         |</div><div class="line">| MyISAM             | YES     | MyISAM storage engine                                                      | NO           | NO   | NO         |</div><div class="line">| FEDERATED          | YES     | FederatedX pluggable storage engine                                        | YES          | NO   | YES        |</div><div class="line">| Aria               | YES     | Crash-safe tables with MyISAM heritage                                     | NO           | NO   | NO         |</div><div class="line">+--------------------+---------+----------------------------------------------------------------------------+--------------+------+------------+</div><div class="line">10 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div></pre></td></tr></table></figure></p>
+<p>2.查看默认的存储引擎；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">MariaDB [mysql]&gt; show global variables like <span class="string">'%storage_engine%'</span>;</div><div class="line">+------------------------+--------+</div><div class="line">| Variable_name          | Value  |</div><div class="line">+------------------------+--------+</div><div class="line">| default_storage_engine | InnoDB |</div><div class="line">| storage_engine         | InnoDB |</div><div class="line">+------------------------+--------+</div><div class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div></pre></td></tr></table></figure></p>
+<p>3.查看指定表的存储引擎（即查看表的状态信息）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">MariaDB [mysql]&gt; show table status like <span class="string">'user'</span>\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           Name: user</div><div class="line">         Engine: MyISAM</div><div class="line">        Version: 10</div><div class="line">     Row_format: Dynamic</div><div class="line">           Rows: 6</div><div class="line"> Avg_row_length: 109</div><div class="line">    Data_length: 656</div><div class="line">Max_data_length: 281474976710655</div><div class="line">   Index_length: 2048</div><div class="line">      Data_free: 0</div><div class="line"> Auto_increment: NULL</div><div class="line">    Create_time: 2017-10-08 19:45:17</div><div class="line">    Update_time: 2017-10-18 15:44:51</div><div class="line">     Check_time: NULL</div><div class="line">      Collation: utf8_bin</div><div class="line">       Checksum: NULL</div><div class="line"> Create_options: </div><div class="line">        Comment: Users and global privileges</div><div class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div></pre></td></tr></table></figure></p>
+<h3 id="InnoDB存储引擎"><a href="#InnoDB存储引擎" class="headerlink" title="InnoDB存储引擎"></a>InnoDB存储引擎</h3><p> —Percona-XtraDB, Supports transactions(支持事务), row-level locking（行级锁）, and foreign keys（外键）<br>★表结构的定义：<br>&ensp;&ensp;&ensp;&ensp;在数据库目录，tbl_name.frm<br>★数据存储于“表空间(table space)”中：<br>☉所有InnoDB表的数据和索引存储于同一个表空间中；<br>◆表空间文件：datadir定义的目录中<br>&ensp;&ensp;&ensp;&ensp;文件：ibdata1, ibdata2, …<br>☉innodb_file_per_table=ON，意味着每表使用单独的表空间文件；<br>◆数据文件（数据和索引，存储于数据库目录）: tbl_name.ibd<br>注意：<br>&ensp;&ensp;&ensp;&ensp;默认所有innodb存储引擎的数据和索引都存储于一个表空间中；<br>&ensp;&ensp;&ensp;&ensp;要想使每表使用单独的表空间文件，就要在/etc/my.cnf中定义<br>★功能：<br>☉事务型存储引擎<br>&ensp;&ensp;&ensp;&ensp;适合对事务要求较高的场景中，但较适用于处理大量短期事务；<br>☉基于MVCC（Mutli Version Concurrency Control）支持高并发；<br>&ensp;&ensp;&ensp;&ensp;支持四个隔离级别，默认级别为 REPEATABLE-READ；间隙锁以防止幻读；<br>☉使用聚集索引（主键索引）；<br>☉支持”自适应Hash索引”；<br>☉锁粒度：<br>&ensp;&ensp;&ensp;&ensp;行级锁；间隙锁；<br>★查看innodb的状态<br>&ensp;&ensp;&ensp;&ensp;SHOW ENGINE INNODB STATUS</p>
+<h4 id="演示：-1"><a href="#演示：-1" class="headerlink" title="演示："></a>演示：</h4><p>1.查看mysql数据库目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># cd /var/lib/mysql/</span></div><div class="line">[root@localhost mysql]<span class="comment"># ll -h</span></div><div class="line">total 29M</div><div class="line">-rw-rw---- 1 mysql mysql  16K Oct 20 16:05 aria_log.00000001</div><div class="line">-rw-rw---- 1 mysql mysql   52 Oct 20 16:05 aria_log_control</div><div class="line">drwx------ 2 mysql mysql 4.0K Oct 19 14:37 hellodb          //创建的数据库目录</div><div class="line">-rw-rw---- 1 mysql mysql  18M Oct 20 16:05 ibdata1          //innodb存储引擎的数据文件存放位置，即公共表空间文件</div><div class="line">-rw-rw---- 1 mysql mysql 5.0M Oct 22 14:48 ib_logfile0      //事物日志相关的文件</div><div class="line">-rw-rw---- 1 mysql mysql 5.0M Oct  8 19:45 ib_logfile1      //事物日志相关的文件</div><div class="line">drwx------ 2 mysql mysql 4.0K Oct  8 19:45 mysql</div><div class="line">srwxrwxrwx 1 mysql mysql    0 Oct 22 14:48 mysql.sock</div><div class="line">drwx------ 2 mysql mysql 4.0K Oct  8 19:45 performance_schema</div><div class="line">drwx------ 2 mysql mysql   94 Oct 18 15:15 testdb</div><div class="line">drwx------ 2 mysql mysql   19 Oct 18 15:37 ultrax</div></pre></td></tr></table></figure></p>
+<p>2.查看testdb数据库的文件，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; use testdb;</div><div class="line">Reading table information <span class="keyword">for</span> completion of table and column names</div><div class="line">You can turn off this feature to get a quicker startup with -A</div><div class="line"></div><div class="line">Database changed</div><div class="line">MariaDB [testdb]&gt; show tables;</div><div class="line">+------------------+</div><div class="line">| Tables_in_testdb |</div><div class="line">+------------------+</div><div class="line">| tb1              |</div><div class="line">| tb2              |</div><div class="line">| testview         |</div><div class="line">+------------------+</div><div class="line">3 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [testdb]&gt; show table status like <span class="string">'tb1'</span>\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           Name: tb1</div><div class="line">         Engine: InnoDB</div><div class="line">        Version: 10</div><div class="line">     Row_format: Compact</div><div class="line">           Rows: 6</div><div class="line"> Avg_row_length: 2730</div><div class="line">    Data_length: 16384</div><div class="line">Max_data_length: 0</div><div class="line">   Index_length: 16384</div><div class="line">      Data_free: 0</div><div class="line"> Auto_increment: 7</div><div class="line">    Create_time: 2017-10-12 14:01:57</div><div class="line">    Update_time: NULL</div><div class="line">     Check_time: NULL</div><div class="line">      Collation: utf8_general_ci</div><div class="line">       Checksum: NULL</div><div class="line"> Create_options: </div><div class="line">        Comment: </div><div class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [testdb]&gt; desc tb1;</div><div class="line">+---------+----------------------+------+-----+---------+----------------+</div><div class="line">| Field   | Type                 | Null | Key | Default | Extra          |</div><div class="line">+---------+----------------------+------+-----+---------+----------------+</div><div class="line">| id      | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |</div><div class="line">| name    | char(30)             | NO   | MUL | NULL    |                |</div><div class="line">| age     | tinyint(3) unsigned  | YES  |     | NULL    |                |</div><div class="line">| classid | tinyint(3) unsigned  | NO   |     | NULL    |                |</div><div class="line">| gender  | enum(<span class="string">'F'</span>,<span class="string">'M'</span>)        | YES  |     | M       |                |</div><div class="line">+---------+----------------------+------+-----+---------+----------------+</div><div class="line">5 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># cd /var/lib/mysql/</span></div><div class="line">[root@localhost mysql]<span class="comment"># cd testdb/</span></div><div class="line">[root@localhost testdb]<span class="comment"># ll</span></div><div class="line">total 240</div><div class="line">-rw-rw---- 1 mysql mysql     61 Oct 12 10:12 db.opt</div><div class="line">-rw-rw---- 1 mysql mysql   8690 Oct 12 14:01 tb1.frm       //定义表格式（tbl、tbl2的格式）</div><div class="line">-rw-rw---- 1 mysql mysql 114688 Oct 18 14:52 tb1.ibd       //数据存放位置，每表使用单独的表空间，不再使用默认的公共表空间ibdata1</div><div class="line">-rw-rw---- 1 mysql mysql   8654 Oct 18 15:15 tb2.frm</div><div class="line">-rw-rw---- 1 mysql mysql  98304 Oct 18 15:17 tb2.ibd</div><div class="line">-rw-rw---- 1 mysql mysql    489 Oct 12 14:31 testview.frm</div></pre></td></tr></table></figure></p>
+<p>3.innodb存储引擎的相关参数<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; show variables like <span class="string">'%innodb%'</span>;</div><div class="line">+-------------------------------------------+------------------------+</div><div class="line">| Variable_name                             | Value                  |</div><div class="line">+-------------------------------------------+------------------------+</div><div class="line">| have_innodb                               | YES                    |</div><div class="line">| ignore_builtin_innodb                     | OFF                    |</div><div class="line">| innodb_adaptive_flushing                  | ON                     |</div><div class="line">| innodb_adaptive_flushing_method           | estimate               |</div><div class="line">| innodb_adaptive_hash_index                | ON                     |</div><div class="line">| innodb_adaptive_hash_index_partitions     | 1                      |</div><div class="line">| innodb_additional_mem_pool_size           | 8388608                |</div><div class="line">| innodb_autoextend_increment               | 8                      |</div><div class="line">| innodb_autoinc_lock_mode                  | 1                      |</div><div class="line">| innodb_blocking_buffer_pool_restore       | OFF                    |</div><div class="line">| innodb_buffer_pool_instances              | 1                      |</div><div class="line">| innodb_buffer_pool_populate               | OFF                    |</div><div class="line">| innodb_buffer_pool_restore_at_startup     | 0                      |</div><div class="line">| innodb_buffer_pool_shm_checksum           | ON                     |</div><div class="line">| innodb_buffer_pool_shm_key                | 0                      |</div><div class="line">| innodb_buffer_pool_size                   | 134217728              |</div><div class="line">| innodb_change_buffering                   | all                    |</div><div class="line">| innodb_checkpoint_age_target              | 0                      |</div><div class="line">| innodb_checksums                          | ON                     |</div><div class="line">| innodb_commit_concurrency                 | 0                      |</div><div class="line">| innodb_concurrency_tickets                | 500                    |</div><div class="line">| innodb_corrupt_table_action               | assert                 |</div><div class="line">| innodb_data_file_path                     | ibdata1:10M:autoextend |</div><div class="line">| innodb_data_home_dir                      |                        |</div><div class="line">| innodb_dict_size_limit                    | 0                      |</div><div class="line">| innodb_doublewrite                        | ON                     |</div><div class="line">| innodb_doublewrite_file                   |                        |</div><div class="line">| innodb_fake_changes                       | OFF                    |</div><div class="line">| innodb_fast_checksum                      | OFF                    |</div><div class="line">| innodb_fast_shutdown                      | 1                      |</div><div class="line">| innodb_file_format                        | Antelope               |</div><div class="line">| innodb_file_format_check                  | ON                     |</div><div class="line">| innodb_file_format_max                    | Antelope               |</div><div class="line">| innodb_file_per_table                     | ON                     |</div><div class="line">| innodb_flush_log_at_trx_commit            | 1                      |</div><div class="line">| innodb_flush_method                       |                        |</div><div class="line">| innodb_flush_neighbor_pages               | area                   |</div><div class="line">| innodb_force_load_corrupted               | OFF                    |</div><div class="line">| innodb_force_recovery                     | 0                      |</div><div class="line">| innodb_ibuf_accel_rate                    | 100                    |</div><div class="line">| innodb_ibuf_active_contract               | 1                      |</div><div class="line">| innodb_ibuf_max_size                      | 67092480               |</div><div class="line">| innodb_import_table_from_xtrabackup       | 0                      |</div><div class="line">| innodb_io_capacity                        | 200                    |</div><div class="line">| innodb_kill_idle_transaction              | 0                      |</div><div class="line">| innodb_large_prefix                       | OFF                    |</div><div class="line">| innodb_lazy_drop_table                    | 0                      |</div><div class="line">| innodb_lock_wait_timeout                  | 50                     |</div><div class="line">| innodb_locking_fake_changes               | ON                     |</div><div class="line">| innodb_locks_unsafe_for_binlog            | OFF                    |</div><div class="line">| innodb_log_block_size                     | 512                    |</div><div class="line">| innodb_log_buffer_size                    | 8388608                |</div><div class="line">| innodb_log_file_size                      | 5242880                |</div><div class="line">| innodb_log_files_in_group                 | 2                      |</div><div class="line">| innodb_log_group_home_dir                 | ./                     |</div><div class="line">| innodb_max_bitmap_file_size               | 104857600              |</div><div class="line">| innodb_max_changed_pages                  | 1000000                |</div><div class="line">| innodb_max_dirty_pages_pct                | 75                     |</div><div class="line">| innodb_max_purge_lag                      | 0                      |</div><div class="line">| innodb_merge_sort_block_size              | 1048576                |</div><div class="line">| innodb_mirrored_log_groups                | 1                      |</div><div class="line">| innodb_old_blocks_pct                     | 37                     |</div><div class="line">| innodb_old_blocks_time                    | 0                      |</div><div class="line">| innodb_open_files                         | 300                    |</div><div class="line">| innodb_page_size                          | 16384                  |</div><div class="line">| innodb_print_all_deadlocks                | OFF                    |</div><div class="line">| innodb_purge_batch_size                   | 20                     |</div><div class="line">| innodb_purge_threads                      | 1                      |</div><div class="line">| innodb_random_read_ahead                  | OFF                    |</div><div class="line">| innodb_read_ahead                         | linear                 |</div><div class="line">| innodb_read_ahead_threshold               | 56                     |</div><div class="line">| innodb_read_io_threads                    | 4                      |</div><div class="line">| innodb_recovery_stats                     | OFF                    |</div><div class="line">| innodb_recovery_update_relay_log          | OFF                    |</div><div class="line">| innodb_replication_delay                  | 0                      |</div><div class="line">| innodb_rollback_on_timeout                | OFF                    |</div><div class="line">| innodb_rollback_segments                  | 128                    |</div><div class="line">| innodb_show_locks_held                    | 10                     |</div><div class="line">| innodb_show_verbose_locks                 | 0                      |</div><div class="line">| innodb_simulate_comp_failures             | 0                      |</div><div class="line">| innodb_spin_wait_delay                    | 6                      |</div><div class="line">| innodb_stats_auto_update                  | 1                      |</div><div class="line">| innodb_stats_method                       | nulls_equal            |</div><div class="line">| innodb_stats_modified_counter             | 0                      |</div><div class="line">| innodb_stats_on_metadata                  | ON                     |</div><div class="line">| innodb_stats_sample_pages                 | 8                      |</div><div class="line">| innodb_stats_traditional                  | ON                     |</div><div class="line">| innodb_stats_update_need_lock             | 1                      |</div><div class="line">| innodb_strict_mode                        | OFF                    |</div><div class="line">| innodb_support_xa                         | ON                     |</div><div class="line">| innodb_sync_spin_loops                    | 30                     |</div><div class="line">| innodb_table_locks                        | ON                     |</div><div class="line">| innodb_thread_concurrency                 | 0                      |</div><div class="line">| innodb_thread_concurrency_timer_based     | OFF                    |</div><div class="line">| innodb_thread_sleep_delay                 | 10000                  |</div><div class="line">| innodb_track_changed_pages                | OFF                    |</div><div class="line">| innodb_use_atomic_writes                  | OFF                    |</div><div class="line">| innodb_use_fallocate                      | OFF                    |</div><div class="line">| innodb_use_global_flush_log_at_trx_commit | ON                     |</div><div class="line">| innodb_use_native_aio                     | ON                     |</div><div class="line">| innodb_use_stacktrace                     | OFF                    |</div><div class="line">| innodb_use_sys_malloc                     | ON                     |</div><div class="line">| innodb_use_sys_stats_table                | OFF                    |</div><div class="line">| innodb_version                            | 5.5.43-MariaDB-37.2    |</div><div class="line">| innodb_write_io_threads                   | 4                      |</div><div class="line">+-------------------------------------------+------------------------+</div><div class="line">105 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div></pre></td></tr></table></figure></p>
+<h4 id="innodb总结："><a href="#innodb总结：" class="headerlink" title="innodb总结："></a>innodb总结：</h4><p>★数据存储：表空间；<br>★并发：MVCC，间隙锁，行级锁；<br>★索引：聚集索引、辅助索引；<br>★性能：预读操作、内存数据缓冲、内存索引缓存、自适应Hash索引、插入操作缓存区；<br>★备份：支持热备；</p>
+<h3 id="MyISAM：存储引擎"><a href="#MyISAM：存储引擎" class="headerlink" title="MyISAM：存储引擎"></a>MyISAM：存储引擎</h3><p>★特性：<br>&ensp;&ensp;&ensp;&ensp;支持全文索引（FULLTEXT index）、压缩、空间函数（GIS）；<br>&ensp;&ensp;&ensp;&ensp;不支持事务；<br>&ensp;&ensp;&ensp;&ensp;锁粒度：表级锁；<br>&ensp;&ensp;&ensp;&ensp;崩溃无法保证表安全恢复<br>★适用场景：<br>&ensp;&ensp;&ensp;&ensp;只读或读多写少的场景、较小的表（以保证崩溃后恢复的时间较短）；<br>★文件：每个表有三个文件，存储于数据库目录中<br>&ensp;&ensp;&ensp;&ensp;tbl_name.frm：表格式定义；<br>&ensp;&ensp;&ensp;&ensp;tbl_name.MYD：数据文件；<br>&ensp;&ensp;&ensp;&ensp;tbl_name.MYI：索引文件；<br>总结：<br>&ensp;&ensp;&ensp;&ensp;加锁和并发：表级锁；<br>&ensp;&ensp;&ensp;&ensp;修复：手动或自动修复、但可能会丢失数据；<br>&ensp;&ensp;&ensp;&ensp;索引：非聚集索引；<br>&ensp;&ensp;&ensp;&ensp;延迟索引更新；<br>&ensp;&ensp;&ensp;&ensp;表压缩；</p>
+<h4 id="演示：-2"><a href="#演示：-2" class="headerlink" title="演示："></a>演示：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">MariaDB [hellodb]&gt; show table status like <span class="string">'students'</span>\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           Name: students</div><div class="line">         Engine: MyISAM</div><div class="line">        Version: 10</div><div class="line">     Row_format: Dynamic</div><div class="line">           Rows: 25</div><div class="line"> Avg_row_length: 24</div><div class="line">    Data_length: 624</div><div class="line">Max_data_length: 281474976710655</div><div class="line">   Index_length: 2048</div><div class="line">      Data_free: 0</div><div class="line"> Auto_increment: 26</div><div class="line">    Create_time: 2017-10-19 14:37:49</div><div class="line">    Update_time: 2017-10-19 14:37:49</div><div class="line">     Check_time: NULL</div><div class="line">      Collation: utf8_general_ci</div><div class="line">       Checksum: NULL</div><div class="line"> Create_options: </div><div class="line">        Comment: </div><div class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div><div class="line">[root@localhost ]<span class="comment"># cd /var/lib/mysql/hellodb</span></div><div class="line">[root@localhost hellodb]<span class="comment"># ll</span></div><div class="line">total 140</div><div class="line">-rw-rw---- 1 mysql mysql 8636 Oct 19 14:37 classes.frm         <span class="comment"># 每个表有三个文件</span></div><div class="line">-rw-rw---- 1 mysql mysql  172 Oct 19 14:37 classes.MYD</div><div class="line">-rw-rw---- 1 mysql mysql 2048 Oct 19 14:37 classes.MYI</div><div class="line">-rw-rw---- 1 mysql mysql 8630 Oct 19 14:37 coc.frm</div><div class="line">-rw-rw---- 1 mysql mysql  112 Oct 19 14:37 coc.MYD</div><div class="line">-rw-rw---- 1 mysql mysql 2048 Oct 19 14:37 coc.MYI</div><div class="line">-rw-rw---- 1 mysql mysql 8602 Oct 19 14:37 courses.frm</div><div class="line">-rw-rw---- 1 mysql mysql  144 Oct 19 14:37 courses.MYD</div><div class="line">-rw-rw---- 1 mysql mysql 2048 Oct 19 14:37 courses.MYI</div><div class="line">-rw-rw---- 1 mysql mysql   61 Oct 19 14:37 db.opt</div><div class="line">-rw-rw---- 1 mysql mysql 8658 Oct 19 14:37 scores.frm</div><div class="line">-rw-rw---- 1 mysql mysql  180 Oct 19 14:37 scores.MYD</div><div class="line">-rw-rw---- 1 mysql mysql 2048 Oct 19 14:37 scores.MYI</div><div class="line">-rw-rw---- 1 mysql mysql 8736 Oct 19 14:37 students.frm</div><div class="line">-rw-rw---- 1 mysql mysql  624 Oct 19 14:37 students.MYD</div><div class="line">-rw-rw---- 1 mysql mysql 2048 Oct 19 14:37 students.MYI</div><div class="line">-rw-rw---- 1 mysql mysql 8656 Oct 19 14:37 teachers.frm</div><div class="line">-rw-rw---- 1 mysql mysql   92 Oct 19 14:37 teachers.MYD</div><div class="line">-rw-rw---- 1 mysql mysql 2048 Oct 19 14:37 teachers.MYI</div><div class="line">-rw-rw---- 1 mysql mysql 8622 Oct 19 14:37 toc.frm</div><div class="line">-rw-rw---- 1 mysql mysql    0 Oct 19 14:37 toc.MYD</div><div class="line">-rw-rw---- 1 mysql mysql 1024 Oct 19 14:37 toc.MYI</div></pre></td></tr></table></figure>
+<h3 id="其他存储引擎"><a href="#其他存储引擎" class="headerlink" title="其他存储引擎"></a>其他存储引擎</h3><p>★其它的存储引擎：<br>&ensp;&ensp;&ensp;&ensp;CSV：将CSV文件（以逗号分隔字段的文本文件）作为MySQL表文件；<br>&ensp;&ensp;&ensp;&ensp;MRG_MYISAM：将多个MyISAM表合并成的虚拟表；<br>&ensp;&ensp;&ensp;&ensp;BLACKHOLE：类似于/dev/null，不真正存储数据；<br>&ensp;&ensp;&ensp;&ensp;MEMORY：内存存储引擎，支持hash索引，表级锁，常用于临时表；<br>&ensp;&ensp;&ensp;&ensp;FEDERATED: 用于访问其它远程MySQL服务器上表的存储引擎接口；<br>&ensp;&ensp;&ensp;&ensp;★MariaDB额外支持很多种存储引擎：<br>&ensp;&ensp;&ensp;&ensp;OQGraph、SphinxSE、TokuDB、Cassandra、CONNECT、SQUENCE、…<br>★搜索引擎：<br>&ensp;&ensp;&ensp;&ensp;lucene：Solr, Elasticsearch<br>&ensp;&ensp;&ensp;&ensp;sphinx </p>
+<h3 id="并发控制：锁"><a href="#并发控制：锁" class="headerlink" title="并发控制：锁"></a>并发控制：锁</h3><h4 id="锁：Lock"><a href="#锁：Lock" class="headerlink" title="锁：Lock"></a>锁：Lock</h4><p>★锁类型 ：<br>&ensp;&ensp;&ensp;&ensp;读锁：共享锁，可被多个读操作共享；<br>&ensp;&ensp;&ensp;&ensp;写锁：排它锁，独占锁；<br>★锁粒度：<br>&ensp;&ensp;&ensp;&ensp;表锁：在表级别施加锁，并发性较低；<br>&ensp;&ensp;&ensp;&ensp;行锁：在行级别施加锁，并发性较高；<br>★锁策略：在锁粒度及数据安全性之间寻求一种平衡机制；<br>&ensp;&ensp;&ensp;&ensp;存储引擎：级别以及何时施加或释放锁由存储引擎自行决定；<br>&ensp;&ensp;&ensp;&ensp;MySQL Server：表级别，可自行决定，也允许显式请求；<br>★锁类别：<br>&ensp;&ensp;&ensp;&ensp;显式锁：用户手动请求的锁；<br>&ensp;&ensp;&ensp;&ensp;隐式锁：存储引擎自行根据需要施加的锁；<br>★显式锁的使用：<br>☉LOCK TABLES<br>&ensp;&ensp;&ensp;&ensp;LOCK TABLES  tbl_name  read|write, tbl_name read|write, … //添加锁<br>&ensp;&ensp;&ensp;&ensp;UNLOCK TABLES //释放锁<br>☉FLUSH TABLES<br>强制把内存中表的相关数据同步到磁盘之后，再一次以施加指令的类型的锁之后打开<br>&ensp;&ensp;&ensp;&ensp;FLUSH TABLES tbl_name,… [WITH READ LOCK];<br>&ensp;&ensp;&ensp;&ensp;UNLOCK TABLES;<br>eg：<br>&ensp;&ensp;&ensp;&ensp;FLUSH TABLES WITH READ LOCK(表示把所有的表同步到磁盘上，然后再请求读锁)<br>☉SELECT cluase<br>锁定指定表中的行<br>&ensp;&ensp;&ensp;&ensp;[FOR UPDATE | LOCK IN SHARE MODE]</p>
+<h4 id="演示：-3"><a href="#演示：-3" class="headerlink" title="演示："></a>演示：</h4><p>在node1会话中请求读锁，发现可以正常读数据，但不能写数据<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; use testdb;</div><div class="line">Reading table information <span class="keyword">for</span> completion of table and column names</div><div class="line">You can turn off this feature to get a quicker startup with -A</div><div class="line"></div><div class="line">Database changed</div><div class="line">MariaDB [testdb]&gt; lock tables tb1 <span class="built_in">read</span>;     <span class="comment"># 请求读锁</span></div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [testdb]&gt; select * from tb1;        <span class="comment"># 可以正常查看数据</span></div><div class="line">+----+--------+------+---------+--------+</div><div class="line">| id | name   | age  | classid | gender |</div><div class="line">+----+--------+------+---------+--------+</div><div class="line">|  1 | jack   | NULL |       4 | M      |</div><div class="line">|  2 | zmj    |   30 |       1 | M      |</div><div class="line">|  3 | zhou   |   18 |       3 | M      |</div><div class="line">|  4 | rat    |    3 |       5 | M      |</div><div class="line">|  5 | ox     |    5 |       5 | F      |</div><div class="line">|  6 | tigger |    2 |       5 | F      |</div><div class="line">+----+--------+------+---------+--------+</div><div class="line">6 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [testdb]&gt; insert into tb1 values (7,<span class="string">'rabbit'</span>,8,3,<span class="string">'F'</span>);      <span class="comment"># 但是不能执行写操作，因为写操作为写锁，是独占的</span></div><div class="line">ERROR 1099 (HY000): Table <span class="string">'tb1'</span> was locked with a READ lock and can<span class="string">'t be updated</span></div></pre></td></tr></table></figure></p>
+<p>在node2会话中，可以正常请求读锁，但是不能请求写锁，因为写锁只能是独占的，要想执行写操作必须保证其他会话中释放了所有的锁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">MariaDB [testdb]&gt; lock tables tb1 <span class="built_in">read</span>;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [testdb]&gt; select * from tb1;</div><div class="line">+----+--------+------+---------+--------+</div><div class="line">| id | name   | age  | classid | gender |</div><div class="line">+----+--------+------+---------+--------+</div><div class="line">|  1 | jack   | NULL |       4 | M      |</div><div class="line">|  2 | zmj    |   30 |       1 | M      |</div><div class="line">|  3 | zhou   |   18 |       3 | M      |</div><div class="line">|  4 | rat    |    3 |       5 | M      |</div><div class="line">|  5 | ox     |    5 |       5 | F      |</div><div class="line">|  6 | tigger |    2 |       5 | F      |</div><div class="line">+----+--------+------+---------+--------+</div><div class="line">6 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [testdb]&gt; unlock tables;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line"><span class="comment"># 请求写锁，发现被阻塞，因为写锁是独占的，必须使node1会话中释放了读锁之后才可以请求读锁；</span></div><div class="line">MariaDB [testdb]&gt; lock tables tb1 write;      </div><div class="line"></div><div class="line"><span class="comment"># 在node1会话中释放读锁，再次请求写锁发现可以正常请求</span></div><div class="line">MariaDB [testdb]&gt; lock tables tb1 write;</div><div class="line">Query OK, 0 rows affected (22.07 sec)        <span class="comment"># 阻塞时长22.07 sec</span></div></pre></td></tr></table></figure></p>
+<p>此时，因为node2上请求了写锁，所以node1会话中再请求读锁，是被阻塞的，因为写锁为排他锁，连接写锁时，其他的会话中的任何读写操作均阻塞；只有等node2会话中写操作执行完成后释放了写锁，node1会话才可以请求读锁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">MariaDB [testdb]&gt; lock tables tb1 <span class="built_in">read</span>;   <span class="comment"># 请求读锁阻塞</span></div><div class="line"></div><div class="line"><span class="comment"># node2释放写锁后，请求读锁成功</span></div><div class="line">MariaDB [testdb]&gt; lock tables tb1 <span class="built_in">read</span>;</div><div class="line">Query OK, 0 rows affected (15.45 sec)        <span class="comment"># 阻塞时长15.45 sec</span></div></pre></td></tr></table></figure></p>
+<p>注意：<br>大多数情况下，mysql都可以自行维护锁机制，而不用去手动施加。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">MariaDB(MySQL)</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/10/08/MariaDB(MySQL)存储引擎和锁/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/10/07/MySQL 查询语句使用进阶/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          MariaDB(MySQL)查询语句使用进阶
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/10/08/MySQL权限和查询缓存/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">MariaDB(MySQL)权限和查询缓存</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

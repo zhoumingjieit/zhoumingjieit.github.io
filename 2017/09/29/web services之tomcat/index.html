@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>Java 技术体系及Tomcat结构 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述：本章将主要介绍Java技术体系基础和Tomcat的结构，具体内容如下：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆编程语言的分类程序的分类；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆Java简介&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;·java的发展历程；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ens">
+<meta name="keywords" content="tomcat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 技术体系及Tomcat结构">
+<meta property="og:url" content="http://yoursite.com/2017/09/29/web services之tomcat/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="概述：本章将主要介绍Java技术体系基础和Tomcat的结构，具体内容如下：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆编程语言的分类程序的分类；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆Java简介&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;·java的发展历程；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ens">
+<meta property="og:image" content="http://yoursite.com/images/tomcat/java.png">
+<meta property="og:image" content="http://yoursite.com/images/tomcat/java1.png">
+<meta property="og:image" content="http://yoursite.com/images/tomcat/jvm.jpg">
+<meta property="og:image" content="http://yoursite.com/images/tomcat/jsp.png">
+<meta property="og:image" content="http://yoursite.com/images/tomcat/jsp1.png">
+<meta property="og:image" content="http://yoursite.com/images/tomcat/tomcat.png">
+<meta property="og:image" content="http://yoursite.com/images/tomcat/tomcat1.gif">
+<meta property="og:updated_time" content="2017-10-13T15:38:30.882Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 技术体系及Tomcat结构">
+<meta name="twitter:description" content="概述：本章将主要介绍Java技术体系基础和Tomcat的结构，具体内容如下：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆编程语言的分类程序的分类；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆Java简介&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;·java的发展历程；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ens">
+<meta name="twitter:image" content="http://yoursite.com/images/tomcat/java.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-web services之tomcat" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java 技术体系及Tomcat结构
+    </h1>
+  
+
+        
+        <a href="/2017/09/29/web services之tomcat/" class="archive-article-date">
+  	<time datetime="2017-09-29T07:50:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>本章将主要介绍Java技术体系基础和Tomcat的结构，具体内容如下：<br>&ensp;&ensp;&ensp;&ensp;◆编程语言的分类程序的分类；<br>&ensp;&ensp;&ensp;&ensp;◆Java简介<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;·java的发展历程；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;·JDK,JRE,JVM的区别和联系；<br>&ensp;&ensp;&ensp;&ensp;◆Java代码的运行和技术体系；<br>&ensp;&ensp;&ensp;&ensp;◆Java的安装<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;·Open JDK;<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;·Oracle JDK；<br>&ensp;&ensp;&ensp;&ensp;◆Java 2 EE<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;·Servlet类库；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;·Jsp类库；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;·Tomcat的出现<br>&ensp;&ensp;&ensp;&ensp;◆Tomcat的执行过程；<br>&ensp;&ensp;&ensp;&ensp;◆Tomcat的运行和环境部署；<br>&ensp;&ensp;&ensp;&ensp;◆Tomcat的核心组件</p>
+<h3 id="编程语言："><a href="#编程语言：" class="headerlink" title="编程语言："></a>编程语言：</h3><p>【百度百科解释】<br>&ensp;&ensp;&ensp;&ensp;编程语言俗称“计算机语言”，种类非常的多，总的来说可以分成机器语言、汇编语言、高级语言三大类。电脑每做的一次动作，一个步骤，都是按照已经用计算机语言编好的程序来执行的，程序是计算机要执行的指令的集合，而程序全部都是用我们所掌握的语言来编写的。所以人们要控制计算机一定要通过计算机语言向计算机发出命令。 目前通用的编程语言有两种形式：汇编语言和高级语言<br>【级别分类】<br>☉硬件级：微码编程，汇编语言<br>☉系统级：C，C++，…（编译型语言）<br>☉应用级：Java, PHP, Python, Ruby, Perl, C#, …<br>&ensp;&ensp;&ensp;&ensp;Python：PVM（代码运行环境）<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Standard Library （标准库）：Web Framework（如：Django, Flask, …）<br>&ensp;&ensp;&ensp;&ensp;Java：JVM（运行环境），JDK（开发环境）<br>&ensp;&ensp;&ensp;&ensp;bash：bash explainer（解释器）<br>&ensp;&ensp;&ensp;&ensp;…<br>【程序】：指令+数据<br>☉过程式编程：以指令为中心，数据服务于代码；<br>☉对象式编程：以数据为中心，指令服务于数据；<br>&ensp;&ensp;&ensp;&ensp;类，class；类属性、类方法；<br>&ensp;&ensp;&ensp;&ensp;对象，方法（method）</p>
+<h3 id="Java："><a href="#Java：" class="headerlink" title="Java："></a>Java：</h3><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h4><p>★百度百科解释<br>&ensp;&ensp;&ensp;&ensp;Java是一门面向对象编程语言，不仅吸收了C++语言的各种优点，还摒弃了C++里难以理解的多继承、指针等概念，因此Java语言具有功能强大和简单易用两个特征。Java语言作为静态面向对象编程语言的代表，极好地实现了面向对象理论，允许程序员以优雅的思维方式进行复杂的编程；<br>&ensp;&ensp;&ensp;&ensp;Java具有简单性、面向对象、分布式、健壮性、安全性、平台独立与可移植性、多线程、动态性等特点。Java可以编写桌面应用程序、Web应用程序、分布式系统和嵌入式系统应用程序等<br>☉发展历程：<br><img src="\images\tomcat\java.png" alt="java"></p>
+<h4 id="2-JDK-JRE-JVM的关系与区别"><a href="#2-JDK-JRE-JVM的关系与区别" class="headerlink" title="2.JDK,JRE,JVM的关系与区别"></a>2.JDK,JRE,JVM的关系与区别</h4><p>★JDK：<br>&ensp;&ensp;&ensp;&ensp;JDK(Java Development Kit) 是Java语言的软件开发工具包(SDK)。<br>&ensp;&ensp;&ensp;&ensp;JDK是整个JAVA的核心，包括了Java运行环境（Java Runtime Envirnment），一堆Java工具（javac/java/jdb等）和Java基础的类库（即Java API ）。<br>☉有三种版本<br>&ensp;&ensp;&ensp;&ensp;SE(J2SE)，standard edition，标准版<br>&ensp;&ensp;&ensp;&ensp;EE(J2EE)，enterprise edition，企业版<br>&ensp;&ensp;&ensp;&ensp;ME(J2ME)，micro edition，主要用于移动设备、嵌入式设备上的java应用程序<br>★JRE<br>&ensp;&ensp;&ensp;&ensp;·运行JAVA程序所必须的环境的集合，包含JVM标准实现及Java核心类库。<br>&ensp;&ensp;&ensp;&ensp;·JRE为Java Runtime Environment的简称，JRE（包括Java Plug-in）是Sun的产品，包括两部分：Java Runtime Environment和Java Plug-in。<br>&ensp;&ensp;&ensp;&ensp;·JRE 是可以在其上运行、测试和传输应用程序的Java平台;<br>&ensp;&ensp;&ensp;&ensp;·JRE需要辅助软件–Java Plug-in–以便在浏览器中运行applet(小程序)。<br>&ensp;&ensp;&ensp;&ensp;·没有JDK的话，无法编译Java程序，但在有JRE环境的系统上可以运行程序。所以当你只需要运行Java程序或Applet，下载并安装JRE即可。如果你要自行开发 Java软件，请下载JDK。<br>★JVM<br>&ensp;&ensp;&ensp;&ensp;·JVM是Java Virtual Machine（Java虚拟机）的缩写，JVM是一种用于计算设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。<br>&ensp;&ensp;&ensp;&ensp;·Java语言的一个非常重要的特点就是与平台的无关性。而使用Java虚拟机是实现这一特点的关键。一般的高级语言如果要在不同的平台上运行，至少需要编译成不同的目标代码。而引入Java语言虚拟机后，Java语言在不同平台上运行时不需要重新编译。Java语言使用Java虚拟机屏蔽了与具体平台相关的信息，使得Java语言编译程序只需生成在Java虚拟机上运行的目标代码（字节码），就可以在多种平台上不加修改地运行。Java虚拟机在执行字节码时，把字节码解释成具体平台上的机器指令执行。这就是Java的能够“一次编译，到处运行”的原因。<br>附图：<br><img src="\images\tomcat\java1.png" alt="java"></p>
+<h4 id="3-Java代码的运行及技术体系"><a href="#3-Java代码的运行及技术体系" class="headerlink" title="3.Java代码的运行及技术体系"></a>3.Java代码的运行及技术体系</h4><p>★Java代码的运行<br>☉<em>.java(source code) 源代码–&gt; javac –&gt; </em>.class(bytecode) 类文件（字节码）<br>◆jvm：<br>&ensp;&ensp;&ensp;&ensp;class loader（类加载器），加载程序的类文件及依赖到的其它的类文件至执行引擎运行； 整个运行表现为一个jvm进程；<br>◆jvm  thread；<br>◆过程：<br>&ensp;&ensp;&ensp;&ensp;利用JDK（调用JAVA API）开发JAVA程序后，通过JDK中的编译程序（javac）将文本java文件编译成JAVA字节码，在JRE上运行这些JAVA字节码，JVM解析这些字节码，映射到CPU指令集或OS的系统调用。<br>★Java技术体系：<br>&ensp;&ensp;&ensp;&ensp;Java编程语言<br>&ensp;&ensp;&ensp;&ensp;Java Class 文件格式<br>&ensp;&ensp;&ensp;&ensp;Java API：Java编程语言中拥有的类库<br>&ensp;&ensp;&ensp;&ensp;Java VM：<br>★JVM的核心组件：<br>&ensp;&ensp;&ensp;&ensp;class loader<br>&ensp;&ensp;&ensp;&ensp;执行引擎<br>★JVM运行时区域：<br>&ensp;&ensp;&ensp;&ensp;方法区：线程； 用于存储被JVM加载的class信息、常量、静态变量、方法等；<br>&ensp;&ensp;&ensp;&ensp;堆：是jvm所管理的内存中占用空间最大的一部分；也是GC管理的主要区域；存储对象；<br>&ensp;&ensp;&ensp;&ensp;Java栈：线程私有，存储 线程自己的局部变量；<br>&ensp;&ensp;&ensp;&ensp;PC寄存器（程序计数器）：线程私有的内存空间，程序的指令指针；<br>&ensp;&ensp;&ensp;&ensp;本地方法栈：<br>附图：<br><img src="\images\tomcat\jvm.jpg" alt="java"></p>
+<h4 id="4-总结："><a href="#4-总结：" class="headerlink" title="4.总结："></a>4.总结：</h4><p>★Java 2 SE：JDK<br>★Java 2 EE：JDK + Servlet, JSP, EJB, JMS, JMX, JavaMail, …（企业及类库）<br>☉商业实现：<br>&ensp;&ensp;&ensp;&ensp;BEA（oracle）：WebLogic<br>&ensp;&ensp;&ensp;&ensp;IBM：WebSphere<br>&ensp;&ensp;&ensp;&ensp;Oracle：oc4j<br>&ensp;&ensp;&ensp;&ensp;    …</p>
+<h3 id="Java安装"><a href="#Java安装" class="headerlink" title="Java安装"></a>Java安装</h3><p>★了解当前的java环境：<br>&ensp;&ensp;&ensp;&ensp;~]# java  -version<br>★OpenJDK 相关程序包<br>☉java-VERSION-openjdk：<br>&ensp;&ensp;&ensp;&ensp;The OpenJDK runtime environment.<br>☉java-VERSION-openjdk-headless：<br>&ensp;&ensp;&ensp;&ensp;The OpenJDK runtime environment without audio and video support.<br>☉java-VERSION-openjdk-devel：<br>&ensp;&ensp;&ensp;&ensp;The OpenJDK development tools.<br>注意：<br>&ensp;&ensp;&ensp;&ensp;多版本并存时，可使用 alternatives命令设定默认使用的版本；<br>★Oracle JDK：<br>☉安装相应版本的rpm包；<br>&ensp;&ensp;&ensp;&ensp;jdk-VERSION-OS-ARCH.rpm   例如:jdk-1.8.0_25-linux-x64.rpm<br>注意：<br>安装完成后，要配置JAVA_HOME环境变量，指向java的安装路径；<br>◆OpenJDK：<br>&ensp;&ensp;&ensp;&ensp;JAVA_HOME=/usr<br>◆Oracle JDK:<br>&ensp;&ensp;&ensp;&ensp;JAVA_HOME=/usr/java/jdk_VERSION<br>&ensp;&ensp;&ensp;&ensp;export PATH=$JAVA_HOME/bin:$PATH</p>
+<h4 id="演示1：Oracle-JDK："><a href="#演示1：Oracle-JDK：" class="headerlink" title="演示1：Oracle JDK："></a>演示1：Oracle JDK：</h4><p>1.下载Orecal官方JDK程序包并安装<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@localhost jdk]<span class="comment"># ls</span></div><div class="line">jdk-7u79-linux-x64.rpm  jdk-8u25-linux-x64.rpm</div><div class="line"><span class="comment"># 安装1.8版本第25次升级的程序包</span></div><div class="line">[root@localhost jdk]<span class="comment"># rpm -ivh jdk-8u25-linux-x64.rpm </span></div><div class="line">Preparing...                          <span class="comment">################################# [100%]</span></div><div class="line">Updating / installing...</div><div class="line">   1:jdk1.8.0_25-2000:1.8.0_25-fcs    <span class="comment">################################# [100%]</span></div><div class="line">Unpacking JAR files...</div><div class="line">	rt.jar...</div><div class="line">	jsse.jar...</div><div class="line">	charsets.jar...</div><div class="line">	tools.jar...</div><div class="line">	localedata.jar...</div><div class="line">	jfxrt.jar...</div></pre></td></tr></table></figure></p>
+<p>2.安装后生成的目录在/usr/java中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">[root@localhost jdk]<span class="comment"># cd /usr/</span></div><div class="line">[root@localhost usr]<span class="comment"># ls</span></div><div class="line">bin  etc  games  include  java  lib  lib64  libexec  <span class="built_in">local</span>  sbin  share  src  tmp</div><div class="line">[root@localhost usr]<span class="comment"># cd java/</span></div><div class="line">[root@localhost java]<span class="comment"># ll</span></div><div class="line">total 4</div><div class="line">lrwxrwxrwx 1 root root   16 Oct 13 22:42 default -&gt; /usr/java/latest</div><div class="line">drwxr-xr-x 9 root root 4096 Oct 13 22:42 jdk1.8.0_25</div><div class="line">lrwxrwxrwx 1 root root   21 Oct 13 22:42 latest -&gt; /usr/java/jdk1.8.0_25        <span class="comment"># 执向的是最新版</span></div><div class="line"></div><div class="line">[root@localhost java]<span class="comment"># cd latest/</span></div><div class="line">[root@localhost latest]<span class="comment"># ll</span></div><div class="line">total 25784</div><div class="line">drwxr-xr-x 2 root root     4096 Oct 13 22:42 bin                   <span class="comment"># 二进制程序</span></div><div class="line">-rw-r--r-- 1 root root     3244 Sep 18  2014 COPYRIGHT</div><div class="line">drwxr-xr-x 4 root root      115 Oct 13 22:42 db</div><div class="line">drwxr-xr-x 3 root root      125 Oct 13 22:42 include               <span class="comment"># 头文件</span></div><div class="line">-rw-r--r-- 1 root root  5025522 Sep 17  2014 javafx-src.zip</div><div class="line">drwxr-xr-x 5 root root     4096 Oct 13 22:42 jre                   <span class="comment"># 运行环境</span></div><div class="line">drwxr-xr-x 5 root root     4096 Oct 13 22:42 lib</div><div class="line">-rw-r--r-- 1 root root       40 Sep 18  2014 LICENSE</div><div class="line">drwxr-xr-x 4 root root       44 Oct 13 22:42 man</div><div class="line">-rw-r--r-- 1 root root      159 Sep 18  2014 README.html</div><div class="line">-rw-r--r-- 1 root root      525 Sep 18  2014 release</div><div class="line">-rw-r--r-- 1 root root 21057306 Sep 18  2014 src.zip</div><div class="line">-rw-r--r-- 1 root root   110114 Sep 17  2014 THIRDPARTYLICENSEREADME-JAVAFX.txt</div><div class="line">-rw-r--r-- 1 root root   178400 Sep 18  2014 THIRDPARTYLICENSEREADME.txt</div><div class="line"></div><div class="line">[root@localhost latest]<span class="comment"># ll jre</span></div><div class="line">total 308</div><div class="line">drwxr-xr-x  2 root root   4096 Oct 13 22:42 bin</div><div class="line">-rw-r--r--  1 root root   3244 Sep 18  2014 COPYRIGHT</div><div class="line">drwxr-xr-x 15 root root   4096 Oct 13 22:42 lib</div><div class="line">-rw-r--r--  1 root root     40 Sep 18  2014 LICENSE</div><div class="line">drwxr-xr-x  3 root root     20 Oct 13 22:42 plugin                 <span class="comment"># 插件</span></div><div class="line">-rw-r--r--  1 root root     46 Sep 18  2014 README</div><div class="line">-rw-r--r--  1 root root 110114 Sep 17  2014 THIRDPARTYLICENSEREADME-JAVAFX.txt</div><div class="line">-rw-r--r--  1 root root 178400 Sep 18  2014 THIRDPARTYLICENSEREADME.txt</div><div class="line">-rw-r--r--  1 root root    955 Sep 18  2014 Welcome.html</div><div class="line"></div><div class="line">[root@localhost latest]<span class="comment"># ls bin</span></div><div class="line">appletviewer  javac  <span class="comment"># 编译器         javaws    jinfo       jsadebugd     orbd         serialver</span></div><div class="line">ControlPanel  javadoc         jcmd      jjs         jstack        pack200      servertool</div><div class="line">extcheck      javafxpackager  jconsole  jmap        jstat         policytool   tnameserv</div><div class="line">idlj          javah           jcontrol  jmc         jstatd        rmic         unpack200</div><div class="line">jar           javap           jdb       jmc.ini     jvisualvm     rmid         wsgen</div><div class="line">jarsigner     javapackager    jdeps     jps         keytool       rmiregistry  wsimport</div><div class="line">java   <span class="comment"># 主要的程序文件       java-rmi.cgi    jhat      jrunscript  native2ascii  schemagen    xjc</span></div></pre></td></tr></table></figure></p>
+<p>3.安装完成后，要配置JAVA_HOME环境变量，指向java的安装路径<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 没有配置环境变量前运行版本号</span></div><div class="line">[root@localhost latest]<span class="comment"># bin/java -version</span></div><div class="line">java version <span class="string">"1.8.0_25"</span></div><div class="line">Java(TM) SE Runtime Environment (build 1.8.0_25-b17)</div><div class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.25-b02, mixed mode)</div><div class="line"></div><div class="line">[root@localhost latest]<span class="comment"># vim /etc/profile.d/java.sh       # 配置环境变量</span></div><div class="line"><span class="built_in">export</span> JAVA_HOME=/usr/java/latest</div><div class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># . /etc/profile.d/java.sh              # 重读脚本文件</span></div><div class="line">[root@localhost ~]<span class="comment"># java -version                         # 直接运行java命令即可</span></div><div class="line">java version <span class="string">"1.8.0_25"</span></div><div class="line">Java(TM) SE Runtime Environment (build 1.8.0_25-b17)</div><div class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.25-b02, mixed mode)</div></pre></td></tr></table></figure></p>
+<h4 id="演示2：OpenJDK"><a href="#演示2：OpenJDK" class="headerlink" title="演示2：OpenJDK:"></a>演示2：OpenJDK:</h4><p>1.安装及查看程序看路径<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># yum install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 java-1.8.0-openjdk-headless.x86_64 -y</span></div><div class="line"><span class="comment"># 可使用 alternatives命令设定默认使用的版本</span></div><div class="line">[root@localhost ~]<span class="comment"># ll /etc/alternatives/java</span></div><div class="line">lrwxrwxrwx 1 root root 70 Oct 13 23:00 /etc/alternatives/java -&gt; /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64/jre/bin/java</div><div class="line"><span class="comment"># 列出程序指向的路径</span></div><div class="line">[root@localhost ~]<span class="comment"># alternatives --list</span></div><div class="line">libnssckbi.so.x86_64	auto	/usr/lib64/pkcs11/p11-kit-trust.so</div><div class="line">ld	auto	/usr/bin/ld.bfd</div><div class="line">mta	auto	/usr/sbin/sendmail.postfix</div><div class="line">java	auto	/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64/jre/bin/java</div><div class="line">jre_openjdk	auto	/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64/jre</div><div class="line">jre_1.8.0	auto	/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64/jre</div><div class="line">jre_1.8.0_openjdk	auto	/usr/lib/jvm/jre-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64</div><div class="line">javac	auto	/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64/bin/javac</div><div class="line">java_sdk_openjdk	auto	/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64</div><div class="line">java_sdk_1.8.0	auto	/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64</div><div class="line">java_sdk_1.8.0_openjdk	auto	/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64</div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># ls -l /bin/java</span></div><div class="line">lrwxrwxrwx 1 root root 22 Oct 13 23:00 /bin/java -&gt; /etc/alternatives/java        <span class="comment"># 始终指向的是真实路径</span></div><div class="line">[root@localhost ~]<span class="comment"># java -version         # 可以直接使用java命令</span></div><div class="line">openjdk version <span class="string">"1.8.0_65"</span></div><div class="line">OpenJDK Runtime Environment (build 1.8.0_65-b17)</div><div class="line">OpenJDK 64-Bit Server VM (build 25.65-b01, mixed mode)</div></pre></td></tr></table></figure></p>
+<p>2.声明JAVA_HOME，不需要声明环境变量，因为已经在bin环境下了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># vim /etc/profile.d/java.sh</span></div><div class="line"><span class="built_in">export</span> JAVA_HOME=/usr</div><div class="line">[root@localhost ~]<span class="comment"># . /etc/profile.d/java.sh</span></div></pre></td></tr></table></figure></p>
+<h3 id="Java-2-EE："><a href="#Java-2-EE：" class="headerlink" title="Java 2 EE："></a>Java 2 EE：</h3><p>★CGI：通用网关接口<br>&ensp;&ensp;&ensp;&ensp;a.任何一种编程语言，只要能够兼容CGI规范，都可以做为httpd的后端动态网站的执行引擎，无论是C，Java，php，Python，pear等都是通过这种方式来运行的；<br>&ensp;&ensp;&ensp;&ensp;b.httpd能够自己基于CGI的规范，向后端的应用程序的执行环境代码发起请求，代码在运行环境中执行运行之后把结果封装成响应报文响应给客户端。<br>★Servlet<br>&ensp;&ensp;&ensp;&ensp;a.Servlet（Server Applet），全称Java Servlet，是用Java编写的服务器端程序。其主要功能在于交互式地浏览和修改数据，生成动态Web内容。狭义的Servlet是指Java语言实现的一个接口，广义的Servlet是指任何实现了这个Servlet接口的类，一般情况下，人们将Servlet理解为后者。<br>&ensp;&ensp;&ensp;&ensp;b.Servlet运行于支持Java的应用服务器中。从原理上讲，Servlet可以响应任何类型的请求，但绝大多数情况下Servlet只用来扩展基于HTTP协议的Web服务器。servlet兼容CGI规范，能接受http请求；<br>&ensp;&ensp;&ensp;&ensp;c.服务器上需要一些程序，常常是根据用户输入访问数据库的程序。这些通常是使用公共网关接口（Common Gateway Interface，CGI）应用程序完成的。然而，在服务器上运行 Java，这种程序可使用 Java 编程语言实现。在通信量大的服务器上，JavaServlet 的优点在于它们的执行速度更快于 CGI 程序。各个用户请求被激活成单个程序中的一个线程，而无需创建单独的进程，这意味着服务器端处理请求的系统开销将明显降低。<br>★JSP: Java Server Page<br>&ensp;&ensp;&ensp;&ensp;a.JSP全名为Java Server Pages，中文名叫 java服务器页面，其根本是一个简化的Servlet设计，它是由Sun Microsystems公司倡导、许多公司参与一起建立的一种动态页面技术标准。JSP技术有点类似ASP技术，它是在传统的网页HTML（标准通用标记语言的子集）文件(<em>.htm,</em>.html)中插入Java程序段(Scriptlet)和JSP标记(tag)，从而形成JSP文件，后缀名为(*.jsp)。 用JSP开发的Web应用是跨平台的，既能在Linux下运行，也能在其他操作系统上运行。<br>&ensp;&ensp;&ensp;&ensp;b.它实现了Html语法中的java扩展（以 &lt;%, %&gt;形式）。JSP与Servlet一样，是在服务器端执行的。通常返回给客户端的就是一个HTML文本，因此客户端只要有浏览器就能浏览。<br>&ensp;&ensp;&ensp;&ensp;c.java Servlet是JSP的技术基础，而且大型的Web应用程序的开发需要Java Servlet和JSP配合才能完成。JSP具备了Java技术的简单易用，完全的面向对象，具有平台无关性且安全可靠，主要面向因特网的所有特点。<br>JSP执行过程:<br><img src="\images\tomcat\jsp.png" alt="java"><br><img src="\images\tomcat\jsp1.png" alt="java"><br>★Web Container（容器）：<br>&ensp;&ensp;&ensp;&ensp;Servlet container（Servlet+JDK）<br>&ensp;&ensp;&ensp;&ensp;JSP<br>☉Tomcat初现：<br>&ensp;&ensp;&ensp;&ensp;Java Web Server：JWS<br>&ensp;&ensp;&ensp;&ensp;ASF：JServ<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Tomcat 3.x<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Tomcat 4.x:Catalina（代码名称）<br>☉商业实现：<br>&ensp;&ensp;&ensp;&ensp;WebSphere, WebLogic, Oc4j, Glassfish, Geronimo, JOnAS, JBoss, …<br>☉开源实现：<br>&ensp;&ensp;&ensp;&ensp;Tomcat, Jetty, Resin, …<br>※Tomcat：<br>&ensp;&ensp;&ensp;&ensp;为Java 2 EE技术体系的不完整实现；（只是构建实现了servlet 和 jsp类库 ） </p>
+<h3 id="Tomcat："><a href="#Tomcat：" class="headerlink" title="Tomcat："></a>Tomcat：</h3><h4 id="1-简介-1"><a href="#1-简介-1" class="headerlink" title="1.简介"></a>1.简介</h4><p>★百度百科：<br>&ensp;&ensp;&ensp;&ensp;a.Tomcat是Apache 软件基金会（Apache Software Foundation）的Jakarta 项目中的一个核心项目，由Apache、Sun 和其他一些公司及个人共同开发而成。由于有了Sun 的参与和支持，最新的Servlet 和JSP 规范总是能在Tomcat 中得到体现，Tomcat 5支持最新的Servlet 2.4 和JSP 2.0 规范。因为Tomcat 技术先进、性能稳定，而且免费，因而深受Java 爱好者的喜爱并得到了部分软件开发商的认可，成为目前比较流行的Web 应用服务器。<br>&ensp;&ensp;&ensp;&ensp;b.Tomcat 服务器是一个免费的开放源代码的Web 应用服务器，属于轻量级应用服务器，在中小型系统和并发访问用户不是很多的场合下被普遍使用，是开发和调试JSP 程序的首选。对于一个初学者来说，可以这样认为，当在一台机器上配置好Apache 服务器，可利用它响应HTML（标准通用标记语言下的一个应用）页面的访问请求。实际上Tomcat 部分是Apache 服务器的扩展，但它是独立运行的，所以当你运行tomcat 时，它实际上作为一个与Apache 独立的进程单独运行的。<br>&ensp;&ensp;&ensp;&ensp;c.诀窍是，当配置正确时，Apache 为HTML页面服务，而Tomcat 实际上运行JSP 页面和Servlet。另外，Tomcat和IIS等Web服务器一样，具有处理HTML页面的功能，另外它还是一个Servlet和JSP容器，独立的Servlet容器是Tomcat的默认模式。不过，Tomcat处理静态HTML的能力不如Apache服务器。目前Tomcat最新版本为9.0。</p>
+<p>★Tomcat的执行过程及应用环境<br>&ensp;&ensp;&ensp;&ensp;a.Tomcat因为是由Java语言编写的，所以要想运行Tomcat首先要转备好一个JDK环境，然后在JDK之上再部署Tomcat（为JDK提供了Servlet和Jsp类库），除此之外Tomcat还自带了一个类库，可以使其监听在8080端口，所以Tomcat又是一个Web服务器。它同httpd一样可以解析http请求，并根据用户的请求加载文件之后响应给客户端；<br>&ensp;&ensp;&ensp;&ensp;b.如果请求的为一个静态文件，因为Tomcat是一个使用Java语言编写的web服务器，所以可以直接在磁盘上加载资源响应给客户端；如果为一个动态资源（JSP），则会加载资源到JDK环境中（Tomcat），先由jasper转换成Servlet，然后由Servlet提请运行在JVM虚拟机上，最后把运行的结果通过Web服务器响应给客户端请求；所以，Tomcat就是一个支持动静资源响应的完整的Web服务器。<br>&ensp;&ensp;&ensp;&ensp;c.当并发请求较低时，Tomcat可以直接响应；但如果当并发请求过大时，为了保证Tomcat的运行，可以在前端可以部署一个http请求的反代组件（如：HAproxy，nginx），实现动静分离。即所有的动态资源请求发给后端的多个Tomcat实例，所有的静态请求发给后端的httpd或者nginx服务器集群。但是Tomcat通常不直接面向前端（客户端）请求，而是在Tomcat前端再使用一个httpd反代，即前端的会话请求由http接受，而Tomcat只接受反代过来的请求（动），如果需要提供数据存储的话后端还需要MySQL，如此一来整个环境就是一个lnamt环境；<br>&ensp;&ensp;&ensp;&ensp;d.因为Tomcat是由Java语言编写的，同时，并没有依赖特权资源，所以，在运行Tomcat时最好不要用管理员的账户运行；Tomcat默认监听的端口为8080而非80端口，这也是为什么在Tomcat的前端要添加一个httpd反代的原因。即：为了程序执行安全，一般使用普通用户（Tomcat）来运行Tomcat，这样一来，Tomcat就无法监听在80端口之上了，要想基于80端口接受前端的调度请求或者客户端请求，就要使用一个httpd的反代组件。</p>
+<h4 id="2-Tomcat的核心组件"><a href="#2-Tomcat的核心组件" class="headerlink" title="2.Tomcat的核心组件"></a>2.Tomcat的核心组件</h4><p>★Tomcat的核心组件：server.xml<br><img src="\images\tomcat\tomcat.png" alt="tomcat"><br>★每一个组件都由一个Java“类”实现，这些组件大体可分为以下几个类型：<br>&ensp;&ensp;&ensp;&ensp;顶级组件：  Server<br>&ensp;&ensp;&ensp;&ensp;服务类组件：Service<br>&ensp;&ensp;&ensp;&ensp;连接器组件：http, https, ajp<br>&ensp;&ensp;&ensp;&ensp;容器类：    Engine, Host, Context<br>&ensp;&ensp;&ensp;&ensp;被嵌套类：  valve, logger, realm, loader, manager, …<br>&ensp;&ensp;&ensp;&ensp;集群类组件：listener, cluster, …<br>☉Server<br>&ensp;&ensp;&ensp;&ensp;代表整个servlet 容器<br>☉Service<br>&ensp;&ensp;&ensp;&ensp;它由一个或者多个Connector组成，以及一个Engine，负责处理所有Connector所获得的客户请求。<br>☉Connector<br>&ensp;&ensp;&ensp;&ensp;一个Connector将在某个指定的端口上监听客户请求，并且将获得的请求交给Engine来处理，从Engine获得获得回应并且返回给客户。Tomcat有一个典型的Connector，一个直接监听来自browser的http请求，一个监听来自其他WebServer的请求。比如8080端口和8009端口就是做这两个事。<br>☉Engin<br>&ensp;&ensp;&ensp;&ensp;Engine下可以配置多个虚拟主机Virtual Host，每个虚拟主机都有一个域名，当Engine获得一个请求时，它把该请求匹配到某个Host上，然后把该请求交给该Host来处理，Engine有一个默认虚拟主机，当请求无法匹配到任何一个Host上的时候，将交给该Host来处理。<br>☉Host<br>&ensp;&ensp;&ensp;&ensp;代表一个虚拟主机，每个虚拟主机和某个网络域名Domain Name相匹配，每个虚拟主机下可以部署一个或者多个WebApp，每个WebApp对应一个Context，每个Context都有一个Context Path，当Host获得一个请求时，将把该请求匹配到某个Context上，然后把该请求交给该Context来处理。<br>☉Context<br>&ensp;&ensp;&ensp;&ensp;一个Context 对应于一个Web Application，一个Web Application 由一个或者多个Servlet组成，Context在创建的时候将根据配置文件 $CATALINA_HOME/conf/web.xml和$WEBAPP_HOME/WEB-INF/web.xml载入Servlet类。<br>附图：<br><img src="\images\tomcat\tomcat1.gif" alt="tomcat"></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">tomcat</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/09/29/web services之tomcat/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/09/28/LinuxCluster之corosync高可用集群的实现/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          CentOS7 corosync高可用集群的实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/29/web services之Tomcat的安装、部署和常用组件/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Tomcat的安装、部署和常用组件</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

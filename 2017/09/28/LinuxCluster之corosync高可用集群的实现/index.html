@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>CentOS7 corosync高可用集群的实现 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="crm命令详解★configure命令：☉定义资源属性相关的命令&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;property       全局属性&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;rsc_defaults   资源的默认元数据属性&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;op_defaults    操作的默认属性☉资源相关的命令&amp;ensp;&amp;ensp;&amp;ensp;&amp;ens">
+<meta name="keywords" content="Cluster">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS7 corosync高可用集群的实现">
+<meta property="og:url" content="http://yoursite.com/2017/09/28/LinuxCluster之corosync高可用集群的实现/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="crm命令详解★configure命令：☉定义资源属性相关的命令&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;property       全局属性&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;rsc_defaults   资源的默认元数据属性&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;op_defaults    操作的默认属性☉资源相关的命令&amp;ensp;&amp;ensp;&amp;ensp;&amp;ens">
+<meta property="og:image" content="http://yoursite.com/images/corosync/property.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/ra.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/classes.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/约束.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/web1.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/web2.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/web3.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/nfs.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/web4.png">
+<meta property="og:image" content="http://yoursite.com/images/corosync/web5.png">
+<meta property="og:updated_time" content="2017-10-13T14:00:34.269Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS7 corosync高可用集群的实现">
+<meta name="twitter:description" content="crm命令详解★configure命令：☉定义资源属性相关的命令&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;property       全局属性&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;rsc_defaults   资源的默认元数据属性&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;op_defaults    操作的默认属性☉资源相关的命令&amp;ensp;&amp;ensp;&amp;ensp;&amp;ens">
+<meta name="twitter:image" content="http://yoursite.com/images/corosync/property.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-LinuxCluster之corosync高可用集群的实现" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CentOS7 corosync高可用集群的实现
+    </h1>
+  
+
+        
+        <a href="/2017/09/28/LinuxCluster之corosync高可用集群的实现/" class="archive-article-date">
+  	<time datetime="2017-09-28T13:50:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="crm命令详解"><a href="#crm命令详解" class="headerlink" title="crm命令详解"></a>crm命令详解</h4><p>★configure命令：<br>☉定义资源属性相关的命令<br>&ensp;&ensp;&ensp;&ensp;property       全局属性<br>&ensp;&ensp;&ensp;&ensp;rsc_defaults   资源的默认元数据属性<br>&ensp;&ensp;&ensp;&ensp;op_defaults    操作的默认属性<br>☉资源相关的命令<br>&ensp;&ensp;&ensp;&ensp;primitive      定义一个资源<br>&ensp;&ensp;&ensp;&ensp;monitor        资源监控<br>&ensp;&ensp;&ensp;&ensp;group          定义组资源<br>&ensp;&ensp;&ensp;&ensp;clone<br>&ensp;&ensp;&ensp;&ensp;ms/master (master-slave)<br>☉有三种类型的约束：<br>&ensp;&ensp;&ensp;&ensp;location   位置约束<br>&ensp;&ensp;&ensp;&ensp;colocation 排列约束<br>&ensp;&ensp;&ensp;&ensp;order   顺序约束<br>☉设置集群的全局属性：property<br><img src="\images\corosync\property.png" alt="corosync"><br>☉定义一个primitive资源的方法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">primitive &lt;rsc&gt; &#123;[&lt;class&gt;:[&lt;provider&gt;:]]&lt;<span class="built_in">type</span>&gt;&#125; [params attr_list] [op op_type [&lt;attribute&gt;=&lt;value&gt;...] ...]</div><div class="line">op_type :: start | stop | monitor</div><div class="line">    start和stop需指明超时时间，monitor需指明时间间隔</div></pre></td></tr></table></figure></p>
+<p>☉定义一个组资源的方法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">group &lt;name&gt; &lt;rsc&gt; [&lt;rsc&gt;...]</div><div class="line">&lt;rsc&gt;：资源的ID，字符串；</div><div class="line">[&lt;class&gt;:[&lt;provider&gt;:]]&lt;<span class="built_in">type</span>&gt;</div></pre></td></tr></table></figure></p>
+<p>☉定义资源监控：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">方法一：</div><div class="line">monitor &lt;rsc&gt;[:&lt;role&gt;] &lt;interval&gt;[:&lt;timeout&gt;]</div><div class="line">方法二：</div><div class="line">primitive &lt;rsc&gt; &#123;[&lt;class&gt;:[&lt;provider&gt;:]]&lt;<span class="built_in">type</span>&gt;&#125; [params attr_list] [op monitor interval=<span class="comment"># timeout=#]</span></div></pre></td></tr></table></figure></p>
+<p>★ra:资源代理<br>☉Commands:<br><img src="\images\corosync\ra.png" alt="corosync"><br>☉常用命令：<br>classes：类别列表<br><img src="\images\corosync\classes.png" alt="corosync"><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">list CLASSES [PROVIDER]：列出指定类型(及提供者)之下的所有可用RA；</div><div class="line">info [&lt;class&gt;:[&lt;provider&gt;]:]]&lt;<span class="built_in">type</span>&gt;：显示指定的RA的详细文档；</div></pre></td></tr></table></figure></p>
+<p>★node 节点管理常用命令<br>&ensp;&ensp;&ensp;&ensp;standby：Put node into standby 设置节点为待机状态<br>&ensp;&ensp;&ensp;&ensp;online：Set node online 设置节点为在线<br>&ensp;&ensp;&ensp;&ensp;delete：Delete node<br>★resourse 资源管理常用命令<br>&ensp;&ensp;&ensp;&ensp;cleanup ：Cleanup resource status  清除资源状况<br>&ensp;&ensp;&ensp;&ensp;migrate ：Migrate a resource to another node 把资源迁往另一个节点<br>&ensp;&ensp;&ensp;&ensp;start   ：Start a resource<br>&ensp;&ensp;&ensp;&ensp;status  ：Show status of resources<br>&ensp;&ensp;&ensp;&ensp;stop    ：Stop a resource<br>★资源约束关系的定义<br><img src="\images\corosync\约束.png" alt="corosync"></p>
+<h3 id="实验：CentOS-7高可用Web集群服务"><a href="#实验：CentOS-7高可用Web集群服务" class="headerlink" title="实验：CentOS 7高可用Web集群服务"></a>实验：CentOS 7高可用Web集群服务</h3><h4 id="实验环境描述："><a href="#实验环境描述：" class="headerlink" title="实验环境描述："></a>实验环境描述：</h4><p>两台CentOS 7.2 X86_64 的虚拟主机，模拟两节点集群；<br>ip部署：node1:172.16.3.142 ；node2：172.16.3.143 ；资源ip：172.16.3.146<br>安装前配置<br>1）主机名解析（/etc/hosts），解析的结果必须要和本地使用的主机名保持一致<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># uname -n</span></div><div class="line">node1.jack.com</div><div class="line">[root@node1 ~]<span class="comment"># cat /etc/hosts</span></div><div class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</div><div class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</div><div class="line">172.16.3.142 node1.jack.com node1</div><div class="line">172.16.3.143 node2.jack.com node2</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@node2 ~]<span class="comment"># uname -n</span></div><div class="line">node2.jack.com</div><div class="line">[root@node2 ~]<span class="comment"># cat /etc/hosts</span></div><div class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</div><div class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</div><div class="line">172.16.3.142 node1.jack.com node1</div><div class="line">172.16.3.143 node2.jack.com node2</div></pre></td></tr></table></figure>
+<p>2）时间同步：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># date;ssh node2 'date'</span></div><div class="line">Mon Oct  9 21:10:58 CST 2017</div><div class="line">Mon Oct  9 21:10:57 CST 2017</div><div class="line">[root@node1 ~]<span class="comment"># date;ssh node2 'date'</span></div><div class="line">Mon Oct  9 21:11:10 CST 2017</div><div class="line">Mon Oct  9 21:11:10 CST 2017</div></pre></td></tr></table></figure></p>
+<h4 id="corosync安装配置过程如下："><a href="#corosync安装配置过程如下：" class="headerlink" title="corosync安装配置过程如下："></a>corosync安装配置过程如下：</h4><p>1.各节点安装相关的程序包，corosync/pacemaker<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># yum info pacemaker</span></div><div class="line">Loaded plugins: fastestmirror</div><div class="line">Loading mirror speeds from cached hostfile</div><div class="line">Available Packages</div><div class="line">Name        : pacemaker</div><div class="line">Arch        : x86_64</div><div class="line">Version     : 1.1.13</div><div class="line">Release     : 10.el7</div><div class="line">Size        : 462 k</div><div class="line">Repo        : Centos7</div><div class="line">Summary     : Scalable High-Availability cluster resource manager</div><div class="line">URL         : http://www.clusterlabs.org</div><div class="line">License     : GPLv2+ and LGPLv2+</div><div class="line">Description : Pacemaker is an advanced, scalable High-Availability cluster resource</div><div class="line">            : manager <span class="keyword">for</span> Corosync, CMAN and/or Linux-HA.</div><div class="line">            : </div><div class="line">            : It supports more than 16 node clusters with significant capabilities</div><div class="line">            : <span class="keyword">for</span> managing resources and dependencies.</div><div class="line">            : </div><div class="line">            : It will run scripts at initialization, when machines go up or down,</div><div class="line">            : when related resources fail and can be configured to periodically check</div><div class="line">            : resource health.</div><div class="line">            : </div><div class="line">            : Available rpmbuild rebuild options:</div><div class="line">            :   --with(out) : cman stonithd doc coverage profiling pre_release upstart_job</div><div class="line"><span class="comment"># 只需安装pacemaker即可，因为会把依赖的corosync程序包一并安装上</span></div><div class="line">[root@node1 ~]<span class="comment"># yum install pacemaker -y</span></div><div class="line">......................</div><div class="line">Installing:</div><div class="line"> pacemaker                     x86_64        1.1.13-10.el7            Centos7        462 k</div><div class="line"></div><div class="line"><span class="comment"># 依赖的程序包如下</span></div><div class="line">Installing <span class="keyword">for</span> dependencies:</div><div class="line"> bc                            x86_64        1.06.95-13.el7           Centos7        115 k</div><div class="line"> corosync                      x86_64        2.3.4-7.el7              Centos7        210 k</div><div class="line"> corosynclib                   x86_64        2.3.4-7.el7              Centos7        124 k</div><div class="line"> libqb                         x86_64        0.17.1-2.el7             Centos7         91 k</div><div class="line"> libtool-ltdl                  x86_64        2.4.2-20.el7             Centos7         49 k</div><div class="line"> libxslt                       x86_64        1.1.28-5.el7             Centos7        242 k</div><div class="line"> net-snmp-libs                 x86_64        1:5.7.2-24.el7           Centos7        747 k</div><div class="line"> pacemaker-cli                 x86_64        1.1.13-10.el7            Centos7        253 k</div><div class="line"> pacemaker-cluster-libs        x86_64        1.1.13-10.el7            Centos7         92 k</div><div class="line"> pacemaker-libs                x86_64        1.1.13-10.el7            Centos7        519 k</div><div class="line"> perl-TimeDate                 noarch        1:2.30-2.el7             Centos7         52 k</div><div class="line"> psmisc                        x86_64        22.20-9.el7              Centos7        140 k</div><div class="line"> resource-agents               x86_64        3.9.5-54.el7             Centos7        339 k</div></pre></td></tr></table></figure></p>
+<p>2.编辑corosync配置文件/etc/corosync/corosync.conf<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># cd /etc/corosync/</span></div><div class="line">[root@node1 corosync]<span class="comment"># ls</span></div><div class="line">corosync.conf.example  corosync.conf.example.udpu  corosync.xml.example  uidgid.d</div><div class="line">[root@node1 corosync]<span class="comment"># cp corosync.conf.example corosync.conf</span></div><div class="line">[root@node1 corosync]<span class="comment"># vim corosync.conf</span></div><div class="line">totem &#123;</div><div class="line">        version: 2</div><div class="line">        crypto_cipher: none</div><div class="line">        crypto_hash: none</div><div class="line">        interface &#123;                               <span class="comment">#如果有多块网卡可以配置多个interface</span></div><div class="line">                ringnumber: 0                     <span class="comment">#第一个必须为0</span></div><div class="line">                bindnetaddr: 172.16.3.142         <span class="comment">#绑定的ip地址</span></div><div class="line">                mcastaddr: 239.255.100.1          <span class="comment">#多播地址，必要使用默认的239</span></div><div class="line">                mcastport: 5405                   <span class="comment">#默认值即可</span></div><div class="line">                ttl: 1                            <span class="comment">#必须为1</span></div><div class="line">        &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">logging &#123;</div><div class="line">        fileline: off</div><div class="line">        to_stderr: no                              <span class="comment">#要不要发给错误输出</span></div><div class="line">        to_logfile: yes                            <span class="comment">#要不要发给日志文件</span></div><div class="line">        logfile: /var/<span class="built_in">log</span>/cluster/corosync.log     <span class="comment">#指明日志文件</span></div><div class="line">        to_syslog: no</div><div class="line">        debug: off                                 <span class="comment">#是否记录debug级别的信息，通常在调试的时候启用</span></div><div class="line">        timestamp: on                              <span class="comment">#是否开启时间戳</span></div><div class="line">        logger_subsys &#123;</div><div class="line">                subsys: QUORUM                     <span class="comment">#要不要记录子系统quorum的日志信息</span></div><div class="line">                debug: off</div><div class="line">        &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">quorum &#123;</div><div class="line">        provider: corosync_votequorum              <span class="comment">#指明使用哪一种算法来完成投票选举</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">nodelist &#123;                                         <span class="comment">#节点列表</span></div><div class="line">        node &#123;</div><div class="line">           ring0_addr: node1.jack.com</div><div class="line">           nodeid: 1</div><div class="line">        &#125;</div><div class="line">        node &#123;</div><div class="line">           ring0_addr: node2.jack.com</div><div class="line">           nodeid: 2</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>3.生成生成authkey：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">[root@node1 corosync]<span class="comment"># corosync-keygen </span></div><div class="line">Corosync Cluster Engine Authentication key generator.</div><div class="line">Gathering 1024 bits <span class="keyword">for</span> key from /dev/random.</div><div class="line">Press keys on your keyboard to generate entropy.</div><div class="line">Press keys on your keyboard to generate entropy (bits = 120).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 168).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 216).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 264).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 312).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 360).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 408).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 456).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 504).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 552).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 600).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 648).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 696).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 744).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 792).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 840).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 888).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 936).</div><div class="line">Press keys on your keyboard to generate entropy (bits = 984).</div><div class="line">Writing corosync key to /etc/corosync/authkey.</div><div class="line"></div><div class="line">[root@node1 corosync]<span class="comment"># ll</span></div><div class="line">total 20</div><div class="line">-r-------- 1 root root  128 Oct  9 21:41 authkey</div><div class="line">-rw-r--r-- 1 root root  586 Oct  9 21:35 corosync.conf</div><div class="line">-rw-r--r-- 1 root root 2881 Nov 21  2015 corosync.conf.example</div><div class="line">-rw-r--r-- 1 root root  767 Nov 21  2015 corosync.conf.example.udpu</div><div class="line">-rw-r--r-- 1 root root 3278 Nov 21  2015 corosync.xml.example</div><div class="line">drwxr-xr-x 2 root root    6 Nov 21  2015 uidgid.d</div></pre></td></tr></table></figure></p>
+<p>4.将node1的配置文件和认证authkey文件远程复制给节点node2主机一份：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">[root@node1 corosync]<span class="comment"># scp -p corosync.conf authkey node2:/etc/corosync/</span></div><div class="line">corosync.conf                                            100%  586     0.6KB/s   00:00    </div><div class="line">authkey</div><div class="line"></div><div class="line">[root@node2 corosync]<span class="comment"># ll</span></div><div class="line">total 20</div><div class="line">-r-------- 1 root root  128 Oct  9 21:41 authkey</div><div class="line">-rw-r--r-- 1 root root  586 Oct  9 21:35 corosync.conf</div><div class="line">-rw-r--r-- 1 root root 2881 Nov 21  2015 corosync.conf.example</div><div class="line">-rw-r--r-- 1 root root  767 Nov 21  2015 corosync.conf.example.udpu</div><div class="line">-rw-r--r-- 1 root root 3278 Nov 21  2015 corosync.xml.example</div><div class="line">drwxr-xr-x 2 root root    6 Nov 21  2015 uidgid.d</div><div class="line"></div><div class="line">[root@node2 corosync]<span class="comment"># vim corosync.conf</span></div><div class="line">totem &#123;</div><div class="line">        version: 2</div><div class="line">        crypto_cipher: none</div><div class="line">        crypto_hash: none</div><div class="line">        interface &#123;                               <span class="comment">#如果有多块网卡可以配置多个interface</span></div><div class="line">                ringnumber: 0                     <span class="comment">#第一个必须为0</span></div><div class="line">                bindnetaddr: 172.16.3.143         <span class="comment">#绑定的ip地址</span></div><div class="line">                mcastaddr: 239.255.100.1          <span class="comment">#多播地址，必要使用默认的239</span></div><div class="line">                mcastport: 5405                   <span class="comment">#默认值即可</span></div><div class="line">                ttl: 1                            <span class="comment">#必须为1</span></div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>5.启动node1和node2两节点的corosync服务，查看监听的端口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@node1 corosync]<span class="comment"># systemctl start corosync.service</span></div><div class="line">[root@node1 corosync]<span class="comment"># ss -unl</span></div><div class="line">State       Recv-Q Send-Q Local Address:Port               Peer Address:Port              </div><div class="line">UNCONN      0      0                 *:50373                         *:*                  </div><div class="line">UNCONN      0      0      172.16.3.142:5404                          *:*                  </div><div class="line">UNCONN      0      0      172.16.3.142:5405                          *:*                  </div><div class="line">UNCONN      0      0      239.255.100.1:5405                          *:*                  </div><div class="line">UNCONN      0      0                 *:68                            *:*                  </div><div class="line">UNCONN      0      0                :::16057                        :::*</div></pre></td></tr></table></figure></p>
+<p>查看node1 corosync的日志文件，正常启动，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@node1 corosync]<span class="comment"># cat /var/log/cluster/corosync.log </span></div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [MAIN  ] Corosync Cluster Engine (<span class="string">'2.3.4'</span>): started and ready to provide service.</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync info    [MAIN  ] Corosync built-in features: dbus systemd xmlconf snmp pie relro bindnow</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [TOTEM ] Initializing transport (UDP/IP Multicast).</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [TOTEM ] Initializing transmit/receive security (NSS) crypto: none <span class="built_in">hash</span>: none</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [TOTEM ] The network interface [172.16.3.142] is now up.</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [SERV  ] Service engine loaded: corosync configuration map access [0]</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync info    [QB    ] server name: cmap</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [SERV  ] Service engine loaded: corosync configuration service [1]</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync info    [QB    ] server name: cfg</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [SERV  ] Service engine loaded: corosync cluster closed process group service v1.01 [2]</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync info    [QB    ] server name: cpg</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [SERV  ] Service engine loaded: corosync profile loading service [4]</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [QUORUM] Using quorum provider corosync_votequorum</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [SERV  ] Service engine loaded: corosync vote quorum service v1.0 [5]</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync info    [QB    ] server name: votequorum</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [SERV  ] Service engine loaded: corosync cluster quorum service v0.1 [3]</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync info    [QB    ] server name: quorum</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [TOTEM ] A new membership (172.16.3.142:4) was formed. Members joined: 1</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [QUORUM] Members[1]: 1</div><div class="line">Oct 09 21:45:59 [15694] node1.jack.com corosync notice  [MAIN  ] Completed service synchronization, ready to provide service.</div></pre></td></tr></table></figure></p>
+<p>查看node2 corosync的日志文件，正常启动，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">[root@node2 corosync]<span class="comment"># cat /var/log/cluster/corosync.log </span></div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [MAIN  ] Corosync Cluster Engine (<span class="string">'2.3.4'</span>): started and ready to provide service.</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync info    [MAIN  ] Corosync built-in features: dbus systemd xmlconf snmp pie relro bindnow</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [TOTEM ] Initializing transport (UDP/IP Multicast).</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [TOTEM ] Initializing transmit/receive security (NSS) crypto: none <span class="built_in">hash</span>: none</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [TOTEM ] The network interface [172.16.3.143] is now up.</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [SERV  ] Service engine loaded: corosync configuration map access [0]</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync info    [QB    ] server name: cmap</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [SERV  ] Service engine loaded: corosync configuration service [1]</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync info    [QB    ] server name: cfg</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [SERV  ] Service engine loaded: corosync cluster closed process group service v1.01 [2]</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync info    [QB    ] server name: cpg</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [SERV  ] Service engine loaded: corosync profile loading service [4]</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [QUORUM] Using quorum provider corosync_votequorum</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [SERV  ] Service engine loaded: corosync vote quorum service v1.0 [5]</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync info    [QB    ] server name: votequorum</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [SERV  ] Service engine loaded: corosync cluster quorum service v0.1 [3]</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync info    [QB    ] server name: quorum</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [TOTEM ] A new membership (172.16.3.143:4) was formed. Members joined: 2</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [QUORUM] Members[1]: 2</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [MAIN  ] Completed service synchronization, ready to provide service.</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync warning [TOTEM ] JOIN or LEAVE message was thrown away during flush operation.</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [TOTEM ] A new membership (172.16.3.142:8) was formed. Members joined: 1</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [QUORUM] This node is within the primary component and will provide service.</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [QUORUM] Members[2]: 1 2</div><div class="line">Oct 09 21:49:59 [15414] node2.jack.com corosync notice  [MAIN  ] Completed service synchronization, ready to provide service.</div></pre></td></tr></table></figure></p>
+<p>6.检测集群工作是否正常<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># corosync-cfgtool -s</span></div><div class="line">Printing ring status.</div><div class="line">Local node ID 1</div><div class="line">RING ID 0</div><div class="line">	id	= 172.16.3.142</div><div class="line">	status	= ring 0 active with no faults</div><div class="line"></div><div class="line">[root@node2 ~]<span class="comment"># corosync-cfgtool -s</span></div><div class="line">Printing ring status.</div><div class="line">Local node ID 2</div><div class="line">RING ID 0</div><div class="line">	id	= 172.16.3.143</div><div class="line">	status	= ring 0 active with no faults</div><div class="line"></div><div class="line">[root@node1 ~]<span class="comment"># corosync-cmapctl |grep member</span></div><div class="line">runtime.totem.pg.mrp.srp.members.1.config_version (u64) = 0</div><div class="line">runtime.totem.pg.mrp.srp.members.1.ip (str) = r(0) ip(172.16.3.142) </div><div class="line">runtime.totem.pg.mrp.srp.members.1.join_count (u32) = 1</div><div class="line">runtime.totem.pg.mrp.srp.members.1.status (str) = joined</div><div class="line">runtime.totem.pg.mrp.srp.members.2.config_version (u64) = 0</div><div class="line">runtime.totem.pg.mrp.srp.members.2.ip (str) = r(0) ip(172.16.3.143) </div><div class="line">runtime.totem.pg.mrp.srp.members.2.join_count (u32) = 1</div><div class="line">runtime.totem.pg.mrp.srp.members.2.status (str) = joined</div></pre></td></tr></table></figure></p>
+<p>如上，就是corosync集群的配置过程，接下来我们启用pacemaker</p>
+<h4 id="pacemaker资源定义操作如下："><a href="#pacemaker资源定义操作如下：" class="headerlink" title="pacemaker资源定义操作如下："></a>pacemaker资源定义操作如下：</h4><p>1.在两个节点分别启动pacemaker，查看其状态<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># systemctl start pacemaker.service</span></div><div class="line">[root@node1 ~]<span class="comment"># systemctl status pacemaker.service</span></div><div class="line">● pacemaker.service - Pacemaker High Availability Cluster Manager</div><div class="line">   Loaded: loaded (/usr/lib/systemd/system/pacemaker.service; disabled; vendor preset: disabled)</div><div class="line">   Active: active (running) since Mon 2017-10-09 21:56:00 CST; 14s ago</div><div class="line"> Main PID: 15752 (pacemakerd)</div><div class="line">   CGroup: /system.slice/pacemaker.service</div><div class="line">           ├─15752 /usr/sbin/pacemakerd <span class="_">-f</span></div><div class="line">           ├─15754 /usr/libexec/pacemaker/cib</div><div class="line">           ├─15755 /usr/libexec/pacemaker/stonithd</div><div class="line">           ├─15756 /usr/libexec/pacemaker/lrmd</div><div class="line">           ├─15757 /usr/libexec/pacemaker/attrd</div><div class="line">           ├─15758 /usr/libexec/pacemaker/pengine</div><div class="line">           └─15759 /usr/libexec/pacemaker/crmd</div><div class="line"></div><div class="line">[root@node2 ~]<span class="comment"># systemctl start pacemaker.service</span></div><div class="line">[root@node2 ~]<span class="comment"># systemctl status pacemaker.service</span></div><div class="line">● pacemaker.service - Pacemaker High Availability Cluster Manager</div><div class="line">   Loaded: loaded (/usr/lib/systemd/system/pacemaker.service; disabled; vendor preset: disabled)</div><div class="line">   Active: active (running) since Mon 2017-10-09 21:57:00 CST; 6s ago</div><div class="line"> Main PID: 15459 (pacemakerd)</div><div class="line">   CGroup: /system.slice/pacemaker.service</div><div class="line">           ├─15459 /usr/sbin/pacemakerd <span class="_">-f</span></div><div class="line">           ├─15460 /usr/libexec/pacemaker/cib</div><div class="line">           ├─15461 /usr/libexec/pacemaker/stonithd</div><div class="line">           ├─15462 /usr/libexec/pacemaker/lrmd</div><div class="line">           ├─15463 /usr/libexec/pacemaker/attrd</div><div class="line">           ├─15464 /usr/libexec/pacemaker/pengine</div><div class="line">           └─15465 /usr/libexec/pacemaker/crmd</div></pre></td></tr></table></figure></p>
+<p>2.使用crm_mon命令监控查看服务是否正常，可以看到当前DC为node1，正常；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm_mon</span></div><div class="line"></div><div class="line">Last updated: Mon Oct  9 21:58:03 2017          Last change: Mon Oct  9 21:56:23 2017 by ha</div><div class="line">cluster	via crmd on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 0 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div></pre></td></tr></table></figure></p>
+<p>3.配置crmsh接口<br>1)下载crmsh以及依赖的rpm包，然后安装<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 这是我下载的crmsh的rpm包，以及依赖到的程序文件</span></div><div class="line">[root@node1 crmsh]<span class="comment"># ll</span></div><div class="line">total 668</div><div class="line">-rw-r--r-- 1 root root 608836 Mar 20  2017 crmsh-2.1.4-1.1.x86_64.rpm</div><div class="line">-rw-r--r-- 1 root root  27080 Mar 20  2017 pssh-2.3.1-4.2.x86_64.rpm</div><div class="line">-rw-r--r-- 1 root root  42980 Mar 20  2017 python-pssh-2.3.1-4.2.x86_64.rpm</div><div class="line"></div><div class="line"><span class="comment"># 配置好yum仓库，直接在本地安装程序包即可</span></div><div class="line">[root@node1 crmsh]<span class="comment"># yum install -y ./*</span></div></pre></td></tr></table></figure></p>
+<p>2）运行crm命令，进入交互命令方式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># status          # 查看状态信息，和crm_mod输出的信息相同</span></div><div class="line">Last updated: Mon Oct  9 22:08:50 2017		Last change: Mon Oct  9 21:56:23 2017 by hacluster via crmd on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 0 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line">crm(live)<span class="comment"># configure       # 查看相关的配置</span></div><div class="line">crm(live)configure<span class="comment"># show</span></div><div class="line">node 1: node1.jack.com</div><div class="line">node 2: node2.jack.com</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync</div><div class="line">crm(live)configure<span class="comment"># verify          # 验证配置是否有错误，这里提示没有SIONITH设备</span></div><div class="line">ERROR: error: unpack_resources:	Resource start-up disabled since no STONITH resources have been defined</div><div class="line">   error: unpack_resources:	Either configure some or <span class="built_in">disable</span> STONITH with the stonith-enabled option</div><div class="line">   error: unpack_resources:	NOTE: Clusters with shared data need STONITH to ensure data integrity</div><div class="line">Errors found during check: config not valid</div></pre></td></tr></table></figure></p>
+<p>3）在configure中关闭stonith<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># help</span></div><div class="line">crm(live)configure<span class="comment"># property        # Tab键可补全</span></div><div class="line">batch-limit=                   node-health-yellow= </div><div class="line">cluster-delay=                 notification-agent= </div><div class="line">cluster-recheck-interval=      notification-recipient= </div><div class="line">crmd-transition-delay=         pe-error-series-max= </div><div class="line">dc-deadtime=                   pe-input-series-max= </div><div class="line">default-action-timeout=        pe-warn-series-max= </div><div class="line">default-resource-stickiness=   placement-strategy= </div><div class="line">election-timeout=              remove-after-stop= </div><div class="line"><span class="built_in">enable</span>-acl=                    shutdown-escalation= </div><div class="line"><span class="built_in">enable</span>-startup-probes=         start-failure-is-fatal= </div><div class="line">have-watchdog=                 startup-fencing= </div><div class="line">is-managed-default=            stonith-action= </div><div class="line">load-threshold=                stonith-enabled= </div><div class="line">maintenance-mode=              stonith-timeout= </div><div class="line">migration-limit=               stonith-watchdog-timeout= </div><div class="line">no-quorum-policy=              stop-all-resources= </div><div class="line">node-action-limit=             stop-orphan-actions= </div><div class="line">node-health-green=             stop-orphan-resources= </div><div class="line">node-health-red=               symmetric-cluster= </div><div class="line">node-health-strategy=   </div><div class="line"></div><div class="line">crm(live)configure<span class="comment"># property stonith-enabled=false         # 设置stonith为false</span></div><div class="line">crm(live)configure<span class="comment"># show             # 再次查看发现多了一行 stonith-enabled=false</span></div><div class="line">node 1: node1.jack.com</div><div class="line">node 2: node2.jack.com</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync \</div><div class="line">	stonith-enabled=<span class="literal">false</span></div><div class="line">crm(live)configure<span class="comment"># verify          # 校验没有报错</span></div><div class="line">crm(live)configure<span class="comment"># commit          # 确定没问题，提交</span></div></pre></td></tr></table></figure></p>
+<p>4.在configure中使用primitive定义一个webip的资源<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:20:47 2017		Last change: Mon Oct  9 22:14:35 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 0 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># primitive webip ocf:heartbeat:IPaddr params ip="172.16.3.146" nic="eno16777736" cidr_netmask="24" broadcast="172.16.3.255"</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># show</span></div><div class="line">node 1: node1.jack.com</div><div class="line">node 2: node2.jack.com</div><div class="line">primitive webip IPaddr \</div><div class="line">	params ip=172.16.3.146 nic=eno16777736 cidr_netmask=24 broadcast=172.16.3.255</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync \</div><div class="line">	stonith-enabled=<span class="literal">false</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div></pre></td></tr></table></figure></p>
+<p>查看当前webip资源所在的节点，可以发现在节点node1上<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">crm(live)configure<span class="comment"># cd</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:25:05 2017		Last change: Tue Oct 10 20:24:14 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 1 resource configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div><div class="line">crm(live)<span class="comment"># exit</span></div><div class="line"><span class="built_in">bye</span></div><div class="line">[root@node1 ~]<span class="comment"># ip a l</span></div><div class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN </div><div class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</div><div class="line">    inet 127.0.0.1/8 scope host lo</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 ::1/128 scope host </div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">2: eno16777736: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</div><div class="line">    link/ether 00:0c:29:89:8d:d1 brd ff:ff:ff:ff:ff:ff</div><div class="line">    inet 172.16.3.142/24 brd 172.16.3.255 scope global dynamic eno16777736</div><div class="line">       valid_lft 1714sec preferred_lft 1714sec</div><div class="line">    inet 172.16.3.146/24 brd 172.16.3.255 scope global secondary eno16777736</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 fe80::20c:29ff:fe89:8dd1/64 scope link </div><div class="line">       valid_lft forever preferred_lft forever</div></pre></td></tr></table></figure></p>
+<p>5.设置node1处于standby待机状态，发现资源webip转移到了节点node2上，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># node standby</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:26:54 2017		Last change: Tue Oct 10 20:26:52 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 1 resource configured</div><div class="line"></div><div class="line">Node node1.jack.com: standby</div><div class="line">Online: [ node2.jack.com ]</div><div class="line"></div><div class="line"> webip	(ocf::heartbeat:IPaddr):	Started node2.jack.com</div><div class="line">crm(live)<span class="comment"># </span></div><div class="line"></div><div class="line">[root@node2 ~]<span class="comment"># ip a l</span></div><div class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN </div><div class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</div><div class="line">    inet 127.0.0.1/8 scope host lo</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 ::1/128 scope host </div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">2: eno16777736: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</div><div class="line">    link/ether 00:0c:29:29:d4:8d brd ff:ff:ff:ff:ff:ff</div><div class="line">    inet 172.16.3.143/24 brd 172.16.3.255 scope global dynamic eno16777736</div><div class="line">       valid_lft 1691sec preferred_lft 1691sec</div><div class="line">    inet 172.16.3.146/24 brd 172.16.3.255 scope global secondary eno16777736</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 fe80::20c:29ff:fe29:d48d/64 scope link </div><div class="line">       valid_lft forever preferred_lft forever</div></pre></td></tr></table></figure></p>
+<p>6.现在在node1和node2两台主机上启动httpd服务，并提供测试页面，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># echo "&lt;h1&gt;Node1&lt;/h1&gt;" &gt; /var/www/html/index.html</span></div><div class="line">[root@node1 ~]<span class="comment"># cat /var/www/html/index.html</span></div><div class="line">&lt;h1&gt;Node1&lt;/h1&gt;</div><div class="line"></div><div class="line">[root@node2 ~]<span class="comment"># echo "&lt;h1&gt;Node2&lt;/h1&gt;" &gt;/var/www/html/index.html</span></div><div class="line">[root@node2 ~]<span class="comment"># cat /var/www/html/index.html</span></div><div class="line">&lt;h1&gt;Node2&lt;/h1&gt;</div></pre></td></tr></table></figure></p>
+<p>7.在集群中定义httpd的资源，在CentOS 7 中要想使httpd出现在systemd的资源列表中，就要设定开机自启enable；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># systemctl enable httpd.service</span></div><div class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/httpd.service to /usr/lib/systemd/system/httpd.service.</div><div class="line"></div><div class="line">[root@node2 ~]<span class="comment"># systemctl enable httpd.service</span></div><div class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/httpd.service to /usr/lib/systemd/system/httpd.service.</div></pre></td></tr></table></figure></p>
+<p>1）在资源ra中查看systemd列表可以看到httpd资源，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm ra</span></div><div class="line">crm(live)ra<span class="comment"># list systemd</span></div><div class="line">NetworkManager                               NetworkManager-wait-online</div><div class="line">auditd                                       brandbot</div><div class="line">corosync                                     cpupower</div><div class="line">crond                                        dbus</div><div class="line">display-manager                              dm-event</div><div class="line">dracut-shutdown                              emergency</div><div class="line">exim                                         getty@tty1</div><div class="line">httpd                                        ip6tables</div><div class="line">iptables                                     irqbalance</div></pre></td></tr></table></figure></p>
+<p>8.定义httpd的资源，并查看，发现两个资源并不在同一节点，但是高可用服务必须要求两个资源在同一个节点上，所以，我们要设定组资源或者资源约束；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># primitive webserver systemd:httpd</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># show</span></div><div class="line">node 1: node1.jack.com \</div><div class="line">	attributes standby=off maintenance=off</div><div class="line">node 2: node2.jack.com</div><div class="line">primitive webip IPaddr \</div><div class="line">	params ip=172.16.3.146 nic=eno16777736 cidr_netmask=24 broadcast=172.16.3.255</div><div class="line">primitive webserver systemd:httpd</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync \</div><div class="line">	stonith-enabled=<span class="literal">false</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div><div class="line">crm(live)configure<span class="comment"># cd</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:45:47 2017		Last change: Tue Oct 10 20:45:40 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> webip	(ocf::heartbeat:IPaddr):	Started node2.jack.com</div><div class="line"> webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line"><span class="comment"># 发现在两个资源不在同一个节点，要想高可用必须使两个资源在同一个节点。两种方式：其一，定义组资源，其二，定义两节点的依赖级别，让两个资源必须在同一节点上。</span></div></pre></td></tr></table></figure></p>
+<p>9.定义组资源webservice，使webserver和webip位于同一组中，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># group webservice webserver webip</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div><div class="line">crm(live)configure<span class="comment"># show</span></div><div class="line">node 1: node1.jack.com \</div><div class="line">	attributes standby=off maintenance=off</div><div class="line">node 2: node2.jack.com</div><div class="line">primitive webip IPaddr \</div><div class="line">	params ip=172.16.3.146 nic=eno16777736 cidr_netmask=24 broadcast=172.16.3.255</div><div class="line">primitive webserver systemd:httpd</div><div class="line">group webservice webserver webip</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync \</div><div class="line">	stonith-enabled=<span class="literal">false</span></div></pre></td></tr></table></figure></p>
+<p>10.查看其状态，可以发现现在资源组webservice位于节点node1上，在浏览器中访问资源ip，可以正常访问node1的web界面，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">crm(live)configure<span class="comment"># cd</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:50:21 2017		Last change: Tue Oct 10 20:49:27 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div><div class="line">crm(live)<span class="comment">#</span></div></pre></td></tr></table></figure></p>
+<p><img src="\images\corosync\web1.png" alt="corosync"></p>
+<p>11.设置node1处于standby待机状态，发现组资源webservice转移到了节点node2上，再次访问资源ip发现为node2节点的web页面<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># node standby</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:53:17 2017		Last change: Tue Oct 10 20:53:12 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Node node1.jack.com: standby</div><div class="line">Online: [ node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webserver	(systemd:httpd):	Started node2.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node2.jack.com</div><div class="line">crm(live)<span class="comment">#</span></div></pre></td></tr></table></figure></p>
+<p><img src="\images\corosync\web2.png" alt="corosync"><br>12.我们可以使用resource/migrate命令完成手动迁移资源到指定的节点上，现在我把node1上线，然后手动把资源迁移到node1，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># node online</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:54:52 2017		Last change: Tue Oct 10 20:54:50 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webserver	(systemd:httpd):	Started node2.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node2.jack.com</div><div class="line"></div><div class="line">crm(live)<span class="comment"># resource</span></div><div class="line">crm(live)resource<span class="comment"># migrate webservice node1.jack.com</span></div><div class="line">crm(live)resource<span class="comment"># cd</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 20:56:05 2017		Last change: Tue Oct 10 20:55:59 2017 by root via crm_resource on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div><div class="line">crm(live)<span class="comment">#</span></div></pre></td></tr></table></figure></p>
+<p><img src="\images\corosync\web3.png" alt="corosync"><br>我们也可以使用resource下的stop，start，status命令控制服务的停止和启动，以及状态查看<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># resource</span></div><div class="line">crm(live)resource<span class="comment"># stop webservice</span></div><div class="line">crm(live)resource<span class="comment"># status</span></div><div class="line"> Resource Group: webservice</div><div class="line">     webserver	(systemd:httpd):	(target-role:Stopped) Stopped</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	(target-role:Stopped) Stopped</div><div class="line">crm(live)resource<span class="comment"># status webservice</span></div><div class="line">resource webservice is NOT running</div><div class="line">crm(live)resource<span class="comment"># start webservice</span></div><div class="line">crm(live)resource<span class="comment"># status webservice</span></div><div class="line">resource webservice is running on: node1.jack.com </div><div class="line">crm(live)resource<span class="comment">#</span></div></pre></td></tr></table></figure></p>
+<p>13.如果资源在节点间转移出现错误，会在状态信息中报错，比如，现在webservice的组资源在node1上，我在node2上启用nginx服务，占用node2httpd服务的80端口，然后使node1节点standby，可以发现报错信息，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># node standby</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 21:05:44 2017		Last change: Tue Oct 10 21:05:27 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Node node1.jack.com: standby</div><div class="line">Online: [ node2.jack.com ]</div><div class="line"></div><div class="line"></div><div class="line">Failed Actions:</div><div class="line">* webserver_start_0 on node2.jack.com <span class="string">'not running'</span> (7): call=16, status=complete, exitreason=<span class="string">'none'</span>,</div><div class="line">    last-rc-change=<span class="string">'Tue Oct 10 21:05:28 2017'</span>, queued=0ms, <span class="built_in">exec</span>=2004ms</div></pre></td></tr></table></figure></p>
+<p>现在我使node1节点上线，可以发现资源转移到node1上，但错误信息依然存在，要想清除中间状态信息，可使用resource/cleanup命令，但是一般不建议清除，因为产生的错误信息有利于我们排错，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># node online</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 21:07:05 2017		Last change: Tue Oct 10 21:06:46 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div><div class="line"></div><div class="line">Failed Actions:</div><div class="line">* webserver_start_0 on node2.jack.com <span class="string">'not running'</span> (7): call=16, status=complete, exitreason=<span class="string">'none'</span>,</div><div class="line">    last-rc-change=<span class="string">'Tue Oct 10 21:05:28 2017'</span>, queued=0ms, <span class="built_in">exec</span>=2004ms</div><div class="line">crm(live)<span class="comment"># resource cleanup webservice</span></div><div class="line">Cleaning up webserver on node1.jack.com, removing fail-count-webserver</div><div class="line">Cleaning up webserver on node2.jack.com, removing fail-count-webserver</div><div class="line">Cleaning up webip on node1.jack.com, removing fail-count-webip</div><div class="line">Cleaning up webip on node2.jack.com, removing fail-count-webip</div><div class="line">Waiting <span class="keyword">for</span> 4 replies from the CRMd.... OK</div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 21:07:23 2017		Last change: Tue Oct 10 21:07:20 2017 by hacluster via crmd on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 2 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div></pre></td></tr></table></figure></p>
+<h4 id="假如，用户可上传资源，如图片等，所以我们还需要一个共享存储，这里以nfs为例"><a href="#假如，用户可上传资源，如图片等，所以我们还需要一个共享存储，这里以nfs为例" class="headerlink" title="假如，用户可上传资源，如图片等，所以我们还需要一个共享存储，这里以nfs为例"></a>假如，用户可上传资源，如图片等，所以我们还需要一个共享存储，这里以nfs为例</h4><p>1.准备一台虚拟主机，当做nfs存储服务器，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 在目录中提供一个测试页面</span></div><div class="line">[root@localhost ~]<span class="comment"># mkdir -pv /data/web/htdocs</span></div><div class="line">mkdir: created directory ‘/data’</div><div class="line">mkdir: created directory ‘/data/web’</div><div class="line">mkdir: created directory ‘/data/web/htdocs’</div><div class="line">[root@localhost ~]<span class="comment"># echo "&lt;h1&gt;Content on NAS&lt;/h1&gt;" &gt;/data/web/htdocs/index.html</span></div><div class="line">[root@localhost ~]<span class="comment"># cat /data/web/htdocs/index.html</span></div><div class="line">&lt;h1&gt;Content on NAS&lt;/h1&gt;</div><div class="line"><span class="comment"># 定义要共享的网络及权限</span></div><div class="line">[root@localhost ~]<span class="comment"># vim /etc/exports</span></div><div class="line">/data/web/htdocs       172.16.3.0/24(rw)</div><div class="line"><span class="comment"># 因为上传是通过apache用户的，所以，授权apache用户对目录拥有rwx权限（id映射的）</span></div><div class="line">[root@localhost ~]<span class="comment"># useradd apache</span></div><div class="line">[root@localhost ~]<span class="comment"># setfacl -m u:apache:rwx /data/web/htdocs/</span></div><div class="line">[root@localhost ~]<span class="comment"># getfacl /data/web/htdocs/</span></div><div class="line">getfacl: Removing leading <span class="string">'/'</span> from absolute path names</div><div class="line"><span class="comment"># file: data/web/htdocs/</span></div><div class="line"><span class="comment"># owner: root</span></div><div class="line"><span class="comment"># group: root</span></div><div class="line">user::rwx</div><div class="line">user:apache:rwx</div><div class="line">group::r-x</div><div class="line">mask::rwx</div><div class="line">other::r-x</div><div class="line"><span class="comment"># 启动服务，并设置为开机自启</span></div><div class="line">[root@localhost ~]<span class="comment"># systemctl start nfs-server.service</span></div><div class="line">[root@localhost ~]<span class="comment"># systemctl enable nfs-server.service</span></div><div class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/nfs-server.service to /usr/lib/systemd/system/nfs-server.service.</div></pre></td></tr></table></figure></p>
+<p>2.在node1和node2节点手动挂载nfs的共享目录，并在浏览器中访问OK，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># mount -t nfs 172.16.3.141:/data/web/htdocs /var/www/html</span></div><div class="line">[root@node2 ~]<span class="comment"># mount -t nfs 172.16.3.141:/data/web/htdocs /var/www/html/</span></div></pre></td></tr></table></figure></p>
+<p><img src="\images\corosync\nfs.png" alt="corosync"><br>3.现在我们再把文件系统定义成一个资源，由所在的节点自动挂载，定义如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># primitive webstore ocf:heartbeat:Filesystem params device="172.16.3.141:/data/web/htdocs/" directory="/var/www/html/" fstype="nfs"</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">WARNING: webstore: default timeout 20s <span class="keyword">for</span> start is smaller than the advised 60</div><div class="line">WARNING: webstore: default timeout 20s <span class="keyword">for</span> stop is smaller than the advised 60</div><div class="line">crm(live)configure<span class="comment"># delete webstore</span></div><div class="line">crm(live)configure<span class="comment"># primitive webstore ocf:heartbeat:Filesystem params device="172.16.3.141:/data/web/htdocs/" directory="/var/www/html/" fstype="nfs" op start timeout=60s op stop timeout=60s</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div><div class="line">crm(live)configure<span class="comment"># show</span></div><div class="line">node 1: node1.jack.com \</div><div class="line">	attributes standby=off maintenance=off</div><div class="line">node 2: node2.jack.com</div><div class="line">primitive webip IPaddr \</div><div class="line">	params ip=172.16.3.146 nic=eno16777736 cidr_netmask=24 broadcast=172.16.3.255</div><div class="line">primitive webserver systemd:httpd</div><div class="line">primitive webstore Filesystem \</div><div class="line">	params device=<span class="string">"172.16.3.141:/data/web/htdocs/"</span> directory=<span class="string">"/var/www/html/"</span> fstype=nfs \</div><div class="line">	op start timeout=60s interval=0 \</div><div class="line">	op stop timeout=60s interval=0</div><div class="line">group webservice webserver webip \</div><div class="line">	meta target-role=Started</div><div class="line">location cli-prefer-webservice webservice role=Started inf: node1.jack.com</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync \</div><div class="line">	stonith-enabled=<span class="literal">false</span> \</div><div class="line">	last-lrm-refresh=1507640840</div><div class="line">crm(live)configure<span class="comment">#</span></div></pre></td></tr></table></figure></p>
+<p>4.重新定义组资源，使三个资源为一组，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># delete webservice</span></div><div class="line">INFO: resource references <span class="keyword">in</span> location:cli-prefer-webservice updated</div><div class="line">crm(live)configure<span class="comment"># group webservice webstore webserver webip</span></div><div class="line">INFO: resource references <span class="keyword">in</span> location:cli-prefer-webservice updated</div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div><div class="line">crm(live)configure<span class="comment"># show</span></div><div class="line">node 1: node1.jack.com \</div><div class="line">	attributes standby=off maintenance=off</div><div class="line">node 2: node2.jack.com</div><div class="line">primitive webip IPaddr \</div><div class="line">	params ip=172.16.3.146 nic=eno16777736 cidr_netmask=24 broadcast=172.16.3.255</div><div class="line">primitive webserver systemd:httpd</div><div class="line">primitive webstore Filesystem \</div><div class="line">	params device=<span class="string">"172.16.3.141:/data/web/htdocs/"</span> directory=<span class="string">"/var/www/html/"</span> fstype=nfs \</div><div class="line">	op start timeout=60s interval=0 \</div><div class="line">	op stop timeout=60s interval=0</div><div class="line">group webservice webstore webserver webip</div><div class="line">location cli-prefer-webservice webservice role=Started inf: node1.jack.com</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync \</div><div class="line">	stonith-enabled=<span class="literal">false</span> \</div><div class="line">	last-lrm-refresh=1507640840</div></pre></td></tr></table></figure></p>
+<p>查看状态，可以发现现在资源在node1节点上，在浏览器中访问OK<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 22:36:19 2017		Last change: Tue Oct 10 22:35:37 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 3 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webstore	(ocf::heartbeat:Filesystem):	Started node1.jack.com</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div></pre></td></tr></table></figure></p>
+<p><img src="\images\corosync\web4.png" alt="corosync"><br>5.设置node1节点为standby状态，可以看到迁到了node2节点上，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># node standby</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 22:40:23 2017		Last change: Tue Oct 10 22:40:13 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 3 resources configured</div><div class="line"></div><div class="line">Node node1.jack.com: standby</div><div class="line">Online: [ node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webstore	(ocf::heartbeat:Filesystem):	Started node2.jack.com</div><div class="line">     webserver	(systemd:httpd):	Started node2.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node2.jack.com</div></pre></td></tr></table></figure></p>
+<p><img src="\images\corosync\web5.png" alt="corosync"></p>
+<h4 id="定义资源监控"><a href="#定义资源监控" class="headerlink" title="定义资源监控"></a>定义资源监控</h4><p>现在资源位于node2上，我把node2上的httpd进程kill掉，在浏览器中已然不能正常访问，但是在crm 命令中查看当前状态，发现资源并没有转移，遇到这种情况，我们就需要定义资源监控，使其能够在节点发生故障时自动重启服务，并且在重启无效后转移资源。具体实现如下：<br>1.定义三个资源webserver、webip、webstore的监控，使其在发生故障后自动重启服务，如果重启无效，再完成资源迁移，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 定义三个资源的时间间隔为30s，超时时间为20s</span></div><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># monitor webserver 30s:20s</span></div><div class="line">crm(live)configure<span class="comment"># monitor webip 30s:20s</span></div><div class="line">crm(live)configure<span class="comment"># monitor webstore 30s:20s</span></div><div class="line"><span class="comment">#校验时，报错，提示webstore设定的超时时长小于最小值40s，所以，重新设置一下：</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">WARNING: webstore: specified timeout 20s <span class="keyword">for</span> monitor is smaller than the advised 40</div><div class="line"><span class="comment">#使用edit命令会自动vim编辑器，然后修改webstore 为60s：40s，保存退出</span></div><div class="line">crm(live)configure<span class="comment"># edit</span></div><div class="line"><span class="comment">#再次校验，没问题后提交</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div></pre></td></tr></table></figure></p>
+<p>查看定义好的监控资源如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">crm(live)configure<span class="comment"># show</span></div><div class="line">node 1: node1.jack.com \</div><div class="line">	attributes standby=off maintenance=off</div><div class="line">node 2: node2.jack.com</div><div class="line">primitive webip IPaddr \</div><div class="line">	params ip=172.16.3.146 nic=eno16777736 cidr_netmask=24 broadcast=172.16.3.255 \</div><div class="line">	op monitor interval=30s timeout=20s</div><div class="line">primitive webserver systemd:httpd \</div><div class="line">	op monitor interval=30s timeout=20s</div><div class="line">primitive webstore Filesystem \</div><div class="line">	params device=<span class="string">"172.16.3.141:/data/web/htdocs/"</span> directory=<span class="string">"/var/www/html/"</span> fstype=nfs \</div><div class="line">	op start timeout=60s interval=0 \</div><div class="line">	op stop timeout=60s interval=0 \</div><div class="line">	op monitor interval=60s timeout=40s</div><div class="line">group webservice webstore webserver webip</div><div class="line">location cli-prefer-webservice webservice role=Started inf: node1.jack.com</div><div class="line">property cib-bootstrap-options: \</div><div class="line">	have-watchdog=<span class="literal">false</span> \</div><div class="line">	dc-version=1.1.13-10.el7-44eb2dd \</div><div class="line">	cluster-infrastructure=corosync \</div><div class="line">	stonith-enabled=<span class="literal">false</span> \</div><div class="line">	last-lrm-refresh=1507646392</div></pre></td></tr></table></figure></p>
+<p>2.测试：<br>1）现在我在资源所在的node2节点上执行killall httpd命令，发现30s之后httpd又自动重启上线了，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[root@node2 ~]<span class="comment"># killall httpd</span></div><div class="line"></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 22:48:10 2017		Last change: Tue Oct 10 22:45:33 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 3 resources configured</div><div class="line"></div><div class="line">Node node1.jack.com: standby</div><div class="line">Online: [ node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webstore	(ocf::heartbeat:Filesystem):	Started node2.jack.com</div><div class="line">     webserver	(systemd:httpd):	Started node2.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node2.jack.com</div><div class="line"></div><div class="line">Failed Actions:</div><div class="line">* webserver_monitor_30000 on node2.jack.com <span class="string">'not running'</span> (7): call=58, status=complete, exitreason=<span class="string">'none'</span>,</div><div class="line">    last-rc-change=<span class="string">'Tue Oct 10 22:48:02 2017'</span>, queued=0ms, <span class="built_in">exec</span>=0ms</div></pre></td></tr></table></figure></p>
+<p>2）现在我在node2节点上执行 killall httpd；nginx命令，杀掉httpd进程并启用nginx进程，占用httpd服务的80端口，查看资源是否转移到node1节点上，发现成功转移到节点node1上；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 23:02:05 2017		Last change: Tue Oct 10 23:01:58 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 3 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webstore	(ocf::heartbeat:Filesystem):	Started node1.jack.com</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div></pre></td></tr></table></figure></p>
+<h4 id="定义资源约束的倾向性："><a href="#定义资源约束的倾向性：" class="headerlink" title="定义资源约束的倾向性："></a>定义资源约束的倾向性：</h4><p>1.现在我把组资源webservice对node1节点的倾向性定义为inf（正无穷），node2对组资源不做定义，提交之后，查看状态，发现资源马上就转移到了node1上了，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># location webservice_prefer_node1 webservice inf: node1.jack.com</span></div><div class="line">crm(live)configure<span class="comment"># edit</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div><div class="line">crm(live)configure<span class="comment"># cd</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 23:05:16 2017		Last change: Tue Oct 10 23:05:13 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 3 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webstore	(ocf::heartbeat:Filesystem):	Started node1.jack.com</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div><div class="line">crm(live)<span class="comment">#</span></div></pre></td></tr></table></figure></p>
+<p>2.如果此时，设置node1处于standby状态，可以发现资源由node1转移到node2上，但是，如果我设置node2对资源的倾向性为 -inf（负无穷），则可以发现，node1处于standby状态后，资源也不会转移到node2节点上，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># crm</span></div><div class="line">crm(live)<span class="comment"># configure</span></div><div class="line">crm(live)configure<span class="comment"># location webservice_refuse_node2 webservice -inf: node2.jack.com</span></div><div class="line">crm(live)configure<span class="comment"># verify</span></div><div class="line">crm(live)configure<span class="comment"># commit</span></div><div class="line">crm(live)configure<span class="comment"># cd</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 23:08:07 2017		Last change: Tue Oct 10 23:07:58 2017 by root via cibadmin on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 3 resources configured</div><div class="line"></div><div class="line">Online: [ node1.jack.com node2.jack.com ]</div><div class="line"></div><div class="line"> Resource Group: webservice</div><div class="line">     webstore	(ocf::heartbeat:Filesystem):	Started node1.jack.com</div><div class="line">     webserver	(systemd:httpd):	Started node1.jack.com</div><div class="line">     webip	(ocf::heartbeat:IPaddr):	Started node1.jack.com</div><div class="line">crm(live)<span class="comment"># node standby</span></div><div class="line">crm(live)<span class="comment"># status</span></div><div class="line">Last updated: Tue Oct 10 23:08:29 2017		Last change: Tue Oct 10 23:08:26 2017 by root via crm_attribute on node1.jack.com</div><div class="line">Stack: corosync</div><div class="line">Current DC: node1.jack.com (version 1.1.13-10.el7-44eb2dd) - partition with quorum</div><div class="line">2 nodes and 3 resources configured</div><div class="line"></div><div class="line">Node node1.jack.com: standby</div><div class="line">Online: [ node2.jack.com ]</div></pre></td></tr></table></figure></p>
+<p>注意：<br>如果资源对两节点的倾向性分值一样大，资源还是会留在当前节点，不会迁往另一个节点 ，所以，我们可以根据自己的需要定义资源的倾向性分值。<br>如上，就是整个corosync+pacemaker定义集群的整个过程…</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Cluster</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/09/28/LinuxCluster之corosync高可用集群的实现/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/09/28/LinuxCluster之OpenAIS-corosync/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          HA Cluster之OpenAIS---corosync
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/29/web services之tomcat/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java 技术体系及Tomcat结构</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

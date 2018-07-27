@@ -8,14 +8,23 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>linux kernel简单编译过程 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords">
+  <meta name="description" content="内核编译程序包的编译安装：★步骤：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;./configure&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;make；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;make install★前提：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;开发环境（开发环境，开发库），头文件：usr/include★开源：源代码–&amp;gt;可执行格式★发行版：以“通">
+<meta name="keywords" content="kernel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux kernel简单编译过程">
 <meta property="og:url" content="http://yoursite.com/2017/06/18/linux-kernel编译/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:updated_time" content="2017-06-18T14:19:27.129Z">
+<meta property="og:description" content="内核编译程序包的编译安装：★步骤：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;./configure&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;make；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;make install★前提：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;开发环境（开发环境，开发库），头文件：usr/include★开源：源代码–&amp;gt;可执行格式★发行版：以“通">
+<meta property="og:image" content="http://yoursite.com/images/kernel-address.png">
+<meta property="og:image" content="http://yoursite.com/images/make-menuconfig.png">
+<meta property="og:image" content="http://yoursite.com/images/htop.png">
+<meta property="og:image" content="http://yoursite.com/images/kernel.gif">
+<meta property="og:image" content="http://yoursite.com/images/kernel.png">
+<meta property="og:updated_time" content="2017-08-26T12:43:08.917Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux kernel简单编译过程">
+<meta name="twitter:description" content="内核编译程序包的编译安装：★步骤：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;./configure&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;make；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;make install★前提：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;开发环境（开发环境，开发库），头文件：usr/include★开源：源代码–&amp;gt;可执行格式★发行版：以“通">
+<meta name="twitter:image" content="http://yoursite.com/images/kernel-address.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -171,7 +180,27 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h3 id="内核编译"><a href="#内核编译" class="headerlink" title="内核编译"></a>内核编译</h3><h4 id="程序包的编译安装："><a href="#程序包的编译安装：" class="headerlink" title="程序包的编译安装："></a>程序包的编译安装：</h4><p>★步骤：<br>&ensp;&ensp;&ensp;&ensp;./configure<br>&ensp;&ensp;&ensp;&ensp;make；<br>&ensp;&ensp;&ensp;&ensp;make install<br>★前提：<br>&ensp;&ensp;&ensp;&ensp;开发环境（开发环境，开发库），头文件：usr/include<br>★开源：源代码–&gt;可执行格式<br>★发行版：以“通用”的目标</p>
+<h4 id="内核编译："><a href="#内核编译：" class="headerlink" title="内核编译："></a>内核编译：</h4><p>★前提：<br>1）准备好开发环境；<br>2）获取目标主机上硬件设备的相关信息；<br>3）获取到目标主机系统功能的相关信息，例如，要启用的文件系统<br>4）获取内核源码包：www.kernel.org<br>★准备开发环境：<br>◆CentOS 6：<br>包组：<br>&ensp;&ensp;&ensp;&ensp;Development Tools<br>&ensp;&ensp;&ensp;&ensp;Server Platform Development<br>◆CentOS 7：<br>包组：<br>&ensp;&ensp;&ensp;&ensp;Development Tools<br>&ensp;&ensp;&ensp;&ensp;Server Platform Development<br>包：<br>&ensp;&ensp;&ensp;&ensp;ncurses-devel<br>★目标主机硬件相关信息：<br>◆CPU：# cat /proc/cpuinfo<br>&ensp;&ensp;&ensp;&ensp;x86info -a<br>&ensp;&ensp;&ensp;&ensp;lscpu<br>◆PCI：# lspci -v,-vv<br>&ensp;&ensp;&ensp;&ensp;lsusb -v,-vv<br>&ensp;&ensp;&ensp;&ensp;lsblk 块设备<br>◆了解全部硬件设备信息<br>&ensp;&ensp;&ensp;&ensp;hal-device</p>
+<h4 id="编译步骤："><a href="#编译步骤：" class="headerlink" title="编译步骤："></a>编译步骤：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">tar xf linux-3.10.99.tar.xz -C /usr/src</div><div class="line"></div><div class="line"><span class="built_in">cd</span> /usr/src</div><div class="line"></div><div class="line">ln -sv linux-3.10.99 linux</div><div class="line"></div><div class="line"><span class="built_in">cd</span> /usr/src/linux</div><div class="line"></div><div class="line">cp /boot/config-$(uname -r) ./.config</div><div class="line"></div><div class="line">make <span class="built_in">help</span></div><div class="line"></div><div class="line">make menuconfig 配置内核选项</div><div class="line"></div><div class="line">make [-j 2] 编译内核，可使用-j指定编译线程数量</div><div class="line"></div><div class="line">make modules_install 安装内核模块</div><div class="line"></div><div class="line">make install  安装内核核心</div><div class="line"></div><div class="line">reboot 重启系统，选择使用新内核</div></pre></td></tr></table></figure>
+<h4 id="演示过程"><a href="#演示过程" class="headerlink" title="演示过程:"></a>演示过程:</h4><p>1.获取源码包（www.kernel.org）,选择要编译的版本，为了保障能够成功编译，建议不要使用跨版本太大的源码包:</p>
+<p><img src="\images\kernel-address.png" alt="kernel address "></p>
+<p>2.准备开发环境（相关开发工具包），以及查看自己的主机硬件相关信息是否可以符合；<br>3.解压到 /usr/src 目录下；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># ls</span></div><div class="line">anaconda-ks.cfg  linux-3.18.41.tar.xz</div><div class="line">[root@centos7 ~]<span class="comment"># tar xf linux-3.18.41.tar.xz -C /usr/src     解压到/usr/src目录下</span></div><div class="line">[root@centos7 ~]<span class="comment"># ls /usr/src/</span></div><div class="line">debug  kernels  linux-3.18.41    解压的源码包</div></pre></td></tr></table></figure></p>
+<p>4.进到/usr/src目录中，并创建一个软链接；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cd /usr/src</span></div><div class="line">[root@centos7 src]<span class="comment"># ls</span></div><div class="line">debug  kernels  linux-3.18.41</div><div class="line">[root@centos7 src]<span class="comment"># ln -s linux-3.18.41/ linux         创建软链接</span></div><div class="line">[root@centos7 src]<span class="comment"># ls</span></div><div class="line">debug  kernels  linux  linux-3.18.41</div><div class="line">[root@centos7 src]<span class="comment"># cd linux</span></div><div class="line">[root@centos7 linux]<span class="comment"># ls</span></div><div class="line">arch     crypto         fs       Kbuild   MAINTAINERS  README          security  virt</div><div class="line">block    Documentation  include  Kconfig  Makefile     REPORTING-BUGS  sound</div><div class="line">COPYING  drivers        init     kernel   mm           samples         tools</div><div class="line">CREDITS  firmware       ipc      lib      net          scripts         usr</div><div class="line">[root@centos7 linux]<span class="comment"># du -sh .</span></div><div class="line">569M	.</div></pre></td></tr></table></figure></p>
+<p>5.复制/boot下的以config开头的文件作为模板文件到/usr/src/linux/.config ；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@centos7 linux]<span class="comment"># cp /boot/config-3.10.0-327.el7.x86_64 /usr/src/linux/.conf</span></div><div class="line">[root@centos7 linux]<span class="comment"># ls -a</span></div><div class="line">.      .conf    Documentation  .gitignore  Kbuild   .mailmap     net             scripts   usr</div><div class="line">..     COPYING  drivers        include     Kconfig  MAINTAINERS  README          security  virt</div><div class="line">arch   CREDITS  firmware       init        kernel   Makefile     REPORTING-BUGS  sound</div><div class="line">block  crypto   fs             ipc         lib      mm           samples         tools</div></pre></td></tr></table></figure></p>
+<p>6.在/usr/src/linux 中使用 # make menuconfig 配置内核选项，选好之后保存退出；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">[root@centos7 linux]<span class="comment"># make menuconfig          </span></div><div class="line">  HOSTCC  scripts/basic/fixdep</div><div class="line">  HOSTCC  scripts/kconfig/conf.o</div><div class="line"> *** Unable to find the ncurses libraries or the</div><div class="line"> *** required header files.</div><div class="line"> *** <span class="string">'make menuconfig'</span> requires the ncurses libraries.</div><div class="line"> *** </div><div class="line"> *** Install ncurses (ncurses-devel) and try again.              此处提示要安装ncurses-devel软件包，安装完即可</div><div class="line"> *** </div><div class="line">make[1]: *** [scripts/kconfig/dochecklxdialog] Error 1</div><div class="line">make: *** [menuconfig] Error 2</div><div class="line"></div><div class="line">[root@centos7 linux]<span class="comment"># make menuconfig</span></div><div class="line">  HOSTCC  scripts/kconfig/conf.o</div><div class="line">  HOSTCC  scripts/kconfig/lxdialog/checklist.o</div><div class="line">  HOSTCC  scripts/kconfig/lxdialog/inputbox.o</div><div class="line">  HOSTCC  scripts/kconfig/lxdialog/menubox.o</div><div class="line">  HOSTCC  scripts/kconfig/lxdialog/textbox.o</div><div class="line">  HOSTCC  scripts/kconfig/lxdialog/util.o</div><div class="line">  HOSTCC  scripts/kconfig/lxdialog/yesno.o</div><div class="line">  HOSTCC  scripts/kconfig/mconf.o</div><div class="line">  SHIPPED scripts/kconfig/zconf.tab.c</div><div class="line">  SHIPPED scripts/kconfig/zconf.lex.c</div><div class="line">  SHIPPED scripts/kconfig/zconf.hash.c</div><div class="line">  HOSTCC  scripts/kconfig/zconf.tab.o</div><div class="line">  HOSTLD  scripts/kconfig/mconf</div><div class="line">scripts/kconfig/mconf Kconfig</div></pre></td></tr></table></figure></p>
+<p><img src="\images\make-menuconfig.png" alt="kernel address "></p>
+<p>7.打开screen界面，执行 # make [-j 4] 编译内核，可使用-j指定编译线程数量；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[root@centos7 linux]<span class="comment"># make -j 4</span></div><div class="line">  HOSTLD  scripts/kconfig/conf</div><div class="line">scripts/kconfig/conf --silentoldconfig Kconfig</div><div class="line">  SYSHDR  arch/x86/syscalls/../include/generated/uapi/asm/unistd_32.h</div><div class="line">  SYSHDR  arch/x86/syscalls/../include/generated/uapi/asm/unistd_64.h</div><div class="line">  SYSHDR  arch/x86/syscalls/../include/generated/uapi/asm/unistd_x32.h</div><div class="line">  SYSTBL  arch/x86/syscalls/../include/generated/asm/syscalls_32.h</div><div class="line">  SYSHDR  arch/x86/syscalls/../include/generated/asm/unistd_32_ia32.h</div><div class="line">  SYSHDR  arch/x86/syscalls/../include/generated/asm/unistd_64_x32.h</div><div class="line">  SYSTBL  arch/x86/syscalls/../include/generated/asm/syscalls_64.h</div><div class="line">  WRAP    arch/x86/include/generated/asm/clkdev.h</div><div class="line">  CHK     include/generated/uapi/linux/version.h</div><div class="line">  UPD     include/generated/uapi/linux/version.h</div><div class="line">  HOSTCC  scripts/genksyms/genksyms.o</div><div class="line">  SHIPPED scripts/genksyms/lex.lex.c</div><div class="line">  SHIPPED scripts/genksyms/keywords.hash.c</div><div class="line">  SHIPPED scripts/genksyms/parse.tab.h</div><div class="line">  SHIPPED scripts/genksyms/parse.tab.c</div><div class="line">  HOSTCC  scripts/genksyms/lex.lex.o</div><div class="line">  HOSTCC  scripts/genksyms/parse.tab.o</div></pre></td></tr></table></figure></p>
+<p>这时可以使用 # htop 查看一下cpu的使用情况，如下所示：cpu占用率急剧升高，负载也变得好大；<br><img src="\images\htop.png" alt="kernel address "></p>
+<p>8.编译完成之后，接下来需要执行 # make modules_install 安装内核模块；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root@centos7 linux]<span class="comment"># ls /lib/modules</span></div><div class="line">3.10.0-327.el7.x86_64  <span class="comment"># 可以看到这时模块文件只有一个</span></div><div class="line">[root@centos7 linux]<span class="comment"># make modules_install # 安装内核模块</span></div><div class="line">[root@centos7 linux]<span class="comment"># ls /lib/modules       </span></div><div class="line">3.10.0-327.el7.x86_64  linux-3.18.41 <span class="comment"># 可以发现多了一个内核模块</span></div><div class="line">[root@centos7 linux]<span class="comment"># ls  /lib/modules/linux-3.18.41/  # 编译完成，而已看到生成的内核模块文件</span></div><div class="line">build              modules.builtin      modules.devname  modules.symbols.bin</div><div class="line">kernel             modules.builtin.bin  modules.order    <span class="built_in">source</span></div><div class="line">modules.alias      modules.dep          modules.softdep</div><div class="line">modules.alias.bin  modules.dep.bin      modules.symbols</div></pre></td></tr></table></figure></p>
+<p><img src="\images\kernel.gif" alt="kernel address "><br>  INSTALL /lib/firmware/whiteheat_loader.fw<br>  INSTALL /lib/firmware/whiteheat.fw<br>  INSTALL /lib/firmware/keyspan_pda/keyspan_pda.fw<br>  INSTALL /lib/firmware/keyspan_pda/xircom_pgs.fw<br>  DEPMOD  3.18.41                 结束标志</p>
+<p>9.执行 # make install 生成内核文件；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@CentOS7 linux]<span class="comment"># make install</span></div><div class="line">sh ./arch/x86/boot/install.sh 3.18.41 arch/x86/boot/bzImage \</div><div class="line">	System.map <span class="string">"/boot"</span></div><div class="line">[root@CentOS7 linux]<span class="comment">#</span></div><div class="line"></div><div class="line">[root@CentOS7 linux]<span class="comment"># ls /boot                       # 编译完成，查看造成的内核文件</span></div><div class="line">config-3.10.0-327.el7.x86_64</div><div class="line">grub</div><div class="line">grub2</div><div class="line">initramfs-0-rescue-980fce0097884a1697008fada376c704.img</div><div class="line">initramfs-3.10.0-327.el7.x86_64.img</div><div class="line">initramfs-3.18.41.img</div><div class="line">initrd-plymouth.img</div><div class="line">symvers-3.10.0-327.el7.x86_64.gz</div><div class="line">System.map</div><div class="line">System.map-3.10.0-327.el7.x86_64</div><div class="line">System.map-3.18.41</div><div class="line">vmlinuz</div><div class="line">vmlinuz-0-rescue-980fce0097884a1697008fada376c704</div><div class="line">vmlinuz-3.10.0-327.el7.x86_64</div><div class="line">vmlinuz-3.18.41</div></pre></td></tr></table></figure></p>
+<p>10.reboot 重启系统，选择使用新内核<br><img src="\images\kernel.png" alt="kernel address "></p>
+<p>启动之后，查看内核版本如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># uname -r</span></div><div class="line">3.18.41  <span class="comment"># 说明新版内核已经启动，编译成功！</span></div><div class="line">至此，一个全新的内核就已经编译完成了！！！</div></pre></td></tr></table></figure></p>
+<h3 id="编译详细说明"><a href="#编译详细说明" class="headerlink" title="编译详细说明"></a>编译详细说明</h3><h4 id="1-配置内核选项："><a href="#1-配置内核选项：" class="headerlink" title="1.配置内核选项："></a>1.配置内核选项：</h4><p>★支持“更新”模式进行配置：在已有的.config文件的基础之上进行“修改”配置；<br>(a) make config：基于命令行以遍历的方式去配置内核中可配置的每个选项；<br>(b) make menuconfig：基于curses的文本窗口界面<br>(c) make gconfig：基于GTK (GNOME）环境窗口界面<br>(d) make xconfig：基于QT(KDE)环境的窗口界面<br>★持“全新配置”模式进行配置<br>(a) make defconfig：基于内核为目标平台提供的“默认”配置进行配置<br>(b) make allyesconfig：所有选项均回答为“yes“<br>(c) make allnoconfig：所有选项均回答为”no”</p>
+<h4 id="2-编译："><a href="#2-编译：" class="headerlink" title="2.编译："></a>2.编译：</h4><p>★多线程编译：<br>&ensp;&ensp;&ensp;&ensp;make [-j #]<br>★编译内核中的一部分代码：<br>◆只编译某子目录中的相关代码：<br>&ensp;&ensp;&ensp;&ensp;cd /usr/src/linux<br>&ensp;&ensp;&ensp;&ensp;make dir/<br>◆只编译一个特定的模块：<br>&ensp;&ensp;&ensp;&ensp;cd /usr/src/linux<br>&ensp;&ensp;&ensp;&ensp;make dir/file.ko<br>例如：只为e1000编译驱动<br>&ensp;&ensp;&ensp;&ensp;# make drivers/net/ethernet/intel/e1000/e1000.ko<br>★如何交叉编译内核：<br>◆编译的目标平台与当前平台不相同；<br>&ensp;&ensp;&ensp;&ensp;make ARCH=arch_name<br>◆要获取特定目标平台的使用帮助<br>&ensp;&ensp;&ensp;&ensp;make ARCH=arch help</p>
+<h4 id="3-如何在执行过编译操作的内核元码树上做重新编译："><a href="#3-如何在执行过编译操作的内核元码树上做重新编译：" class="headerlink" title="3.如何在执行过编译操作的内核元码树上做重新编译："></a>3.如何在执行过编译操作的内核元码树上做重新编译：</h4><p>★需要事先清理操作：<br>&ensp;&ensp;&ensp;&ensp;make clean：清理大多数编译生成的文件，但会保留config文件等<br>&ensp;&ensp;&ensp;&ensp;make mrproper：清理所有编译生成的文件、config及某些备份文件<br>&ensp;&ensp;&ensp;&ensp;make distclean：mrproper、patches以及编辑器备份文件</p>
+
       
 
       
@@ -200,6 +229,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">kernel</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -274,6 +314,11 @@
     </a>
   
   
+    <a href="/2017/06/20/linux之shell脚本编程-基础篇(一)/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">linux之shell脚本编程-基础篇(一)</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
 </nav>
 
 
@@ -296,7 +341,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2017 Jack_zhou
+    		&copy; 2018 Jack_zhou
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -375,27 +420,147 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">command</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">man</a>
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">privilege</a>
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">user&group</a>
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
               </li>
             
             <div class="clearfix"></div>

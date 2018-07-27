@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>DNS原理详解 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;DNS（Domain Name System，域名系统），因特网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP地址。通过主机名，最终得到该主机名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。★ 相关知识◆Sockets：在互联网">
+<meta name="keywords" content="linux服务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DNS原理详解">
+<meta property="og:url" content="http://yoursite.com/2017/07/21/dns原理详解/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="概述&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;DNS（Domain Name System，域名系统），因特网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP地址。通过主机名，最终得到该主机名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。★ 相关知识◆Sockets：在互联网">
+<meta property="og:image" content="http://yoursite.com/images/dns域划分.png">
+<meta property="og:image" content="http://yoursite.com/images/dns域说明.jpg">
+<meta property="og:image" content="http://yoursite.com/images/dns解析流程图.jpg">
+<meta property="og:image" content="http://yoursite.com/images/dns-soa记录.png">
+<meta property="og:image" content="http://yoursite.com/images/dns-ns记录.png">
+<meta property="og:image" content="http://yoursite.com/images/dns-mx记录.png">
+<meta property="og:updated_time" content="2017-08-26T12:42:05.276Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DNS原理详解">
+<meta name="twitter:description" content="概述&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;DNS（Domain Name System，域名系统），因特网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP地址。通过主机名，最终得到该主机名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。★ 相关知识◆Sockets：在互联网">
+<meta name="twitter:image" content="http://yoursite.com/images/dns域划分.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-dns原理详解" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      DNS原理详解
+    </h1>
+  
+
+        
+        <a href="/2017/07/21/dns原理详解/" class="archive-article-date">
+  	<time datetime="2017-07-21T13:30:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>&ensp;&ensp;&ensp;&ensp;DNS（Domain Name System，域名系统），因特网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP地址。通过主机名，最终得到该主机名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。<br>★ 相关知识<br>◆Sockets：在互联网上基于套接字协议的通信一般都遵循C/S法则；<br>&ensp;&ensp;&ensp;&ensp;Client：客户端，发起应用请求的程序；<br>&ensp;&ensp;&ensp;&ensp;Server：响应请求（提供服务）的程序；<br>&ensp;&ensp;&ensp;&ensp;LISTEN：Socket（ip：port）<br>◆传输层协议：TCP,UDP,SCTP<br>&ensp;&ensp;&ensp;&ensp;TCP：面向连接的协议，双方通信之前需要建立虚连接；<br>&ensp;&ensp;&ensp;&ensp;UDP：无连接的协议，双方无需通信之前事先建立虚连接；</p>
+<h3 id="DNS服务"><a href="#DNS服务" class="headerlink" title="DNS服务"></a>DNS服务</h3><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>★ DNS：Domain Name Service 域名系统，是一个应用层协议。<br>&ensp;&ensp;&ensp;&ensp;C/S架构，监听在 53/udp(解析时使用), 53/tcp(区域传送时使用)（DNS服务在启动的时候会同时开启tcp和udp的53号端口）<br>★ DNS作用：<br>&ensp;&ensp;&ensp;&ensp;将主机名解析成IP地址的过程;<br>&ensp;&ensp;&ensp;&ensp;解决了从域名（FQDN）到主机识别的IP地址之间的转换.<br>★ 本地名称配置解析文件：/etc/hosts<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># cat /etc/hosts</span></div><div class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</div><div class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</div><div class="line">192.168.2.143 node1.jack.com node1</div><div class="line">192.168.2.144 node2.jack.com node2</div><div class="line">192.168.2.145 node3.jack.com node3</div></pre></td></tr></table></figure></p>
+<p>◆缺点：<br>&ensp;&ensp;&ensp;&ensp;只能作用于本主机，而不能同步更新所有的主机使用，并且当hosts文件很庞大时很难管理，因此就必须有一个统一的组织去记录管理域名和ip的对应关系<br>★ DNS结构<br>&ensp;&ensp;&ensp;&ensp;DNS是一个分布式、分层次的主机名管理架构，通过配置DNS服务器地址，主机不需要知道对应的ip地址就能通过主机名的形式访问互联网；<br>&ensp;&ensp;&ensp;&ensp;DNS利用类似倒状树的目录结构将主机名的管理分配在不同层级的DNS服务器当中，经过分层管理，每一级DNS服务器负责部分域名信息，这也就减轻了DNS服务器的负载，同时也方便记录的更新同步。<br>★ FQDN（Full Qualified Domain Name）:完整主机名<br>&ensp;&ensp;&ensp;&ensp;完整主机名由主机名和域名构成。比如，www.taobao.com当中，www就是web网站服务器的主机名，taobao.com就是域名；<br>&ensp;&ensp;&ensp;&ensp;主机名和域名之间用实心的点号来表示；</p>
+<h4 id="DNS域名"><a href="#DNS域名" class="headerlink" title="DNS域名"></a>DNS域名</h4><p>★ 域名划分：<br>◆根域：<br>◆一级域名：Top Level Domain: tld（顶级域）<br>&ensp;&ensp;&ensp;&ensp;组织域：com, edu, mil, gov, net, org, int，<br>&ensp;&ensp;&ensp;&ensp;国家域：.cn, .ca, .hk, .tw…<br>&ensp;&ensp;&ensp;&ensp;反向域：<br>◆二级域名：<br>&ensp;&ensp;&ensp;&ensp;如：.magedu.com、taobao.com<br>◆三级域名：<br>&ensp;&ensp;&ensp;&ensp;如：.dns.magedu.com<br>★ 说明：<br>&ensp;&ensp;&ensp;&ensp;每一级只负责对应下级的域的管理，其中根节点是有分布在世界各地的13台服务器组成，其中10台位于美国，另外3台设置于英国、瑞典和日本。<br>&ensp;&ensp;&ensp;&ensp;ICANN（The Internet Corporation for Assigned Names and Numbers）互联网名称与数字地址分配机构，负责在全球范围内对互联网通用顶级域名（gTLD）以及国家和地区顶级域名（ccTLD）系统的管理、以及根服务器系统的管理。<br>◆域名层级结构图：<br><img src="\images\dns域划分.png" alt="DNS域划分"><br>◆按其功能命名空间中用来描述 DNS 域名称的五个类别的介绍详见下表中，以及与每个名称类型的示例：<br><img src="\images\dns域说明.jpg" alt="DNS域说明"></p>
+<h4 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h4><p>★解析流程：<br>     1.在浏览器中输入www.qq.com域名，操作系统会先检查自己本地的hosts文件是否有这个网址映射关系，如果有，就先调用这个IP地址映射，完成域名解析。<br>     2.如果hosts里没有这个域名的映射，则查找本地DNS解析器缓存（每次通过TCP/IP指向的DNS服务器查询到的记录返回结果都会在本地数据库中缓存一份，是这种加速机制，有生存周期TTL），是否有这个网址映射关系，如果有，直接返回，完成域名解析。<br>     3.如果hosts与本地DNS解析器缓存都没有相应的网址映射关系，首先会找TCP/IP参数中设置的首选DNS服务器，此服务器收到查询时，如果要查询的域名，包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析，此解析具有权威性。<br>     4.如果要查询的域名，不由本地DNS服务器区域解析，但该服务器已缓存了此网址映射关系，则调用这个IP地址映射，完成域名解析，此解析不具有权威性。<br>     5.如果本地DNS服务器本地区域文件与缓存解析都失效，则根据本地DNS服务器的设置（是否设置转发器）进行查询，如果未用转发模式，本地DNS就把请求发至13台根DNS，根DNS服务器收到请求后会判断这个域名(.com)是谁来授权管理，并会返回一个负责该顶级域名服务器的一个IP。本地DNS服务器收到IP信息后，将会联系负责.com域的这台服务器。这台负责.com域的服务器收到请求后，如果自己无法解析，它就会找一个管理.com域的下一级DNS服务器地址(qq.com)给本地DNS服务器。当本地DNS服务器收到这个地址后，就会找qq.com域服务器，重复上面的动作，进行查询，直至找到www.qq.com主机。<br>     6.如果用的是转发模式，此DNS服务器就会把请求转发至上一级DNS服务器，由上一级服务器进行解析，上一级服务器如果不能解析，或找根DNS或把转请求转至上上级，以此循环。不管是本地DNS服务器用是是转发，还是根提示，最后都是把结果返回给本地DNS服务器，由此DNS服务器再返回给客户机。<br>◆说明：<br>    从客户端到本地DNS服务器是属于递归查询，而DNS服务器之间就是的交互查询就是迭代查询。<br>◆解析流程图如下：<br><img src="\images\dns解析流程图.jpg" alt="DNS解析流程图"></p>
+<h4 id="DNS类型，解析方式"><a href="#DNS类型，解析方式" class="headerlink" title="DNS类型，解析方式"></a>DNS类型，解析方式</h4><p>★ DNS查询类型<br>◆递归查询：<br>&ensp;&ensp;&ensp;&ensp;客户机和本地DNS服务器之间的查询<br>◆迭代查询：<br>&ensp;&ensp;&ensp;&ensp;DNS服务器与DNS服务器之间的交互查询<br>★ DNS名称解析方式：<br>&ensp;&ensp;&ensp;&ensp;名称—&gt;IP :  正向解析<br>&ensp;&ensp;&ensp;&ensp;IP —&gt;名称：反向解析<br>注意：<br>&ensp;&ensp;&ensp;&ensp;正反向解析是两个不同的名称空间，是两棵不同的解析树，因此也不是同一个解析库。<br>★ 域名购买<br>&ensp;&ensp;&ensp;&ensp;通常我们申请注册的域名是顶级域下的一个二级域（.com），申请成功之后（如：magedu.com），域名商会免费给我们提供DNS解析服务（群租的一个DNS服务器），我们只需要通过其提供的接口（如：web页面）在管理后台添加主机记录即可。然而免费的东西和付费的服务总是不一样的，免费提供的服务不保证服务的可靠性，因此企业里面要想架设自己的DNS服务器，来提供更可靠、更丰富的功能，就需要向上级提出授权认证，更改DNS服务器的指向，从原来的群租转到自己的DNS服务器上，自己管理。但一般的小公司如果自己架设DNS服务器的话成本较高，所以一般都是代理商提供的。<br>★ DNS服务器的类型：<br>◆负责解析至少一个域：<br>&ensp;&ensp;&ensp;&ensp;主DNS服务器：<br>&ensp;&ensp;&ensp;&ensp;辅助DNS服务器：<br>◆不负责域解析：<br>&ensp;&ensp;&ensp;&ensp;缓存DNS服务器：转发器<br>★ 一次完整地解析请求经历的过程：<br>Client–&gt;hosts文件–&gt;Dns Local Cache–&gt;DNS Server(recursion递归)–&gt;<br>&ensp;&ensp;&ensp;&ensp;自己负责解析的域：直接查询数据库并返回答案；<br>&ensp;&ensp;&ensp;&ensp;不是自己负责的解析域：Server Cache–&gt;iteration(迭代)–&gt; 根–&gt; 顶级域DNS–&gt;二级域名DNS…<br>★ 解析答案：<br>&ensp;&ensp;&ensp;&ensp;肯定答案：<br>&ensp;&ensp;&ensp;&ensp;否定答案：请求的条目不存在等原因导致无法返回结果；<br>&ensp;&ensp;&ensp;&ensp;权威答案：由直接负责的DNS服务器返回的答案；<br>&ensp;&ensp;&ensp;&ensp;非权威答案：<br>★ 主-从DNS服务器：<br>◆主DNS服务器：<br>&ensp;&ensp;&ensp;&ensp;维护所负责解析的域数据库的那台服务器；读写操作均可进行；<br>◆从DNS服务器：<br>&ensp;&ensp;&ensp;&ensp;从主DNS服务器那里或其他的从DNS服务器那里“复制”解析库；但只能进行读操作(只能接受查询，不能接受修改)；<br>◆复制操作的实施方式（主从同步的属性）：<br>&ensp;&ensp;&ensp;&ensp;序列号：解析库版本号，主服务器解析库变化时，其序列号递增；<br>&ensp;&ensp;&ensp;&ensp;刷新时间间隔：从服务器每隔多久到主服务器检查序列号更新情况；<br>&ensp;&ensp;&ensp;&ensp;重试时间间隔：从服务器请求同步失败时，再次发起尝试请求时间间隔；<br>&ensp;&ensp;&ensp;&ensp;过期时长：从服务器联系不到主服务器时，多久后停止服务；<br>&ensp;&ensp;&ensp;&ensp;否定答案的缓存时长（TTL）：快取时间<br>“通知”机制：主服务器解析库发生变化时，会主动通知从服务器；<br>★ 区域传送：<br>&ensp;&ensp;&ensp;&ensp;全量传送：axfr，传递整个解析库；<br>&ensp;&ensp;&ensp;&ensp;增量传送：ixfr，传递解析库变化的数据；<br>★ 区域（zone）和域（domain）<br>◆baidu.com域：<br>&ensp;&ensp;&ensp;&ensp;FQDN–&gt;IP：正向解析库；(正向区域：正向解析库和正向解析的功能的组合);<br>&ensp;&ensp;&ensp;&ensp;IP —&gt;FQDN：反向解析库，反向区域<br>注意：<br>&ensp;&ensp;&ensp;&ensp;一般来说一个域由正向区域和反向区域组成，但并不是域就一定大于区域，如：父域的区域可能会比子域要大；<br>区域是物理概念，而域是逻辑概念。<br>★ DNS端口<br>&ensp;&ensp;&ensp;&ensp;DNS是一个网络服务，因此就有对应的端口，其端口是53号，通常DNS在查询的时候是以udp这个快速的数据传输协议来查询的，但是一旦没有办法查询到完整的信息时就会再次以TCP协议来进行重新查询，因此DNS服务在启动的时候会同时开启 tcp的53号端口 和 udp的53号端口。</p>
+<h3 id="区域数据库文件"><a href="#区域数据库文件" class="headerlink" title="区域数据库文件"></a>区域数据库文件</h3><h4 id="资源记录（Resource-Record）简称RR"><a href="#资源记录（Resource-Record）简称RR" class="headerlink" title="资源记录（Resource Record）简称RR"></a>资源记录（Resource Record）简称RR</h4><p>★ 区域解析库：由众多RR组成：<br>记录类型：A, AAAA, PTR, SOA, NS, CNAME, MX<br>◆SOA：(Start Of Authority)<br>&ensp;&ensp;&ensp;&ensp;起始授权记录；一个区域解析库有且仅能有一个SOA记录，必须为解析库的第一条记录；<br>◆A：（internet Address）<br>&ensp;&ensp;&ensp;&ensp;作用：FQDN –&gt; IPv4；<br>◆AAAA：地址记录<br>&ensp;&ensp;&ensp;&ensp;作用：FQDN –&gt; IPv6；<br>◆PTR：（PoinTeR）<br>&ensp;&ensp;&ensp;&ensp;作用：IP –&gt; FQDN；反解到的主机名；<br>◆NS：（Name Server）<br>&ensp;&ensp;&ensp;&ensp;专用于标明当前区域的DNS服务器，一个区域解析库可以有多个NS记录(主从DNS服务器等)；<br>◆CNAME：（Canonical Name）<br>&ensp;&ensp;&ensp;&ensp;别名记录，一个主机可以有多个别名，但IP地址是一样的；<br>◆MX：<br>&ensp;&ensp;&ensp;&ensp;Mail exchanger，邮件交换器，有优先级，0-99，数字越小优先级越高；</p>
+<h4 id="资源记录的格式及各资源类型详解"><a href="#资源记录的格式及各资源类型详解" class="headerlink" title="资源记录的格式及各资源类型详解"></a>资源记录的格式及各资源类型详解</h4><p>★ 资源记录的定义格式：<br>◆语法：<br>name    [TTL]   IN    RR_TYPE   value<br>每一种资源类型的定义方式如下：<br>★ SOA记录<br>起始授权记录；一个区域解析库有且仅能有一个SOA记录，必须为解析库的第一条记录；<br>◆name：<br>当前区域的名字。例如“magedu.com.”或者“2.3.4.in-addr.arpa.”<br>◆value：有多部分组成<br>&ensp;&ensp;&ensp;&ensp;1）当前区域的区域名称（也可以是主DNS服务器的FQDN）；<br>&ensp;&ensp;&ensp;&ensp;2）当前区域管理员的邮箱地址；但地址中不能使用@符号，一般用.替换，例如linuxedu.magedu.com<br>&ensp;&ensp;&ensp;&ensp;3）主从服务协调属性的定义以及否定的答案的统一的TTL<br>示例：<br><img src="\images\dns-soa记录.png" alt="DNS SOA记录"><br>★ NS记录<br>专用于标明当前区域的DNS服务器，一个区域解析库可以有多个NS记录(主从DNS服务器等)；<br>◆name：当前区域的名字<br>◆value：当前区域的某DNS服务器的名字，例如 ns.magedu.com.；<br>示例：<br><img src="\images\dns-ns记录.png" alt="DNS NS记录"><br>注意：<br>&ensp;&ensp;&ensp;&ensp;相邻的两个资源记录的name相同时，后续的可省略；<br>对NS记录而言，任何一个ns记录后面的服务器名字，都应该在后续有一个A记录<br>★ MX记录<br>邮件交换器，有优先级，0-99，数字越小优先级越高；<br>◆name：当前区域的名字<br>◆value：当前区域的某邮件服务器(smtp服务器)的主机名<br>注意：<br>&ensp;&ensp;&ensp;&ensp;一个区域内，MX记录可有多个；但每个记录的value之前应该有一个数字(0-99)，表示此服务器的优先级；数字越小优先级越高；<br>&ensp;&ensp;&ensp;&ensp;对MX记录而言，任何一个MX记录后面的服务器名字，都应该在后续有一个A记录<br>示例：<br><img src="\images\dns-mx记录.png" alt="DNS MX记录"><br>★ A记录<br>作用：FQDN –&gt; IPv4；<br>◆name：某主机的FQDN，例如www.magedu.com.<br>◆value：主机名对应主机的IPv4地址；<br>例如：<br>&ensp;&ensp;&ensp;&ensp;www.magedu.com.  IN  A   1.1.1.1<br>&ensp;&ensp;&ensp;&ensp;www.magedu.com.  IN  A   1.1.1.2<br>&ensp;&ensp;&ensp;&ensp;mx1.magedu.com.   IN  A   1.1.1.1<br>&ensp;&ensp;&ensp;&ensp;mx2.magedu.com.   IN  A   1.1.1.2<br>注意：<br>&ensp;&ensp;&ensp;&ensp;*.magedu.com.  IN  A  5.5.5.5<br>&ensp;&ensp;&ensp;&ensp;  magedu.com.  IN  A  5.5.5.5<br>避免用户写错名称时给错误答案，可通过泛域名解析进行解析至某特定地址。<br>★ AAAA记录<br>作用：FQDN –&gt; IPv6；<br>◆name：FQDN<br>◆value：IPv6<br>★ PTR记录<br>◆name：IP<br>&ensp;&ensp;&ensp;&ensp;有特定格式，把IP地址反过来写  如：1.2.3.4，要写作4.3.2.1；<br>&ensp;&ensp;&ensp;&ensp;有特定后缀：in-addr.arpa.  如：完整写法为：4.3.2.1.in-addra.arpa.<br>◆value：FQDN<br>例如：<br>&ensp;&ensp;&ensp;&ensp;4.3.2.1.in-addr.arpa. IN  PTR  www.magedu.com<br>&ensp;&ensp;&ensp;&ensp;简写成：如1.2.3为网络地址，可省<br>&ensp;&ensp;&ensp;&ensp;4 IN  PTR  www.magedu.com.<br> 注意：网络地址及后缀可省略；主机地址依然需要反着写<br>★ CNAME记录<br>别名记录，一个主机可以有多个别名，但IP地址是一样的；<br>◆name：FQDN格式的别名<br>◆value：FQDN格式的正式名字；<br>例如：<br>&ensp;&ensp;&ensp;&ensp;web.magedu.com.    IN      CNAME   www.magedu.com.<br>&ensp;&ensp;&ensp;&ensp;（表示www的这个主机的别名为web）<br>★ 注意：<br>&ensp;&ensp;&ensp;&ensp;TTL就是time to live，表示该记录被其他dns服务器保留到对方服务器上的缓存当中，并保持多少秒（即客户端可以缓存多长时间），可从全局继承；<br>&ensp;&ensp;&ensp;&ensp;IN：为关键字 ；<br>&ensp;&ensp;&ensp;&ensp;@ ：可用于引用当前区域的名字；<br>&ensp;&ensp;&ensp;&ensp;相邻的两条记录其name相同时，后面的可以省略；<br>&ensp;&ensp;&ensp;&ensp;同一个名字可以通过多条记录定义多个不同的值（即一个主机名有多个IP地址）；此时DNS服务器会以轮询方式响应可以实现负载均衡；<br>&ensp;&ensp;&ensp;&ensp;同一个值也可能有多个不同的定义名字（即一个IP地址多个主机名）；通过多个不同的名字指向同一个值进行定义；此仅表示通过多个不同的名字可以找到同一个主机而已；<br>&ensp;&ensp;&ensp;&ensp;对于正向区域来说，各MX、NS等类型的记录的value为一个FQDN，此FQDN应该有一个A记录。</p>
+<h3 id="安装部署DNS服务"><a href="#安装部署DNS服务" class="headerlink" title="安装部署DNS服务"></a>安装部署DNS服务</h3><h4 id="bind的安装配置"><a href="#bind的安装配置" class="headerlink" title="bind的安装配置"></a>bind的安装配置</h4><p>★ BIND：Berkeley Internet Name Domain,ISC.org<br>&ensp;&ensp;&ensp;&ensp;dns：协议；<br>&ensp;&ensp;&ensp;&ensp;bind：dns协议的一种实现；<br>&ensp;&ensp;&ensp;&ensp;named：bind程序的运行的进程名；<br>★ 相关程序包：<br>查询方式：yum list all bind*<br>&ensp;&ensp;&ensp;&ensp;bind-libs：被bind和bind-utils包中的程序共同用到的库文件；<br>&ensp;&ensp;&ensp;&ensp;bind-utils：bind客户端程序集（工具组件），例如dig，host，nslookup等；<br>&ensp;&ensp;&ensp;&ensp;bind：提供的dns server程序、以及几个常用的测试程序；<br>&ensp;&ensp;&ensp;&ensp;bind-chroot：选装，让named运行于jall模式下；/var/named/chroot<br>★ bind服务器配置文件<br>◆主配置文件：/etc/named.conf<br> 或包含进来其他文件：<br> &ensp;&ensp;&ensp;&ensp;/etc/named.iscdlv.key<br> &ensp;&ensp;&ensp;&ensp;/etc/named.rfc1912.zones<br> &ensp;&ensp;&ensp;&ensp;/etc/named.root.key<br>★ 解析库文件：<br>◆/var/named：<br>&ensp;&ensp;&ensp;&ensp;该目录为DNS数据库文件存放目录，每一个域文件都存放在这里；<br>&ensp;&ensp;&ensp;&ensp;一般名字为：/var/named/ZONE_NAME.ZONE<br>注意：<br>&ensp;&ensp;&ensp;&ensp;1）一台DNS服务器可同时为多个区域提供解析；<br>&ensp;&ensp;&ensp;&ensp;2）必须要有根区域解析库文件：named.ca；<br>&ensp;&ensp;&ensp;&ensp;3）还应该有两个区域解析库文件：localhost 和 127.0.0.1 的正反向解析库；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;正向：named.localhost<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;反向：named.loopbask<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 解析库文件</span></div><div class="line">[root@node1 ~]<span class="comment"># ls -l /usr/lib/sys</span></div><div class="line">sysctl.d/ systemd/  </div><div class="line">[root@node1 ~]<span class="comment"># ls /var/named/</span></div><div class="line">data  dynamic  named.ca  named.empty  named.localhost  named.loopback  slaves</div><div class="line"><span class="comment"># 本地正向解析库文件</span></div><div class="line">[root@node1 ~]<span class="comment"># cat /var/named/named.localhost </span></div><div class="line"><span class="variable">$TTL</span> 1D</div><div class="line">@	IN SOA	@ rname.invalid. (</div><div class="line">					0	; serial</div><div class="line">					1D	; refresh</div><div class="line">					1H	; retry</div><div class="line">					1W	; expire</div><div class="line">					3H )	; minimum</div><div class="line">	NS	@</div><div class="line">	A	127.0.0.1</div><div class="line">	AAAA	::1</div><div class="line"><span class="comment"># 本地反向解析库文件</span></div><div class="line">[root@node1 ~]<span class="comment"># cat /var/named/named.loopback </span></div><div class="line"><span class="variable">$TTL</span> 1D</div><div class="line">@	IN SOA	@ rname.invalid. (</div><div class="line">					0	; serial</div><div class="line">					1D	; refresh</div><div class="line">					1H	; retry</div><div class="line">					1W	; expire</div><div class="line">					3H )	; minimum</div><div class="line">	NS	@</div><div class="line">	A	127.0.0.1</div><div class="line">	AAAA	::1</div><div class="line">	PTR	localhost.</div></pre></td></tr></table></figure></p>
+<p>★ rndc：remote name domain controller<br>&ensp;&ensp;&ensp;&ensp;默认与bind安装在同一主机，且只能通过127.0.0.1连接named进程，因此仅允许本地使用；<br>&ensp;&ensp;&ensp;&ensp;提供辅助性的管理功能；953/tcp（监听在953端口）<br>★ 启动服务<br>bind程序安装完成之后，默认既可作为缓存名称服务器使用，如果没有专门负责解析的区域，直接即可启动服务；<br>&ensp;&ensp;&ensp;&ensp;CentOS 6：service named start<br>&ensp;&ensp;&ensp;&ensp;CentOS 7：systemctl start named.service<br>演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># yum info bind</span></div><div class="line">Loaded plugins: fastestmirror</div><div class="line">Loading mirror speeds from cached hostfile</div><div class="line"> * base: mirrors.163.com</div><div class="line"> * extras: mirrors.aliyun.com</div><div class="line"> * updates: mirrors.njupt.edu.cn</div><div class="line">Installed Packages</div><div class="line">Name        : <span class="built_in">bind</span></div><div class="line">Arch        : x86_64</div><div class="line">Epoch       : 32</div><div class="line">Version     : 9.9.4</div><div class="line">Release     : 50.el7_3.1</div><div class="line">Size        : 4.3 M</div><div class="line">Repo        : installed</div><div class="line">From repo   : updates</div><div class="line">Summary     : The Berkeley Internet Name Domain (BIND) DNS (Domain Name System) server</div><div class="line">URL         : http://www.isc.org/products/BIND/</div><div class="line">License     : ISC</div><div class="line">Description : BIND (Berkeley Internet Name Domain) is an implementation of the DNS</div><div class="line">            : (Domain Name System) protocols. BIND includes a DNS server (named),</div><div class="line">            : <span class="built_in">which</span> resolves host names to IP addresses; a resolver library</div><div class="line">            : (routines <span class="keyword">for</span> applications to use when interfacing with DNS); and</div><div class="line">            : tools <span class="keyword">for</span> verifying that the DNS server is operating properly.</div></pre></td></tr></table></figure></p>
+<h4 id="主配置文件格式"><a href="#主配置文件格式" class="headerlink" title="主配置文件格式"></a>主配置文件格式</h4><p>★ 主配置文件：<br>◆全局配置段：<br>&ensp;&ensp;&ensp;&ensp;options {…}；<br>◆日志配置段：<br>&ensp;&ensp;&ensp;&ensp;logging {…}；<br>◆区域配置段：本机能够为哪些zone进行解析，就要定义哪些zone；<br>&ensp;&ensp;&ensp;&ensp;zone {…}；<br>注意：<br>&ensp;&ensp;&ensp;&ensp;任何服务程序如果期望其能够通过网络被其它主机访问，至少应该监听在一个能与外部主机通信的IP地址上；<br>每个配置语句必须以分号结尾，否则语法错误；<br>★ 缓存名称服务器的配置（初始化配置）：<br>◆监听能与外部主机通信的地址；<br>☉listen-on port 53 { any; };<br>&ensp;&ensp;&ensp;&ensp;监听的端口，即哪些主机可以进行访问解析，这里表示监听所有地址，后面有分号 ，花括号两边有空格；<br>☉listen-on port 53 { 192.168.16.104; };<br>&ensp;&ensp;&ensp;&ensp;表示监听某一特定的地址；<br>◆学习使用时建议关闭dnssec<br>&ensp;&ensp;&ensp;&ensp;dnssec-enable  no;<br>&ensp;&ensp;&ensp;&ensp;dnssec-validation no；<br>&ensp;&ensp;&ensp;&ensp;dnssec-lookaside no；<br>◆关闭仅允许本地查询<br>&ensp;&ensp;&ensp;&ensp;// allow-query     { localhost; };<br>★ 配置文件语法检查<br>&ensp;&ensp;&ensp;&ensp;named-checkconf [/etc/named.conf]</p>
+<h4 id="演示："><a href="#演示：" class="headerlink" title="演示："></a>演示：</h4><p>★ bind 安装、初始化设置及启动<br>◆主配置文件初始化设置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># yum install bind -y        # 安装 bind</span></div><div class="line">[root@node1 ~]<span class="comment"># cat /etc/named.conf        # 查看主配置文件</span></div><div class="line">//</div><div class="line">// named.conf</div><div class="line">//</div><div class="line">// Provided by Red Hat <span class="built_in">bind</span> package to configure the ISC BIND named(8) DNS</div><div class="line">// server as a caching only nameserver (as a localhost DNS resolver only).</div><div class="line">//</div><div class="line">// See /usr/share/doc/<span class="built_in">bind</span>*/sample/ <span class="keyword">for</span> example named configuration files.</div><div class="line">//</div><div class="line">// See the BIND Administrator<span class="string">'s Reference Manual (ARM) for details about the</span></div><div class="line">// configuration located in /usr/share/doc/bind-&#123;version&#125;/Bv9ARM.html</div><div class="line"></div><div class="line"># 全局配置段</div><div class="line">options &#123;</div><div class="line">	listen-on port 53 &#123; any; &#125;;   # 修改为监听本地的所有地址，注意以分号结尾，花括号两边有空格</div><div class="line">	listen-on-v6 port 53 &#123; ::1; &#125;;</div><div class="line">	directory 	"/var/named";</div><div class="line">	dump-file 	"/var/named/data/cache_dump.db";</div><div class="line">	statistics-file "/var/named/data/named_stats.txt";</div><div class="line">	memstatistics-file "/var/named/data/named_mem_stats.txt";</div><div class="line">	// allow-query     &#123; localhost; &#125;;     # 单行注释,关闭仅允许本地查询</div><div class="line"></div><div class="line">	/* </div><div class="line">	 - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.</div><div class="line">	 - If you are building a RECURSIVE (caching) DNS server, you need to enable </div><div class="line">	   recursion. </div><div class="line">	 - If your recursive DNS server has a public IP address, you MUST enable access </div><div class="line">	   control to limit queries to your legitimate users. Failing to do so will</div><div class="line">	   cause your server to become part of large scale DNS amplification </div><div class="line">	   attacks. Implementing BCP38 within your network would greatly</div><div class="line">	   reduce such attack surface </div><div class="line">	*/   # 以上为多行注释</div><div class="line">	recursion yes;</div><div class="line"></div><div class="line">	dnssec-enable no;        # 学习使用时建议关闭dnssec</div><div class="line">	dnssec-validation no;    # 学习使用时建议关闭dnssec</div><div class="line"></div><div class="line">	/* Path to ISC DLV key */      # 单行注释</div><div class="line">	bindkeys-file "/etc/named.iscdlv.key";</div><div class="line"></div><div class="line">	managed-keys-directory "/var/named/dynamic";</div><div class="line"></div><div class="line">	pid-file "/run/named/named.pid";</div><div class="line">	session-keyfile "/run/named/session.key";</div><div class="line">&#125;;</div><div class="line"></div><div class="line"># 日志配置段</div><div class="line">logging &#123;</div><div class="line">        channel default_debug &#123;</div><div class="line">                file "data/named.run";</div><div class="line">                severity dynamic;</div><div class="line">        &#125;;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"># 区域配置段</div><div class="line">zone "." IN &#123;</div><div class="line">	type hint;</div><div class="line">	file "named.ca";</div><div class="line">&#125;;</div><div class="line"></div><div class="line"># 包含的其他文件</div><div class="line">include "/etc/named.rfc1912.zones";</div><div class="line">include "/etc/named.root.key";</div></pre></td></tr></table></figure></p>
+<p>◆检查语法错误，启动服务，并查看状态<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># named-checkconf                       # 检查语法错误</span></div><div class="line">[root@node1 ~]<span class="comment"># systemctl start named.service         # 开启服务</span></div><div class="line">[root@node1 ~]<span class="comment"># systemctl status named.service        # 查看服务状态</span></div><div class="line">?.named.service - Berkeley Internet Name Domain (DNS)</div><div class="line">   Loaded: loaded (/usr/lib/systemd/system/named.service; disabled; vendor preset: disabled)</div><div class="line">   Active: active (running) since Sat 2017-07-22 22:35:41 CST; 13s ago</div><div class="line">  Process: 2035 ExecStart=/usr/sbin/named -u named <span class="variable">$OPTIONS</span> (code=exited, status=0/SUCCESS)</div><div class="line">  Process: 2033 ExecStartPre=/bin/bash -c <span class="keyword">if</span> [ ! <span class="string">"<span class="variable">$DISABLE_ZONE_CHECKING</span>"</span> == <span class="string">"yes"</span> ]; <span class="keyword">then</span> /usr/sbin/named-checkconf -z /etc/named.conf; <span class="keyword">else</span> <span class="built_in">echo</span> <span class="string">"Checking of zone files is disabled"</span>; <span class="keyword">fi</span> (code=exited, status=0/SUCCESS)</div><div class="line"> Main PID: 2038 (named)</div><div class="line">   CGroup: /system.slice/named.service</div><div class="line">           ?..2038 /usr/sbin/named -u named</div><div class="line"></div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: <span class="built_in">command</span> channel listening on ::1<span class="comment">#953</span></div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: managed-keys-zone: loaded serial 0</div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: zone 0.in-addr.arpa/IN: loaded serial 0</div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: zone 1.0.0.127.in-addr.arpa/IN: loade... 0</div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: zone localhost.localdomain/IN: loaded... 0</div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: zone localhost/IN: loaded serial 0</div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: zone 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.... 0</div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: all zones loaded</div><div class="line">Jul 22 22:35:41 node1.jack.com named[2038]: running</div><div class="line">Jul 22 22:35:41 node1.jack.com systemd[1]: Started Berkeley Internet Name Domain ...).</div><div class="line">Hint: Some lines were ellipsized, use <span class="_">-l</span> to show <span class="keyword">in</span> full.</div></pre></td></tr></table></figure></p>
+<p>◆查看监听状态<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># ss -tunlp|column -t</span></div><div class="line">Netid  State   Recv-Q  Send-Q  Local          Address:Port  Peer                                 Address:Port</div><div class="line">udp    UNCONN  0       0       *:24991        *:*           users:((<span class="string">"dhclient"</span>,pid=1674,fd=20))</div><div class="line">udp    UNCONN  0       0       127.0.0.1:53   *:*           users:((<span class="string">"named"</span>,pid=2038,fd=512))</div><div class="line">udp    UNCONN  0       0       *:68           *:*           users:((<span class="string">"dhclient"</span>,pid=1674,fd=6))</div><div class="line">udp    UNCONN  0       0       :::31945       :::*          users:((<span class="string">"dhclient"</span>,pid=1674,fd=21))</div><div class="line">udp    UNCONN  0       0       ::1:53         :::*          users:((<span class="string">"named"</span>,pid=2038,fd=513))</div><div class="line">tcp    LISTEN  0       10      127.0.0.1:53   *:*           users:((<span class="string">"named"</span>,pid=2038,fd=21))</div><div class="line">tcp    LISTEN  0       128     *:22           *:*           users:((<span class="string">"sshd"</span>,pid=1863,fd=3))</div><div class="line">tcp    LISTEN  0       128     127.0.0.1:953  *:*           users:((<span class="string">"named"</span>,pid=2038,fd=23))</div><div class="line">tcp    LISTEN  0       100     127.0.0.1:25   *:*           users:((<span class="string">"master"</span>,pid=1963,fd=13))</div><div class="line">tcp    LISTEN  0       10      ::1:53         :::*          users:((<span class="string">"named"</span>,pid=2038,fd=22))</div><div class="line">tcp    LISTEN  0       128     :::22          :::*          users:((<span class="string">"sshd"</span>,pid=1863,fd=4))</div><div class="line">tcp    LISTEN  0       128     ::1:953        :::*          users:((<span class="string">"named"</span>,pid=2038,fd=24))</div><div class="line">tcp    LISTEN  0       100     ::1:25         :::*          users:((<span class="string">"master"</span>,pid=1963,fd=14))</div></pre></td></tr></table></figure></p>
+<p>◆此时，我们可以把/etc/resolv.conf 配置文件中的DNS指向为本机的地址，即自己把自己当做DNS服务器，也可以在另一个客户端主机中配置DNS指向这台服务器，也可以正常访问<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># vi /etc/resolv.conf </span></div><div class="line"><span class="comment"># Generated by NetworkManager</span></div><div class="line">nameserver 192.168.2.143</div></pre></td></tr></table></figure></p>
+<h3 id="测试DNS工具：dig，host，nslookup"><a href="#测试DNS工具：dig，host，nslookup" class="headerlink" title="测试DNS工具：dig，host，nslookup"></a>测试DNS工具：dig，host，nslookup</h3><p>★ dig命令<br>◆语法：<br>&ensp;&ensp;&ensp;&ensp;dig [-t RR_TYPE] name [@SERVER] [query options]<br> 注意：<br>&ensp;&ensp;&ensp;&ensp;dig只用于测试dns系统，不会查询hosts文件进行解析<br>&ensp;&ensp;&ensp;&ensp;@：表示通过哪个DNS服务器，不写表示为通过本机<br>◆选项：<br>&ensp;&ensp;&ensp;&ensp;+[no]trace：跟踪解析过程<br>&ensp;&ensp;&ensp;&ensp;+[no]recurse：进行递归解析<br>◆测试反向解析：<br>&ensp;&ensp;&ensp;&ensp;dig -x IP @SERVER<br>◆模拟完全区域传送：<br>&ensp;&ensp;&ensp;&ensp;dig -t axfr ZONE_NAME @SERVER<br>示例：<br>&ensp;&ensp;&ensp;&ensp;dig -t axfr magedu.com @172.16.100.11<br>&ensp;&ensp;&ensp;&ensp;dig –t axfr 100.16.172.in-addr.arpa @172.16.1.1<br>★ host命令<br>◆语法：<br>&ensp;&ensp;&ensp;&ensp;host [-t type] name [SERVER_IP]<br>示例：<br>&ensp;&ensp;&ensp;&ensp;host –t NS magedu.com @172.16.0.1<br>★ nslookup命令：<br>◆语法：<br>&ensp;&ensp;&ensp;&ensp;nslookup [-option] [name | -] [server]<br>◆交互式模式：<br>&ensp;&ensp;&ensp;&ensp;nslookup&gt;<br>&ensp;&ensp;&ensp;&ensp;server IP：指明使用哪个DNS server进行查询；默认为/etc/resolv.conf中的<br>&ensp;&ensp;&ensp;&ensp;set q=RR_TYPE：指明查询的资源记录类型<br>&ensp;&ensp;&ensp;&ensp;NAME：要查询的名称</p>
+<h4 id="dig命令演示"><a href="#dig命令演示" class="headerlink" title="dig命令演示"></a>dig命令演示</h4><p>◆测试本机DNS能否正常查询<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 测试能否解析 </span></div><div class="line">[root@centos7 ~]<span class="comment"># dig -t A www.baidu.com  </span></div><div class="line"> </div><div class="line">; &lt;&lt;&gt;&gt; DiG 9.9.4-RedHat-9.9.4-29.el7 &lt;&lt;&gt;&gt; -t A www.baidu.com</div><div class="line">;; global options: +cmd</div><div class="line">;; Got answer:</div><div class="line">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 28923</div><div class="line">;; flags: qr rd ra; QUERY: 1, ANSWER: 3, AUTHORITY: 5, ADDITIONAL: 6</div><div class="line"> </div><div class="line">;; OPT PSEUDOSECTION:</div><div class="line">; EDNS: version: 0, flags:; udp: 4096</div><div class="line">;; QUESTION SECTION:  <span class="comment"># 问题区段</span></div><div class="line">;www.baidu.com.         IN  A</div><div class="line"> </div><div class="line">;; ANSWER SECTION: <span class="comment"># 答案选项</span></div><div class="line">www.baidu.com.      901 IN  CNAME   www.a.shifen.com.  <span class="comment"># 一个别名</span></div><div class="line">www.a.shifen.com.   300 IN  A   220.181.112.244</div><div class="line">www.a.shifen.com.   300 IN  A   220.181.111.188</div><div class="line"> </div><div class="line">;; AUTHORITY SECTION: <span class="comment"># 权威选项 ，这个别名对应了5台DNS服务器</span></div><div class="line">a.shifen.com.       1200    IN  NS  ns1.a.shifen.com.</div><div class="line">a.shifen.com.       1200    IN  NS  ns2.a.shifen.com.</div><div class="line">a.shifen.com.       1200    IN  NS  ns5.a.shifen.com.</div><div class="line">a.shifen.com.       1200    IN  NS  ns4.a.shifen.com.</div><div class="line">a.shifen.com.       1200    IN  NS  ns3.a.shifen.com.</div><div class="line"> </div><div class="line">;; ADDITIONAL SECTION:  <span class="comment">#附加选项 ，显示着5台服务器分别对应的地址</span></div><div class="line">ns1.a.shifen.com.   1200    IN  A   61.135.165.224</div><div class="line">ns2.a.shifen.com.   1200    IN  A   180.149.133.241</div><div class="line">ns3.a.shifen.com.   1200    IN  A   61.135.162.215</div><div class="line">ns4.a.shifen.com.   1200    IN  A   115.239.210.176</div><div class="line">ns5.a.shifen.com.   1200    IN  A   119.75.222.17</div><div class="line"> </div><div class="line">;; Query time: 89 msec  <span class="comment"># 查询指令时长，为89毫秒</span></div><div class="line">;; SERVER: 192.168.2.2<span class="comment">#53(192.168.2.2)  # 由哪个DNS服务器进行解析的，这里是由本机进行迭代的方式查询的</span></div><div class="line">;; WHEN: Sat Jul 22 23:13:20 CST 2017</div><div class="line">;; MSG SIZE  rcvd: 271</div></pre></td></tr></table></figure></p>
+<p>◆dig跟踪查询命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># dig +trace -t A www.baidu.com</span></div><div class="line"></div><div class="line">; &lt;&lt;&gt;&gt; DiG 9.9.4-RedHat-9.9.4-50.el7_3.1 &lt;&lt;&gt;&gt; +trace -t A www.baidu.com       <span class="comment"># 首先查找根节点服务器</span></div><div class="line">;; global options: +cmd</div><div class="line">.			5	IN	NS	c.root-servers.net.</div><div class="line">.			5	IN	NS	i.root-servers.net.</div><div class="line">.			5	IN	NS	g.root-servers.net.</div><div class="line">.			5	IN	NS	j.root-servers.net.</div><div class="line">.			5	IN	NS	e.root-servers.net.</div><div class="line">.			5	IN	NS	d.root-servers.net.</div><div class="line">.			5	IN	NS	h.root-servers.net.</div><div class="line">.			5	IN	NS	m.root-servers.net.</div><div class="line">.			5	IN	NS	f.root-servers.net.</div><div class="line">.			5	IN	NS	k.root-servers.net.</div><div class="line">.			5	IN	NS	a.root-servers.net.</div><div class="line">.			5	IN	NS	b.root-servers.net.</div><div class="line">.			5	IN	NS	l.root-servers.net.</div><div class="line">;; Received 228 bytes from 192.168.2.2<span class="comment">#53(192.168.2.2) in 991 ms</span></div><div class="line"></div><div class="line">com.			172800	IN	NS	a.gtld-servers.net.                          <span class="comment"># 其次查找顶级域名</span></div><div class="line">com.			172800	IN	NS	b.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	c.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	d.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	e.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	f.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	g.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	h.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	i.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	j.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	k.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	l.gtld-servers.net.</div><div class="line">com.			172800	IN	NS	m.gtld-servers.net.</div><div class="line">com.			86400	IN	DS	30909 8 2 E2D3C916F6DEEAC73294E8268FB5885044A833FC5459588F4A9184CF C41A5766</div><div class="line">com.			86400	IN	RRSIG	DS 8 1 86400 20170804050000 20170722040000 15768 . hmKipA6XwVN3NxUfSQQh1wyj0BKzSLGJq7pOCY/b3ikAWde4wOqiPIHa ewT8cWV4BOv5mfBng3SXhzxLpQxvOu/MgBQw+0MErD0X4iw/eQjFW43d JUdEAN5VKF80RITdEIZNDFYeFlYLQzt7jRBaSdhC0Ba7UCtYxUel9LO2 2knqizDt8fDnmUQutruzZDUgrDeimyl1OmJnhAU/nHFNzuvs7HHrCFhY wRq+99CL69AVkecC8NOU3VyME3tRS98nTk7FsU21S/VPeH7wDMAEtdiR gftLVTS4i8Qbq/RN6l2lrYwJ1dRdlqp+rb1ZdanRr9JEUcA+gv3SLDGR 6D7jdQ==</div><div class="line">;; Received 1173 bytes from 198.97.190.53<span class="comment">#53(h.root-servers.net) in 1634 ms</span></div><div class="line"></div><div class="line">baidu.com.		172800	IN	NS	dns.baidu.com.                          <span class="comment"># 再查找子域</span></div><div class="line">baidu.com.		172800	IN	NS	ns2.baidu.com.</div><div class="line">baidu.com.		172800	IN	NS	ns3.baidu.com.</div><div class="line">baidu.com.		172800	IN	NS	ns4.baidu.com.</div><div class="line">baidu.com.		172800	IN	NS	ns7.baidu.com.</div><div class="line">CK0POJMG874LJREF7EFN8430QVIT8BSM.com. 86400 IN NSEC3 1 1 0 - CK0Q1GIN43N1ARRC9OSM6QPQR81H5M9A NS SOA RRSIG DNSKEY NSEC3PARAM</div><div class="line">CK0POJMG874LJREF7EFN8430QVIT8BSM.com. 86400 IN RRSIG NSEC3 8 2 86400 20170728044707 20170721033707 5528 com. bfXkJHN13mddUk3DnV1jB1UAs3bs4oFkG3YDNfFbSGNNydEcQur8FaL8 u00oG8VRWj44b6D0WbZl8ALgD4F0HXvy0pc4EV3kU5ZI5zI9xUXqkYJ+ xPqrj54Pv6s6WbraJkloxRBg4ksDGvjpaqzuu1MAkYItX242ysr3+F57 Z1Q=</div><div class="line">HPVV2B5N85O7HJJRB7690IB5UVF9O9UA.com. 86400 IN NSEC3 1 1 0 - HQ01I3PFSK4TG3Q31LT3RIMHGBFQU42T NS DS RRSIG</div><div class="line">HPVV2B5N85O7HJJRB7690IB5UVF9O9UA.com. 86400 IN RRSIG NSEC3 8 2 86400 20170726044717 20170719033717 5528 com. ld+oxNAmzP+XhPtws5HNcyMXVCwHF0Wef79XUdv6TBL0ugJv0pRrcVwD W7U9DHC06XZTm/CnYkbL1l3+UjOOkFMS9t9I0sJ+UE2BrxVNWhJf1m5P fpmAIcrnbOHavY9rC/oO8CXWhi5prs/gQuXOXRnDymY419FQQTiSG5+u lx4=</div><div class="line">;; Received 697 bytes from 192.52.178.30<span class="comment">#53(k.gtld-servers.net) in 230 ms</span></div><div class="line"></div><div class="line">www.baidu.com.		1200	IN	CNAME	www.a.shifen.com.                      <span class="comment"># 查找的主机</span></div><div class="line">a.shifen.com.		1200	IN	NS	ns5.a.shifen.com.</div><div class="line">a.shifen.com.		1200	IN	NS	ns3.a.shifen.com.</div><div class="line">a.shifen.com.		1200	IN	NS	ns1.a.shifen.com.</div><div class="line">a.shifen.com.		1200	IN	NS	ns4.a.shifen.com.</div><div class="line">a.shifen.com.		1200	IN	NS	ns2.a.shifen.com.</div><div class="line">;; Received 239 bytes from 220.181.38.10<span class="comment">#53(ns4.baidu.com) in 48 ms</span></div></pre></td></tr></table></figure></p>
+<h4 id="host命令演示"><a href="#host命令演示" class="headerlink" title="host命令演示"></a>host命令演示</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 查询IPv4地址资源记录</span></div><div class="line">[root@node1 ~]<span class="comment"># host -t A www.baidu.com</span></div><div class="line">www.baidu.com is an <span class="built_in">alias</span> <span class="keyword">for</span> www.a.shifen.com.</div><div class="line">www.a.shifen.com has address 111.13.100.92</div><div class="line">www.a.shifen.com has address 111.13.100.91</div><div class="line"><span class="comment"># 查询域名服务器名资源记录</span></div><div class="line">[root@node1 ~]<span class="comment"># host -t NS baidu.com</span></div><div class="line">baidu.com name server ns2.baidu.com.</div><div class="line">baidu.com name server dns.baidu.com.</div><div class="line">baidu.com name server ns3.baidu.com.</div><div class="line">baidu.com name server ns7.baidu.com.</div><div class="line">baidu.com name server ns4.baidu.com.</div><div class="line"><span class="comment"># 查询邮件服务器资源记录</span></div><div class="line">[root@node1 ~]<span class="comment"># host -t MX baidu.com</span></div><div class="line">baidu.com mail is handled by 10 mx.n.shifen.com.</div><div class="line">baidu.com mail is handled by 20 mx50.baidu.com.</div><div class="line">baidu.com mail is handled by 20 mx1.baidu.com.</div><div class="line">baidu.com mail is handled by 20 jpmx.baidu.com.</div></pre></td></tr></table></figure>
+<h4 id="nslookup命令演示"><a href="#nslookup命令演示" class="headerlink" title="nslookup命令演示"></a>nslookup命令演示</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># nslookup</span></div><div class="line">&gt; server 192.168.2.2            <span class="comment"># 直接写server默认为本机DNS</span></div><div class="line">Default server: 192.168.2.2</div><div class="line">Address: 192.168.2.2<span class="comment">#53</span></div><div class="line">&gt; <span class="built_in">set</span> q=A                        <span class="comment"># 查询A记录</span></div><div class="line">&gt; www.baidu.com</div><div class="line">Server:		192.168.2.2</div><div class="line">Address:	192.168.2.2<span class="comment">#53</span></div><div class="line"></div><div class="line">Non-authoritative answer:</div><div class="line">www.baidu.com	canonical name = www.a.shifen.com.</div><div class="line">Name:	www.a.shifen.com</div><div class="line">Address: 111.13.100.91</div><div class="line">Name:	www.a.shifen.com</div><div class="line">Address: 111.13.100.92</div><div class="line">&gt; <span class="built_in">set</span> q=NS                       <span class="comment"># 查询NS资源记录</span></div><div class="line">&gt; baidu.com</div><div class="line">Server:		192.168.2.2</div><div class="line">Address:	192.168.2.2<span class="comment">#53</span></div><div class="line"></div><div class="line">Non-authoritative answer:</div><div class="line">baidu.com	nameserver = ns2.baidu.com.</div><div class="line">baidu.com	nameserver = dns.baidu.com.</div><div class="line">baidu.com	nameserver = ns3.baidu.com.</div><div class="line">baidu.com	nameserver = ns7.baidu.com.</div><div class="line">baidu.com	nameserver = ns4.baidu.com.</div><div class="line"></div><div class="line">Authoritative answers can be found from:</div><div class="line">&gt; <span class="built_in">exit</span></div></pre></td></tr></table></figure>
+<h4 id="rndc命令：named服务控制命令"><a href="#rndc命令：named服务控制命令" class="headerlink" title="rndc命令：named服务控制命令"></a>rndc命令：named服务控制命令</h4><p>★ rndc：named 服务控制命令<br>&ensp;&ensp;&ensp;&ensp;rndc–&gt; rndc(953/tcp) 监听端口<br>&ensp;&ensp;&ensp;&ensp;rndc COMMAND<br>★ COMMAND:<br>&ensp;&ensp;&ensp;&ensp;reload：重载主配置文件和区域解析库文件<br>&ensp;&ensp;&ensp;&ensp;reload zone：重载区域解析库文件<br>&ensp;&ensp;&ensp;&ensp;retransfer zone：手动启动区域传送过程，而不管序列号是否增加<br>&ensp;&ensp;&ensp;&ensp;notify zone：重新对区域传送发通知<br>&ensp;&ensp;&ensp;&ensp;reconfig：重载主配置文件<br>&ensp;&ensp;&ensp;&ensp;querylog：开启或关闭查询日志文件/var/log/message<br>&ensp;&ensp;&ensp;&ensp;trace：递增debug一个级别<br>&ensp;&ensp;&ensp;&ensp;trace LEVEL：指定使用的级别<br>&ensp;&ensp;&ensp;&ensp;notrace：将调试级别设置为0<br>&ensp;&ensp;&ensp;&ensp;flush：清空DNS服务器的所有缓存记录<br>&ensp;&ensp;&ensp;&ensp;status：状态查询<br>演示:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@node1 ~]<span class="comment"># rndc status</span></div><div class="line">version: 9.9.4-RedHat-9.9.4-50.el7_3.1 &lt;id:8f9657aa&gt;</div><div class="line">CPUs found: 1</div><div class="line">worker threads: 1</div><div class="line">UDP listeners per interface: 1</div><div class="line">number of zones: 101</div><div class="line">debug level: 0</div><div class="line">xfers running: 0</div><div class="line">xfers deferred: 0</div><div class="line">soa queries <span class="keyword">in</span> progress: 0</div><div class="line">query logging is OFF</div><div class="line">recursive clients: 0/0/1000</div><div class="line">tcp clients: 0/100</div><div class="line">server is up and running</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">linux服务</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/07/21/dns原理详解/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/07/15/加密-解密-数字签名-SSL-CA/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          加密解密、数字签名、SSL、CA技术
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/22/dns详细配置/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">DNS详解配置</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

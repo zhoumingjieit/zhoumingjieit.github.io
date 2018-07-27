@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>CentOS 系统自动化安装 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★系统安装过程&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★配置anaconda&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★自动化安装系统 CentOS 系统安装1.启动流程★启动流程&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆bootloader–&amp;gt;kernel(initrd)–&amp;gt;rootfs–&amp;gt;anacon">
+<meta name="keywords" content="linux安装">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 系统自动化安装">
+<meta property="og:url" content="http://yoursite.com/2017/06/25/CentOS安装/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="概述：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★系统安装过程&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★配置anaconda&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★自动化安装系统 CentOS 系统安装1.启动流程★启动流程&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆bootloader–&amp;gt;kernel(initrd)–&amp;gt;rootfs–&amp;gt;anacon">
+<meta property="og:image" content="http://yoursite.com/images/system-config-kickstart.png">
+<meta property="og:image" content="http://yoursite.com/images/ks.png">
+<meta property="og:image" content="http://yoursite.com/images/ks-install.png">
+<meta property="og:image" content="http://yoursite.com/images/ks-install01.png">
+<meta property="og:updated_time" content="2017-08-26T12:41:44.338Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS 系统自动化安装">
+<meta name="twitter:description" content="概述：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★系统安装过程&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★配置anaconda&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;★自动化安装系统 CentOS 系统安装1.启动流程★启动流程&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆bootloader–&amp;gt;kernel(initrd)–&amp;gt;rootfs–&amp;gt;anacon">
+<meta name="twitter:image" content="http://yoursite.com/images/system-config-kickstart.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-CentOS安装" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CentOS 系统自动化安装
+    </h1>
+  
+
+        
+        <a href="/2017/06/25/CentOS安装/" class="archive-article-date">
+  	<time datetime="2017-06-25T02:52:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>&ensp;&ensp;&ensp;&ensp;★系统安装过程<br>&ensp;&ensp;&ensp;&ensp;★配置anaconda<br>&ensp;&ensp;&ensp;&ensp;★自动化安装系统</p>
+<h4 id="CentOS-系统安装"><a href="#CentOS-系统安装" class="headerlink" title="CentOS 系统安装"></a>CentOS 系统安装</h4><h4 id="1-启动流程"><a href="#1-启动流程" class="headerlink" title="1.启动流程"></a>1.启动流程</h4><p>★启动流程<br>&ensp;&ensp;&ensp;&ensp;◆bootloader–&gt;kernel(initrd)–&gt;rootfs–&gt;anaconda(启动安装程序）</p>
+<h4 id="2-anaconda：（系统安装程序）"><a href="#2-anaconda：（系统安装程序）" class="headerlink" title="2.anaconda：（系统安装程序）"></a>2.anaconda：（系统安装程序）</h4><p>★安装界面：<br>&ensp;&ensp;&ensp;&ensp;◆tui：基于cureses的文本配置窗口；<br>&ensp;&ensp;&ensp;&ensp;◆gui：图形界面<br>★anaconda介绍<br>&ensp;&ensp;&ensp;&ensp;◆Anaconda是RedHat、CentOS、Fedora等Linux的安装管理程序。它可以提供文本、图形等安装管理方式，并支持 Kickstart 等脚本提供自动安装的功能。此外，其还支持许多启动参数，熟悉这些参数可为安装带来很多方便。该程序的功能是把位于光盘或其他源上的数据包，根据设置安装到主机上。为实现该定制安装，它提供一个定制界面，可以实现交互式界面供用户选择配置（如选择语言，键盘，时区等信息）。<br>&ensp;&ensp;&ensp;&ensp;◆Anaconda的大部分模块用Python编写，有少许的载入模块用C编写。</p>
+<h4 id="3-CentOS的安装过程启动流程："><a href="#3-CentOS的安装过程启动流程：" class="headerlink" title="3.CentOS的安装过程启动流程："></a>3.CentOS的安装过程启动流程：</h4><p>★MBR：boot.cat                光盘上引导加载器<br>★Stage2：isolinux/isolinux.bin<br>&ensp;&ensp;&ensp;&ensp;◆配置文件：isolinux/isolinux.cfg<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;每个对应的菜单选项<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;加载内核：isolinux/vmlinuz<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;向内核传递参数：append initrd=initrd.img<br>&ensp;&ensp;&ensp;&ensp;其实整个光盘安装启动过程就是依赖于isolinux这个目录下的文件的<br>★装载根文件系统，并启动anaconda<br>&ensp;&ensp;&ensp;&ensp;◆默认界面是图形界面（GUI）：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;512MB+内存空间<br>&ensp;&ensp;&ensp;&ensp;◆若需要显示指定启动TUI接口：向启动内核传递一个参数“text”即可；<br>&ensp;&ensp;&ensp;&ensp;◆1)按tab键：在后面增加text<br>&ensp;&ensp;&ensp;&ensp;◆2)按ESC键：boot（提示符下）: linux text<br>注意：<br>&ensp;&ensp;&ensp;&ensp;◆上述内容一般位于引导设备，例如可通过光盘、U盘、或网络等；后续的anaconda及其安装用到的程序包等可以来自于程序包仓库。<br>&ensp;&ensp;&ensp;&ensp;◆此仓库的位置可以为：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;本地光盘、本地硬盘、ftp server、http server、nfs server<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;如果想手动指定安装仓库：按 ESC键：boot（提示符下）：linux method</p>
+<h4 id="演示-查看光盘镜像引导文件"><a href="#演示-查看光盘镜像引导文件" class="headerlink" title="演示-查看光盘镜像引导文件"></a>演示-查看光盘镜像引导文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">[root@CentOS7 ~]<span class="comment"># mount /dev/cdrom /mnt/cdrom</span></div><div class="line">mount: /dev/sr0 is write-protected, mounting <span class="built_in">read</span>-only</div><div class="line">[root@CentOS7 ~]<span class="comment"># cd /mnt/cdrom</span></div><div class="line">[root@CentOS7 cdrom]<span class="comment"># ls</span></div><div class="line">CentOS_BuildTag  GPL       LiveOS    RPM-GPG-KEY-CentOS-7</div><div class="line">EFI              images    Packages  RPM-GPG-KEY-CentOS-Testing-7</div><div class="line">EULA             isolinux  repodata  TRANS.TBL</div><div class="line">[root@CentOS7 cdrom]<span class="comment"># cd isolinux/</span></div><div class="line">[root@CentOS7 isolinux]<span class="comment"># ls</span></div><div class="line">boot.cat  grub.conf   isolinux.bin  memtest     TRANS.TBL    vesamenu.c32</div><div class="line">boot.msg  initrd.img  isolinux.cfg  splash.png  upgrade.img  vmlinuz</div><div class="line">[root@CentOS7 isolinux]<span class="comment"># ls -l</span></div><div class="line">total 86002</div><div class="line">-r--r--r--. 1 root root     2048 Dec 10  2015 boot.cat</div><div class="line">-r--r--r--. 1 root root       84 Dec 10  2015 boot.msg</div><div class="line">-r--r--r--. 1 root root      281 Dec 10  2015 grub.conf</div><div class="line">-r--r--r--. 2 root root 38508192 Dec 10  2015 initrd.img</div><div class="line">-r--r--r--. 1 root root    24576 Dec 10  2015 isolinux.bin</div><div class="line">-r--r--r--. 1 root root     3032 Dec 10  2015 isolinux.cfg</div><div class="line">-r--r--r--. 1 root root   176500 Sep 11  2014 memtest</div><div class="line">-r--r--r--. 1 root root      186 Oct  1  2015 splash.png</div><div class="line">-r--r--r--. 1 root root     2438 Dec 10  2015 TRANS.TBL</div><div class="line">-r--r--r--. 2 root root 44035836 Dec 10  2015 upgrade.img</div><div class="line">-r--r--r--. 1 root root   153104 Mar  6  2015 vesamenu.c32</div><div class="line">-r-xr-xr-x. 2 root root  5156528 Nov 20  2015 vmlinuz</div><div class="line">[root@CentOS7 isolinux]<span class="comment"># less isolinux.cfg</span></div><div class="line">label linux</div><div class="line">  menu label ^Install CentOS 7</div><div class="line">  kernel vmlinuz                          加载的内核</div><div class="line">  append initrd=initrd.img inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 quiet        向内核传递的参数</div></pre></td></tr></table></figure>
+<h3 id="anaconda-工作过程（安装前配置阶段，安装阶段，首次启动）"><a href="#anaconda-工作过程（安装前配置阶段，安装阶段，首次启动）" class="headerlink" title="anaconda 工作过程（安装前配置阶段，安装阶段，首次启动）"></a>anaconda 工作过程（安装前配置阶段，安装阶段，首次启动）</h3><h4 id="1-安装前配置阶段："><a href="#1-安装前配置阶段：" class="headerlink" title="1.安装前配置阶段："></a>1.安装前配置阶段：</h4><p>◆安装过程使用的语言；<br>◆键盘类型；<br>◆安装目标存数设备；<br>&ensp;&ensp;&ensp;&ensp;Basic Storage：本地磁盘<br>&ensp;&ensp;&ensp;&ensp;Special Storage：ISCSI<br>◆设定主机名；<br>◆配置网络接口；<br>◆时区；<br>◆管理员密码；<br>◆设定分区方式及MBR的安装位置；<br>◆创建一个普通用户；<br>◆选定要安装的程序包；</p>
+<h4 id="2-安装阶段："><a href="#2-安装阶段：" class="headerlink" title="2.安装阶段："></a>2.安装阶段：</h4><p>◆在目标磁盘创建分区并执行格式化；<br>◆将选定的程序包安装至目标位置；<br>◆安装bootloader</p>
+<h4 id="3-重启系统"><a href="#3-重启系统" class="headerlink" title="3.重启系统"></a>3.重启系统</h4><p>◆iptables 防火墙<br>◆selinux<br>◆core dump 核心转储</p>
+<h3 id="安装引导选项及-kickstart-文件"><a href="#安装引导选项及-kickstart-文件" class="headerlink" title="安装引导选项及 kickstart 文件"></a>安装引导选项及 kickstart 文件</h3><h4 id="1-anaconda-的配置方式："><a href="#1-anaconda-的配置方式：" class="headerlink" title="1.anaconda 的配置方式："></a>1.anaconda 的配置方式：</h4><p>★配置方式：<br>&ensp;&ensp;&ensp;&ensp;◆交互式配置方式；<br>&ensp;&ensp;&ensp;&ensp;◆支持通过读取配置文件中事先定义好的配置项自动完成配置；遵循特定的语法格 式，此文件即为kickstart文件；</p>
+<h4 id="2-安装引导选项："><a href="#2-安装引导选项：" class="headerlink" title="2.安装引导选项："></a>2.安装引导选项：</h4><p>★boot：<br>&ensp;&ensp;&ensp;&ensp;◆text：文本安装方式；<br>&ensp;&ensp;&ensp;&ensp;◆method：手动指定使用安装方法；<br>&ensp;&ensp;&ensp;&ensp;◆与网络相关的引导选项：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ip=IPADDR<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;netmask=MASK<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;gateway=GW<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;dns=DNS_SERVER_IP<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ifname=NAME:MAC_ADDR<br>&ensp;&ensp;&ensp;&ensp;◆远程访问功能相关的引导选项：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;vnc<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;vncpassword=’PASSWORD’<br>&ensp;&ensp;&ensp;&ensp;◆指明kickstart文件的位置：ks=<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;DVD drive:   ks=cdrom:/PATH/TO/KICKSTART_FILE<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Hard drive:  ks=hd:device:/directory/KICKSTART_FILE<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;HTTP server: ks=<a href="http://host:port/path/to/KICKSTART_FILE" target="_blank" rel="external">http://host:port/path/to/KICKSTART_FILE</a><br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;FTP server:  ks=ftp://host:port/path/to/KICKSTART_FILE<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;HTTPS server:ks=<a href="https://host:port/path/to/KICKSTART_FILE" target="_blank" rel="external">https://host:port/path/to/KICKSTART_FILE</a><br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;NFS server:  ks=nfs:host:/path/to/KICKSTART_FILE<br>&ensp;&ensp;&ensp;&ensp;◆启动救援模式：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;rescue<br>&ensp;&ensp;&ensp;&ensp;◆装载额外驱动：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;dd<br>&ensp;&ensp;&ensp;&ensp;◆官方文档<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;www.redhat.com/docs 《installation guide》</p>
+<h4 id="3-kickstart文件的格式-："><a href="#3-kickstart文件的格式-：" class="headerlink" title="3.kickstart文件的格式 ："></a>3.kickstart文件的格式 ：</h4><p>★命令段：指定各种安装前的配置选项，如键盘类型等；<br>&ensp;&ensp;&ensp;&ensp;◆必备命令<br>&ensp;&ensp;&ensp;&ensp;◆可选命令<br>★程序包段：指明要安装程序包，以及包组，也包括不安装的程序包；<br>&ensp;&ensp;&ensp;&ensp;◆%packages ：指明程序包段的开始；<br>&ensp;&ensp;&ensp;&ensp;◆@group_name：安装一个包组;<br>&ensp;&ensp;&ensp;&ensp;◆package：安装一个程序包；<br>&ensp;&ensp;&ensp;&ensp;◆-package ：指明不安装的程序包;<br>&ensp;&ensp;&ensp;&ensp;◆%end ：指明程序包段的结尾;<br>★脚本段：<br>&ensp;&ensp;&ensp;&ensp;◆%pre：安装前脚本<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;运行环境：运行于安装介质上的微型Linux环境<br>&ensp;&ensp;&ensp;&ensp;◆%post：安装后脚本<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;运行环境：安装完成的系统；</p>
+<h4 id="4-命令段中的必备命令及可选命令："><a href="#4-命令段中的必备命令及可选命令：" class="headerlink" title="4.命令段中的必备命令及可选命令："></a>4.命令段中的必备命令及可选命令：</h4><p>★必备命令<br>&ensp;&ensp;&ensp;&ensp;◆authconfig：认证方式配置；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;authconfig–useshadow–passalgo=sha512<br>&ensp;&ensp;&ensp;&ensp;◆bootloader：bootloader的安装位置及相关配置；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;bootloader –location=mbr –driveorder=sda –append=”crashkernel=auto rhgb quiet”<br>&ensp;&ensp;&ensp;&ensp;◆keyboard: 设定键盘类型；<br>&ensp;&ensp;&ensp;&ensp;◆lang: 语言类型； 如：lang zh_CN.UTF-8<br>&ensp;&ensp;&ensp;&ensp;◆part: 分区布局；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;part /boot –fstype=ext4 –size=200<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;part pv.008002 –size=61440<br>&ensp;&ensp;&ensp;&ensp;◆补充：分区相关的其他命令：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;clrarpart：清除分区；（clearpart –none –drives=sda：清空磁盘分区）<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;volgroup：创建卷组；（volgroup vg0 –pesize=8192 pv.008002）<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;logvol：创建逻辑卷；（logvol / –fstype=ext4 –name=root –vgname=vg0 –size=20480）<br>&ensp;&ensp;&ensp;&ensp;◆rootpw：指明root的密码；<br>&ensp;&ensp;&ensp;&ensp;◆timezone：时区  timezone Asia/Shanghai<br>★可选命令<br>&ensp;&ensp;&ensp;&ensp;◆install OR upgrade；安装或升级<br>&ensp;&ensp;&ensp;&ensp;◆text: 安装界面类型，text为TUL，默认为GUI<br>&ensp;&ensp;&ensp;&ensp;◆network：配置网络接口；<br>&ensp;&ensp;&ensp;&ensp;◆firewall：防火墙<br>&ensp;&ensp;&ensp;&ensp;系统安装完成之后禁用防火墙<br>&ensp;&ensp;&ensp;&ensp;◆CentOS 6 ：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;service iptables stop<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;chkconfig iptables off<br>&ensp;&ensp;&ensp;&ensp;◆CentOS 7 ：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;systemctl stop firewalld.service<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;systemctl disables firewalld.service<br>&ensp;&ensp;&ensp;&ensp;◆selinux：SElinux<br>&ensp;&ensp;&ensp;&ensp;系统安装完成后禁用SElinux：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;编辑/etc/sysconfig/selinux或/etc/selinux/config文件，修改SELINUX参数的值为下面其中参数之一：permisslve,disabled<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;立即生效：getenforce，setenforce 0<br>&ensp;&ensp;&ensp;&ensp;◆安装完成之后的行为<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;halt、poweroff、reboot：；<br>&ensp;&ensp;&ensp;&ensp;◆repo：安装时使用的rpository<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;repo  –name=”CentOS”   –baseurl=cdrom:sr0  –cost=100<br>&ensp;&ensp;&ensp;&ensp;◆user：安装完成后为系统创建新用户<br>&ensp;&ensp;&ensp;&ensp;◆url：指明安装时使用的repository，但是为url格式；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;url –url=<a href="http://172.16.0.1/cobbler/ks_mirror/CentOS-6.7-x86_64/" target="_blank" rel="external">http://172.16.0.1/cobbler/ks_mirror/CentOS-6.7-x86_64/</a><br>&ensp;&ensp;&ensp;&ensp;◆key –skip：跳过安装号码,适用于rhel版本</p>
+<h4 id="演示：kickstart文件"><a href="#演示：kickstart文件" class="headerlink" title="演示：kickstart文件"></a>演示：kickstart文件</h4><p>CentOS 6 中的 anaconda-ks.cfg<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">[root@CentOS6 ~]<span class="comment"># cat anaconda-ks.cfg </span></div><div class="line"><span class="comment">#Kickstart file automatically generated by anaconda.</span></div><div class="line"><span class="comment">#version=DEVEL</span></div><div class="line">install      安装</div><div class="line">url --url=    指明安装时使用的仓库 </div><div class="line">lang en_US.UTF-8 指明使用的语言</div><div class="line">keyboard us    指明使用的键盘</div><div class="line">network --onboot yes --device eth0 --bootproto dhcp --noipv6 配置网络接口</div><div class="line">rootpw  --iscrypted <span class="variable">$6</span><span class="variable">$CGsqab6d</span><span class="variable">$Cd</span>.PnnWtlL5XZAyr9J2zoMqyJH1QodcDp1pQp0uZ1f0Cq4eq9.TMkSQU6IfpvYZEYc32.lmF0lKuQwavnC49a0   指明root密码 </div><div class="line"><span class="comment">#Reboot after installation</span></div><div class="line">reboot          安装完成之后的行为</div><div class="line">firewall --disabled   防火墙</div><div class="line">authconfig --useshadow  --passalgo=sha512 认证方式配置</div><div class="line">selinux --disabled      SElinux</div><div class="line">timezone Asia/Shanghai    时区</div><div class="line">bootloader --location=mbr --driveorder=sda --append=<span class="string">"crashkernel=auto crashkernel=auto rhgb rhgb quiet quiet"</span>  bootloader的安装位置及相关配置</div><div class="line"><span class="comment">#Clear the Master Boot Record</span></div><div class="line"><span class="comment">#zerombr</span></div><div class="line"><span class="comment">#The following is the partition information you requested</span></div><div class="line"><span class="comment">#Note that any partitions you deleted are not expressed</span></div><div class="line"><span class="comment">#here so unless you clear all partitions first, this is</span></div><div class="line"><span class="comment">#not guaranteed to work</span></div><div class="line"><span class="comment">#clearpart --all</span></div><div class="line"><span class="comment">#part /boot --fstype=ext4 --size=200</span></div><div class="line"><span class="comment">#part pv.008002 --size=61440</span></div><div class="line"><span class="comment">#volgroup vg0 --pesize=8192 pv.008002</span></div><div class="line"><span class="comment">#logvol / --fstype=ext4 --name=root --vgname=vg0 --size=20480</span></div><div class="line"><span class="comment">#logvol swap --name=swap --vgname=vg0 --size=2048</span></div><div class="line"><span class="comment">#logvol /usr --fstype=ext4 --name=usr --vgname=vg0 --size=10240</span></div><div class="line"><span class="comment">#logvol /var --fstype=ext4 --name=var --vgname=vg0 --size=20480</span></div><div class="line">repo --name=<span class="string">"CentOS"</span>  --baseurl=http://10.1.0.1/cobbler/ks_mirror/6/ --cost=100</div></pre></td></tr></table></figure></p>
+<h3 id="定制kickstart文件的方式："><a href="#定制kickstart文件的方式：" class="headerlink" title="定制kickstart文件的方式："></a>定制kickstart文件的方式：</h3><p>★直接手动编辑；<br>&ensp;&ensp;&ensp;&ensp;依据某模板修改<br>★可使用创建工具：<br>&ensp;&ensp;&ensp;&ensp;yum install system-config-kickstart<br>&ensp;&ensp;&ensp;&ensp;system-config-kickstart<br>&ensp;&ensp;&ensp;&ensp;依据某模板修改并生成新配置；<br>&ensp;&ensp;&ensp;&ensp;◆检查ks文件的语法错误：ksvalidator<br>&ensp;&ensp;&ensp;&ensp;ksvalidator /PATH/TO/KICKSTART_FILE</p>
+<h3 id="制作一个kickstart文件以及一个引导镜像"><a href="#制作一个kickstart文件以及一个引导镜像" class="headerlink" title="制作一个kickstart文件以及一个引导镜像"></a>制作一个kickstart文件以及一个引导镜像</h3><h4 id="制作kickstart文件："><a href="#制作kickstart文件：" class="headerlink" title="制作kickstart文件："></a>制作kickstart文件：</h4><p>运行命令system-config-kickstart &amp;<br>会出现如下编辑界：<br><img src="\images\system-config-kickstart.png" alt="kernel address "><br>可以在以下界面编辑，配置相关信息，最后保存至/root目录下为ks.cfg<br><img src="\images\ks.png" alt="kernel address "></p>
+<h4 id="制作引导光盘步骤："><a href="#制作引导光盘步骤：" class="headerlink" title="制作引导光盘步骤："></a>制作引导光盘步骤：</h4><p>1.挂载光盘镜像：<br>[root@CentOS6 ~]# mount /dev/cdrom /mnt/cdrom<br>mount: block device /dev/sr0 is write-protected, mounting read-only<br>2.指定一个启动镜像配置文件根目录：<br>[root@CentOS6 ~]# mkdir myboot<br>[root@CentOS6 ~]# cd myboot/<br>[root@CentOS6 myboot]# ls<br>3.拷贝光盘镜像的启动文件目录isolinux到镜像文件根目录myboot下:<br>[root@CentOS6 myboot]# cp -r /mnt/cdrom/isolinux/ ./<br>[root@CentOS6 myboot]# ls<br>isolinux<br>[root@CentOS6 myboot]# cd isolinux/<br>[root@CentOS6 isolinux]# ls -l<br>total 38572<br>-r–r–r–. 1 root root     2048 Jun 27 00:42 boot.cat<br>-r–r–r–. 1 root root       84 Jun 27 00:42 boot.msg<br>-r–r–r–. 1 root root      334 Jun 27 00:42 grub.conf<br>-r–r–r–. 1 root root 34815427 Jun 27 00:42 initrd.img<br>-r–r–r–. 1 root root    24576 Jun 27 00:42 isolinux.bin<br>-r–r–r–. 1 root root      936 Jun 27 00:42 isolinux.cfg<br>-r–r–r–. 1 root root   165080 Jun 27 00:42 memtest<br>-r–r–r–. 1 root root   151230 Jun 27 00:42 splash.jpg<br>-r–r–r–. 1 root root     2215 Jun 27 00:42 TRANS.TBL<br>-r–r–r–. 1 root root   163728 Jun 27 00:42 vesamenu.c32<br>-r-xr-xr-x. 1 root root  4152336 Jun 27 00:42 vmlinuz<br>4.添加启动镜像文件写权限（默认没有写权限）<br>[root@CentOS6 isolinux]# chmod +w *<br>5.修改启动镜像配置文件<br>[root@CentOS6 isolinux]# vim isolinux.cfg<br>[root@CentOS6 isolinux]# cat isolinux.cfg<br>default vesamenu.c32</p>
+<p>#prompt 1<br>timeout 600<br>display boot.msg<br>menu background splash.jpg<br>menu title Welcome to CentOS 6.6!<br>menu color border 0 #ffffffff #00000000<br>menu color sel 7 #ffffffff #ff000000<br>menu color title 0 #ffffffff #00000000<br>menu color tabmsg 0 #ffffffff #00000000<br>menu color unsel 0 #ffffffff #00000000<br>menu color hotsel 0 #ff000000 #ffffffff<br>menu color hotkey 7 #ffffffff #ff000000<br>menu color scrollbar 0 #ffffffff #00000000<br>label linux<br>  menu label ^Install or upgrade an existing system (ks)     #########可以自行修改添加启动显示信息<br>  menu default<br>  kernel vmlinuz<br>  append initrd=initrd.img ks=cdrom:/ks.cfg           ##########指定kickstart文件位置<br>label vesa<br>  menu label Install system with ^basic video driver<br>  kernel vmlinuz<br>  append initrd=initrd.img xdriver=vesa nomodeset<br>label rescue<br>  menu label ^Rescue installed system<br>  kernel vmlinuz<br>  append initrd=initrd.img rescue<br>label local<br>  menu label Boot from ^local drive<br>  localboot 0xffff<br>label memtest86<br>  menu label ^Memory test<br>  kernel memtest<br>  append –<br>6.拷贝kickstart文件到镜像文件的根目录myboot下：<br>[root@CentOS6 isolinux]# cp /root/ks.cfg /root/myboot/<br>[root@CentOS6 isolinux]# ls /root/myboot/<br>isolinux  ks.cfg<br>7.制作光盘镜像文件：<br>[root@CentOS6 myboot]# cd ..          #########切换到镜像目录的上层目录<br>[root@CentOS6 ~]# mkisofs -R -J -T -v –no-emul-boot –boot-load-size 4 –boot-info-table -V “CentOS 6 x86_64 boot” -c isolinux/boot.cat -b isolinux/isolinux.bin -o /root/boot.iso myboot/<br>I: -input-charset not specified, using utf-8 (detected in locale settings)<br>genisoimage 1.1.9 (Linux)<br>Scanning myboot/<br>Scanning myboot/isolinux<br>Excluded: myboot/isolinux/TRANS.TBL<br>Excluded by match: myboot/isolinux/boot.cat<br>Writing:   Initial Padblock                        Start Block 0<br>Done with: Initial Padblock                        Block(s)    16<br>Writing:   Primary Volume Descriptor               Start Block 16<br>Done with: Primary Volume Descriptor               Block(s)    1<br>Writing:   Eltorito Volume Descriptor              Start Block 17<br>Size of boot image is 4 sectors -&gt; No emulation<br>Done with: Eltorito Volume Descriptor              Block(s)    1<br>Writing:   Joliet Volume Descriptor                Start Block 18<br>Done with: Joliet Volume Descriptor                Block(s)    1<br>Writing:   End Volume Descriptor                   Start Block 19<br>Done with: End Volume Descriptor                   Block(s)    1<br>Writing:   Version block                           Start Block 20<br>Done with: Version block                           Block(s)    1<br>Writing:   Path table                              Start Block 21<br>Done with: Path table                              Block(s)    4<br>Writing:   Joliet path table                       Start Block 25<br>Done with: Joliet path table                       Block(s)    4<br>Writing:   Directory tree                          Start Block 29<br>Done with: Directory tree                          Block(s)    2<br>Writing:   Joliet directory tree                   Start Block 31<br>Done with: Joliet directory tree                   Block(s)    2<br>Writing:   Directory tree cleanup                  Start Block 33<br>Done with: Directory tree cleanup                  Block(s)    0<br>Writing:   Extension record                        Start Block 33<br>Done with: Extension record                        Block(s)    1<br>Writing:   The File(s)                             Start Block 34<br> 25.74% done, estimate finish Tue Jun 27 00:51:16 2017<br> 51.38% done, estimate finish Tue Jun 27 00:51:16 2017<br> 77.11% done, estimate finish Tue Jun 27 00:51:16 2017<br>Total translation table size: 4701<br>Total rockridge attributes bytes: 1438<br>Total directory bytes: 2654<br>Path table size(bytes): 26<br>Done with: The File(s)                             Block(s)    19283<br>Writing:   Ending Padblock                         Start Block 19317<br>Done with: Ending Padblock                         Block(s)    150<br>Max brk space used 0<br>19467 extents written (38 MB)</p>
+<h4 id="新建一台虚拟机用创建好的镜像引导系统。这里没有配置网络，所以在找镜像源时再更换为本地系统光盘镜像文件自行安装系统。"><a href="#新建一台虚拟机用创建好的镜像引导系统。这里没有配置网络，所以在找镜像源时再更换为本地系统光盘镜像文件自行安装系统。" class="headerlink" title="新建一台虚拟机用创建好的镜像引导系统。这里没有配置网络，所以在找镜像源时再更换为本地系统光盘镜像文件自行安装系统。"></a>新建一台虚拟机用创建好的镜像引导系统。这里没有配置网络，所以在找镜像源时再更换为本地系统光盘镜像文件自行安装系统。</h4><p><img src="\images\ks-install.png" alt="kernel address "><br><img src="\images\ks-install01.png" alt="kernel address "></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">linux安装</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/06/25/CentOS安装/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/06/20/linux之shell脚本编程-基础篇(一)/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          linux之shell脚本编程-基础篇(一)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/25/linux之shell脚本编程-基础篇(二)/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">linux之shell脚本编程-基础篇(二)</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

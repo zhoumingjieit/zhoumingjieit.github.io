@@ -9,16 +9,37 @@
   <title>CentOS系统启动流程 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Linux系统相关概念Linux系统主要由以下两部分组成：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;内核+根文件系统&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;内核：进程管理、内存管理、网络协议栈、文件系统、驱动程序、安全功能&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;根文件系统：运行中的linux系统可分为两层：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;用户空间：主要是应用程">
-<meta name="keywords">
+<meta name="keywords" content="linux启动流程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CentOS系统启动流程">
 <meta property="og:url" content="http://yoursite.com/2017/06/17/CentOS启动流程/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Linux系统相关概念Linux系统主要由以下两部分组成：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;内核+根文件系统&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;内核：进程管理、内存管理、网络协议栈、文件系统、驱动程序、安全功能&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;根文件系统：运行中的linux系统可分为两层：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;用户空间：主要是应用程">
-<meta property="og:updated_time" content="2017-06-18T05:50:46.503Z">
+<meta property="og:image" content="http://yoursite.com/images/make-partation.png">
+<meta property="og:image" content="http://yoursite.com/images/mkfs1.png">
+<meta property="og:image" content="http://yoursite.com/images/mkfs2.png">
+<meta property="og:image" content="http://yoursite.com/images/mkdir-boot.png">
+<meta property="og:image" content="http://yoursite.com/images/grub-install.png">
+<meta property="og:image" content="http://yoursite.com/images/cp-kernel-ramfs.png">
+<meta property="og:image" content="http://yoursite.com/images/modify-grub.png">
+<meta property="og:image" content="http://yoursite.com/images/make-root.png">
+<meta property="og:image" content="http://yoursite.com/images/make-dir.png">
+<meta property="og:image" content="http://yoursite.com/images/cp-comm.png">
+<meta property="og:image" content="http://yoursite.com/images/ldd-comm.png">
+<meta property="og:image" content="http://yoursite.com/images/ldd-comm01.png">
+<meta property="og:image" content="http://yoursite.com/images/ldd-comm02.png">
+<meta property="og:image" content="http://yoursite.com/images/test-comm.png">
+<meta property="og:image" content="http://yoursite.com/images/chroot.png">
+<meta property="og:image" content="http://yoursite.com/images/modify-grub.png">
+<meta property="og:image" content="http://yoursite.com/images/make-virtualM.png">
+<meta property="og:image" content="http://yoursite.com/images/make-virtualM01.png">
+<meta property="og:image" content="http://yoursite.com/images/boot-grub.png">
+<meta property="og:image" content="http://yoursite.com/images/boot.png">
+<meta property="og:updated_time" content="2017-08-26T12:41:30.418Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS系统启动流程">
 <meta name="twitter:description" content="Linux系统相关概念Linux系统主要由以下两部分组成：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;内核+根文件系统&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;内核：进程管理、内存管理、网络协议栈、文件系统、驱动程序、安全功能&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;根文件系统：运行中的linux系统可分为两层：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;用户空间：主要是应用程">
+<meta name="twitter:image" content="http://yoursite.com/images/make-partation.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -187,6 +208,13 @@
 <h5 id="CentOS-7：systemd"><a href="#CentOS-7：systemd" class="headerlink" title="CentOS 7：systemd"></a>CentOS 7：systemd</h5><p>&ensp;&ensp;&ensp;&ensp;&ensp;init程序：systemd<br>&ensp;&ensp;&ensp;&ensp;&ensp;配置文件：<br>&ensp;&ensp;&ensp;&ensp;&ensp;/usr/lib/systemd/system/<em>,  /etc/systemd/system/</em><br>&ensp;&ensp;&ensp;&ensp;&ensp;完全兼容SysV脚本机制；因此，service命令依然可用；不过，建议使用systemctl命令来控制服务；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# systemctl  {start|stop|restart|status}  name[.service]</p>
 <h5 id="系统启动流程-用户空间-：-sbin-init-etc-inittab"><a href="#系统启动流程-用户空间-：-sbin-init-etc-inittab" class="headerlink" title="系统启动流程(用户空间)： /sbin/init (/etc/inittab)"></a>系统启动流程(用户空间)： /sbin/init (/etc/inittab)</h5><p>设置默认运行级别 –&gt; 运行系统初始化脚本，完成系统初始化 –&gt; 关闭对应级别下需要停止的服务，启动对应级别下需要开启的服务–&gt; 设置登录终端 [–&gt; 启动图形终端]</p>
 <h4 id="CentOS系统启动流程总结"><a href="#CentOS系统启动流程总结" class="headerlink" title="CentOS系统启动流程总结"></a>CentOS系统启动流程总结</h4><p>&ensp;&ensp;&ensp;&ensp;POST –&gt; Boot Sequence(BIOS) –&gt; Boot Loader (MBR) –&gt; Kernel(ramdisk) –&gt; rootfs –&gt; switchroot –&gt; /sbin/init –&gt;(/etc/inittab, /etc/init/*.conf) –&gt; 设定默认运行级别 –&gt; 系统初始化脚本 –&gt; 关闭或启动对应级别下的服务 –&gt; 启动终端</p>
+<h4 id="请详细描述CentOS系统的启动流程（详细到每个过程系统做了哪些事情）"><a href="#请详细描述CentOS系统的启动流程（详细到每个过程系统做了哪些事情）" class="headerlink" title="请详细描述CentOS系统的启动流程（详细到每个过程系统做了哪些事情）"></a>请详细描述CentOS系统的启动流程（详细到每个过程系统做了哪些事情）</h4><h5 id="POST加电自检："><a href="#POST加电自检：" class="headerlink" title="POST加电自检："></a>POST加电自检：</h5><p>&ensp;&ensp;&ensp;&ensp;加电后首先加载BIOS并通过BIOS程序去加载CMOS，通过CMOS内的配置取得主机的各硬件配置，然后进行POST (Power-on Self Test)加电自检。</p>
+<h5 id="Boot-Sequence："><a href="#Boot-Sequence：" class="headerlink" title="Boot Sequence："></a>Boot Sequence：</h5><p>&ensp;&ensp;&ensp;&ensp;根据BIOS中设置的可引导设备序列，依次查找可引导设备，根据可引导设备中的MBR (Master Boot Record, 主要启动记录区中的前446字节的Boot Loader程序（GRUB）来引导启动设备，第一个有引导程序（Boot Loader）的设备将被作为本次引导启动设备。</p>
+<h5 id="Boot-Loader：引导加载器"><a href="#Boot-Loader：引导加载器" class="headerlink" title="Boot Loader：引导加载器"></a>Boot Loader：引导加载器</h5><p>&ensp;&ensp;&ensp;&ensp;主要是GRUB引导程序根据配置文件中指定的位置加载ramdisk虚拟文件系统和内核到内存中。<br>&ensp;&ensp;&ensp;&ensp;过程如下：<br>&ensp;&ensp;&ensp;&ensp;Grub stage1也是就MBR中的前446字节（Boot Loader）主要存放Grub的主程序。由于MBR太小无法存放所有Grub的配置信息，所以引入Grub stage2.<br>&ensp;&ensp;&ensp;&ensp;Grub stage2 主要是存放GRUB配置信息并以菜单的形式显示，配置信息中指定了根分区及内核、ramdisk虚拟文件系统的文件位置。<br>&ensp;&ensp;&ensp;&ensp;Grub stage1.5 MBR之后的扇区，让Grub stage1中也就是Boot Loader能够识别Grub stage2所在分区上的文件系统。</p>
+<h5 id="Kernel：内核"><a href="#Kernel：内核" class="headerlink" title="Kernel：内核"></a>Kernel：内核</h5><p>&ensp;&ensp;&ensp;&ensp;Ramdisk虚拟文件系统会被解压缩并在内存中模拟一个根目录，然后内核通过解压出来的Ramdisk虚拟文件系统加载相应的模块和驱动，最后完成根切换,加载第一个程序init.</p>
+<h5 id="init-程序："><a href="#init-程序：" class="headerlink" title="init 程序："></a>init 程序：</h5><p>&ensp;&ensp;&ensp;&ensp;根据/etc/inittab文件设置系统的默认运行级别<br>&ensp;&ensp;&ensp;&ensp;根据/etc/rc.d/rc.sysinit脚本完成系统初始化<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(1) 设置主机名；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(2) 设置欢迎信息；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(3) 激活udev和selinux；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(4) 挂载/etc/fstab文件中定义的所有文件系统；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(5) 检测根文件系统，并以读写方式重新挂载根文件系统；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(6) 设置系统时钟；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(7) 根据/etc/sysctl.conf文件来设置内核参数；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(8) 激活lvm及软raid设备；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(9) 激活swap设备；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(10) 加载额外设备的驱动程序；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(11) 清理操作；<br>&ensp;&ensp;&ensp;&ensp;根据/etc/rc.d/rc#启动和关闭相应的服务<br>&ensp;&ensp;&ensp;&ensp;加载相应的终端</p>
+<h3 id="实战自制Linux操作系统"><a href="#实战自制Linux操作系统" class="headerlink" title="实战自制Linux操作系统"></a>实战自制Linux操作系统</h3><p>(1) 为运行于虚拟机上的CentOS6添加一块新硬盘，新建两个主分区；并为其安装grub；<br>(2) 为硬盘的第一个主分区提供内核和ramdisk文件； 为第二个分区提供rootfs；<br>(3) 为rootfs提供bash、ls、cat程序及所依赖的库文件；<br>(4) 为grub提供配置文件；<br>(5) 将新的硬盘设置为第一启动项并能够正常启动目标主机；</p>
+<h4 id="步骤如下："><a href="#步骤如下：" class="headerlink" title="步骤如下："></a>步骤如下：</h4><p>1.添加一个硬盘/deb/sdb,创建两个分区/dev/sdb1和/dev/sdb2：<br><img src="\images\make-partation.png" alt="kernel address "><br>2.分别格式化两个分区为ext4文件系统：<br><img src="\images\mkfs1.png" alt="kernel address "><br><img src="\images\mkfs2.png" alt="kernel address "><br>3.在/mnt目录下创建一个boot目录，并挂载/dev/sdb1到此目录/mnt/boot目录下：<br><img src="\images\mkdir-boot.png" alt="kernel address "><br>4.安装grub<br><img src="\images\grub-install.png" alt="kernel address "><br>5.拷贝内核文件和ramfs文件到/mnt/boot目录下：<br><img src="\images\cp-kernel-ramfs.png" alt="kernel address "><br>6.创建grub.conf文件：由于我们会用这个盘/dev/sdb做为一个单独的系统盘启动，所有这里写为：hd0,0 root根目录挂载点为/dev/sda2<br><img src="\images\modify-grub.png" alt="kernel address "><br>7.创建根文件系统目录，并挂载/dev/sdb2到此目录下,并创建根目录下所对应的目录：<br><img src="\images\make-root.png" alt="kernel address "><br><img src="\images\make-dir.png" alt="kernel address "><br>8.提供bash,ls,cat程序以及相关的库文件：<br><img src="\images\cp-comm.png" alt="kernel address "><br><img src="\images\ldd-comm.png" alt="kernel address "><br><img src="\images\ldd-comm01.png" alt="kernel address "><br><img src="\images\ldd-comm02.png" alt="kernel address "><br>9.在/mnt/sysroot/home目录下创建一个文件，测试cat命令：<br><img src="\images\test-comm.png" alt="kernel address "><br>10.切换根目录做测试：<br><img src="\images\chroot.png" alt="kernel address "><br>11.再次编辑/mnt/boot/grub/grub.conf文件改变系统第一个启动程序为init为bash环境：<br><img src="\images\modify-grub.png" alt="kernel address "><br>12.新创建一个虚拟机把刚才创建好的启动盘为本虚拟机的启动盘;<br><img src="\images\make-virtualM.png" alt="kernel address "><br><img src="\images\make-virtualM01.png" alt="kernel address "><br>13.启动系统：<br><img src="\images\boot-grub.png" alt="kernel address "><br><img src="\images\boot.png" alt="kernel address "></p>
 
       
 
@@ -216,6 +244,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">linux启动流程</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -280,18 +319,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/06/11/linux进程及作业管理/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/06/13/linux之vim/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Linux进程及作业管理工具之一
+          Linux编辑器之vim
         
       </div>
     </a>
   
   
-    <a href="/2017/06/17/CentOS安装/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title"></div>
+    <a href="/2017/06/18/linux启动之grub/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CentOS系统启动流程之grub详解</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -317,7 +356,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2017 Jack_zhou
+    		&copy; 2018 Jack_zhou
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -396,27 +435,147 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">command</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">man</a>
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">privilege</a>
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">user&group</a>
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
               </li>
             
             <div class="clearfix"></div>

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>linux服务之iptables基础 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述：Linux中有关防火墙的相关基础知识，内容包括：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆iptables/netfilter：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆netfilter上的5个钩子函数；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆iptables上的5链；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆四表：raw，mangle，nat，filte">
+<meta name="keywords" content="iptables">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux服务之iptables基础">
+<meta property="og:url" content="http://yoursite.com/2017/08/22/linux服务之iptables/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="概述：Linux中有关防火墙的相关基础知识，内容包括：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆iptables/netfilter：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆netfilter上的5个钩子函数；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆iptables上的5链；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆四表：raw，mangle，nat，filte">
+<meta property="og:image" content="http://yoursite.com/images/iptables/filter.png">
+<meta property="og:image" content="http://yoursite.com/images/iptables/nat.png">
+<meta property="og:image" content="http://yoursite.com/images/iptables/数据包过程匹配流程.png">
+<meta property="og:image" content="http://yoursite.com/images/iptables/数据报流向.png">
+<meta property="og:image" content="http://yoursite.com/images/iptables/ftp.png">
+<meta property="og:image" content="http://yoursite.com/images/iptables/iptables-config.png">
+<meta property="og:image" content="http://yoursite.com/images/iptables/iptables-review.png">
+<meta property="og:updated_time" content="2017-08-28T08:01:50.715Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux服务之iptables基础">
+<meta name="twitter:description" content="概述：Linux中有关防火墙的相关基础知识，内容包括：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆iptables/netfilter：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆netfilter上的5个钩子函数；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆iptables上的5链；&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆四表：raw，mangle，nat，filte">
+<meta name="twitter:image" content="http://yoursite.com/images/iptables/filter.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-linux服务之iptables" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      linux服务之iptables基础
+    </h1>
+  
+
+        
+        <a href="/2017/08/22/linux服务之iptables/" class="archive-article-date">
+  	<time datetime="2017-08-22T02:00:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>Linux中有关防火墙的相关基础知识，内容包括：<br>&ensp;&ensp;&ensp;&ensp;◆iptables/netfilter：<br>&ensp;&ensp;&ensp;&ensp;◆netfilter上的5个钩子函数；<br>&ensp;&ensp;&ensp;&ensp;◆iptables上的5链；<br>&ensp;&ensp;&ensp;&ensp;◆四表：raw，mangle，nat，filter以及各表的功能和链的对应关系；<br>&ensp;&ensp;&ensp;&ensp;◆iptables的安装和命令规则的组成和使用格式；<br>&ensp;&ensp;&ensp;&ensp;◆iptables的匹配规则，包括基本匹配条件和扩展匹配条件；<br>&ensp;&ensp;&ensp;&ensp;◆扩展匹配条件中的隐性匹配和显性匹配</p>
+<h3 id="iptables介绍"><a href="#iptables介绍" class="headerlink" title="iptables介绍"></a>iptables介绍</h3><h4 id="Firewall"><a href="#Firewall" class="headerlink" title="Firewall"></a>Firewall</h4><p>★ Firewall：防火墙系统<br>&ensp;&ensp;&ensp;&ensp;是一种隔离工具，Packets Filter Firewall （包过滤型防火墙）；<br>☉定义：<br>&ensp;&ensp;&ensp;&ensp;工作于主机或网络的边缘，对经由的报文根据预先定义的规则（匹配条件）进行检测，对于能够被规则匹配到的报文实行某预定义的处理机制的一套组件；<br>☉硬件防火墙：<br>&ensp;&ensp;&ensp;&ensp;在硬件级别实现部分功能的防火墙；另一个部分功能基于软件实现；<br>☉软件防火墙：<br>&ensp;&ensp;&ensp;&ensp;应用软件处理逻辑运行于通用硬件平台之上的防火墙；<br>★ 防火墙范围分类：<br>&ensp;&ensp;&ensp;&ensp;主机防火墙：服务范围为当前主机；<br>&ensp;&ensp;&ensp;&ensp;网络防火墙：服务范围为防火墙背后的局域网；</p>
+<h4 id="iptables-netfilter："><a href="#iptables-netfilter：" class="headerlink" title="iptables/netfilter："></a>iptables/netfilter：</h4><p>★ netfilter：防火墙框架，framework；位于内核空间；<br>⊙hooks function（钩子函数）<br>&ensp;&ensp;&ensp;&ensp;prerouting：路由前<br>&ensp;&ensp;&ensp;&ensp;input ：   入栈<br>&ensp;&ensp;&ensp;&ensp;forward ： 转发<br>&ensp;&ensp;&ensp;&ensp;output ：  出栈<br>&ensp;&ensp;&ensp;&ensp;postrouting：路由后<br>注意：<br>&ensp;&ensp;&ensp;&ensp;钩子函数都是在内核中的TCP/IP协议栈上定义的。<br>★ iptables：<br>&ensp;&ensp;&ensp;&ensp;命令行工具程序，位于用户空间；规则管理工具；<br>⊙CHAINS：链，在钩子上定义规则<br>&ensp;&ensp;&ensp;&ensp;PREROUTING<br>&ensp;&ensp;&ensp;&ensp;INPUT<br>&ensp;&ensp;&ensp;&ensp;FORWARD<br>&ensp;&ensp;&ensp;&ensp;OUTPUT<br>&ensp;&ensp;&ensp;&ensp;POSTROUTING<br>注意：<br>&ensp;&ensp;&ensp;&ensp;iptables 是用户空间的规则管理工具，通过iptables编写好规则后，然后送往在对应的CHAINS（链）之上来管理报文；<br>★ 报文流向：<br>&ensp;&ensp;&ensp;&ensp;到本机某进程的报文：PREROUTING –&gt; INPUT<br>&ensp;&ensp;&ensp;&ensp;由本机转发的报文：PREROUTING –&gt; FORWARD –&gt; POSTROUTING<br>&ensp;&ensp;&ensp;&ensp;由本机的某进程发出报文：OUTPUT –&gt; POSTROUTING</p>
+<h4 id="tables-表"><a href="#tables-表" class="headerlink" title="tables 表"></a>tables 表</h4><p>★ 功能：<br>&ensp;&ensp;&ensp;&ensp;filter：过滤，防火墙；<br>&ensp;&ensp;&ensp;&ensp;nat：network address translation，网络地址转换；<br>&ensp;&ensp;&ensp;&ensp;mangle：拆解报文，做出修改，并重新封装；<br>&ensp;&ensp;&ensp;&ensp;raw：关闭nat表上启用的连接追踪机制；<br>附录：<br>filter表和nat表：<br><img src="\images\iptables\filter.png" alt="iptables"><br><img src="\images\iptables\nat.png" alt="iptables"><br>★ 优先级次序（由高而低）：<br>&ensp;&ensp;&ensp;&ensp;raw –&gt; mangle –&gt; nat –&gt; filter<br>★ 功能&lt;–&gt;钩子对应关系：很重要<br>&ensp;&ensp;&ensp;&ensp;raw：PREROUTING，OUTPUT<br>&ensp;&ensp;&ensp;&ensp;mangle：PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING<br>&ensp;&ensp;&ensp;&ensp;nat：PREROUTING，INPUT，OUTPUT，POSTROUTING<br>&ensp;&ensp;&ensp;&ensp;filter：INPUT，FORWARD，OUTPUT<br>★数据包过滤匹配流程：<br><img src="\images\iptables\数据包过程匹配流程.png" alt="iptables"></p>
+<h4 id="iptables规则的组成及工作原理："><a href="#iptables规则的组成及工作原理：" class="headerlink" title="iptables规则的组成及工作原理："></a>iptables规则的组成及工作原理：</h4><p>★ 匹配条件：<br>&ensp;&ensp;&ensp;&ensp;网络层首部：Source IP（源IP）, Destination IP（目标IP）<br>&ensp;&ensp;&ensp;&ensp;传输层首部：Source Port(源端口), Destination Port（目标端口）<br>&ensp;&ensp;&ensp;&ensp;扩展检查机制：<br>★ 处理动作：target 目标<br>&ensp;&ensp;&ensp;&ensp;ACCEPT：接受<br>&ensp;&ensp;&ensp;&ensp;DROP：丢弃<br>&ensp;&ensp;&ensp;&ensp;REJECT：驳回，拒绝<br>★ iptables工作流程<br>&ensp;&ensp;&ensp;&ensp;iptables是采用数据包过滤机制工作的，所以它会对请求的数据包的包头数据进行分析，并根据我们预先设定的规则进行匹配来确定是否可以进入主机。<br>&ensp;&ensp;&ensp;&ensp;工作流程如下图所示：<br>（数据报的流向是从左向右）<br><img src="\images\iptables\数据报流向.png" alt="iptables"><br>★ 总结：<br>&ensp;&ensp;&ensp;&ensp;1.防火墙是层层过滤的，实际是按照配置规则的顺序从上到下，从前到后进行过滤的。<br>&ensp;&ensp;&ensp;&ensp;2.如果匹配上规则，即明确表明是阻止还是通过，数据包就不在向下进行匹配新规则了。<br>&ensp;&ensp;&ensp;&ensp;3.如果所有规则中没有明确表明是阻止还是通过，也就是没有匹配规则，向下进行匹配，直到匹配默认规则得到明确的阻止还是通过。<br>&ensp;&ensp;&ensp;&ensp;4.防火墙默认规则是所有的规则执行完才会执行的。<br>&ensp;&ensp;&ensp;&ensp;5.匹配上了拒绝规则也是匹配，这点要多注意</p>
+<h3 id="iptables命令使用基础"><a href="#iptables命令使用基础" class="headerlink" title="iptables命令使用基础"></a>iptables命令使用基础</h3><h4 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h4><p>★ netfilter：位于内核中的tcp/ip协议栈报文处理框架；<br>★ iptables：<br>☉CentOS 5/6：iptables命令编写规则；<br> 初始化安装命令：<br>&ensp;&ensp;&ensp;&ensp;iptables -t filter -F<br>&ensp;&ensp;&ensp;&ensp;service iptables save<br>☉CentOS 7：firewalld，firewall-cmd, firewall-config<br> 初始化安装命令：<br>&ensp;&ensp;&ensp;&ensp;systemctl disable firewalld<br>★ 程序包：<br>&ensp;&ensp;&ensp;&ensp;iptables，iptstate</p>
+<h4 id="iptables命令的规则"><a href="#iptables命令的规则" class="headerlink" title="iptables命令的规则:"></a>iptables命令的规则:</h4><p>规则：<br>&ensp;&ensp;&ensp;&ensp;根据指定的匹配条件来尝试匹配每个流经此处的报文，一旦匹配成功，则由规则后面指定的处理动作进行处理；<br>⊙匹配条件：<br>◆基本匹配条件：主要是ip层（源地址，目标地址），传输层协议；<br>◆扩展匹配条件：需要借助于扩展模块进行指定的匹配条件；<br>&ensp;&ensp;&ensp;&ensp;隐式扩展：已经在基本匹配条件中指明的协议相关的扩展；<br>&ensp;&ensp;&ensp;&ensp;显式扩展：隐式扩展之外的其它扩展匹配条件；<br>⊙处理动作：<br>&ensp;&ensp;&ensp;&ensp;基本动作：ACCEPT，DROP，…<br>&ensp;&ensp;&ensp;&ensp;扩展动作：需要借助于扩展模块进行，但无须显式指定，仅需指明动作；<br>★ 添加规则时需要考量的问题：<br>&ensp;&ensp;&ensp;&ensp;报文流经的位置：用于判断将规则添加至哪个链；<br>&ensp;&ensp;&ensp;&ensp;实现的功能：用于判断将规则添加至哪个表；<br>&ensp;&ensp;&ensp;&ensp;报文的方向：用于判断哪个为“源”，哪个为“目标”；<br>&ensp;&ensp;&ensp;&ensp;匹配条件：用于编写能够正确匹配目标报文的规则；</p>
+<h4 id="iptables命令的使用格式"><a href="#iptables命令的使用格式" class="headerlink" title="iptables命令的使用格式"></a>iptables命令的使用格式</h4><p>★ 规则使用格式：<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] {-A|-C|-D} chain rule-specification<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] -I chain [rulenum] rule-specification<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] -R chain rulenum rule-specification<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] -D chain rulenum<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] -S [chain [rulenum]]<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] {-F|-L|-Z} [chain [rulenum]] [options…]<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] -N chain<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] -P chain target<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] -E old-chain-name new-chain-name<br>&ensp;&ensp;&ensp;&ensp;rule-specification = [matches…] [target]<br>&ensp;&ensp;&ensp;&ensp;match = -m matchname [per-match-options] 扩展条件<br>&ensp;&ensp;&ensp;&ensp;target = -j targetname [per-target-options] 处理动作<br>★ 规则管理格式：<br>&ensp;&ensp;&ensp;&ensp;iptables [-t table] COMMAND chain cretieria [-m -m matchname [per-match-options]]  [-j targetname [per-target-options]]<br>⊙-t table：<br>&ensp;&ensp;&ensp;&ensp;指明要管理的表； 默认为filter；<br>⊙COMMANDS：<br>◆链管理：<br>&ensp;&ensp;&ensp;&ensp;-P：iptables [-t table] -P chain target<br>&ensp;&ensp;&ensp;&ensp;              定义链的默认策略；其target一般可使用ACCEPT或DROP；<br>&ensp;&ensp;&ensp;&ensp;-N：iptables [-t table] -N chain<br>&ensp;&ensp;&ensp;&ensp;              自定义规则链；仅在默认链通过某规则进行调用方可生效；因此，每个自定义链都有其引用记数；<br>&ensp;&ensp;&ensp;&ensp;-X：iptables [-t table] -X [chain]<br>&ensp;&ensp;&ensp;&ensp;              删除自定义的空的引用计数为0的链；<br>&ensp;&ensp;&ensp;&ensp;-F：iptables [-t table] -F [chain [rulenum]] [options…]，<br>&ensp;&ensp;&ensp;&ensp;              清空指定的链，或删除指定链上的规则 ；<br>&ensp;&ensp;&ensp;&ensp;-E：iptables [-t table] -E old-chain-name new-chain-name，<br>&ensp;&ensp;&ensp;&ensp;              重命名自定义的引用计数为0的链；<br>&ensp;&ensp;&ensp;&ensp;-Z：iptables [-t table] -Z  [chain [rulenum]] [options…]<br>&ensp;&ensp;&ensp;&ensp;              规则置零，置零计数器<br>◆规则：<br>&ensp;&ensp;&ensp;&ensp;-A：append, iptables [-t table] -A chain rule-specification，<br>&ensp;&ensp;&ensp;&ensp;              追加规则到指定的链尾部；<br>&ensp;&ensp;&ensp;&ensp;-I：insert, iptables [-t table] -I chain [rulenum] rule-specification，<br>&ensp;&ensp;&ensp;&ensp;       插入规则到指定的链中的指定位置，默认为链首；<br>&ensp;&ensp;&ensp;&ensp;-D：delete，iptables [-t table] -D chain rule-specification或iptables [-t table] -D chain rulenum，<br>&ensp;&ensp;&ensp;&ensp;              删除指定的链上的指定规则；<br>&ensp;&ensp;&ensp;&ensp;-R：replace，iptables [-t table] -R chain rulenum rule-specification，<br>&ensp;&ensp;&ensp;&ensp;              将指定的链上的指定规则替换为新的规则；<br>◆查看：<br>&ensp;&ensp;&ensp;&ensp;-L：list, iptables [-t table] -L [chain [rulenum]] [options…]<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;-n：数字格式，不要做反解；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;-v：verbose，详细格式信息；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;-vv, -vvv<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;- -line-numbers：显示链上的规则的编号；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;-x：exactly，显示计数器的精确值；<br>★计数器：<br>每条规则以及链的默认策略分别有各自的两个计数器：<br>&ensp;&ensp;&ensp;&ensp;匹配到的报文的个数：pkts<br>&ensp;&ensp;&ensp;&ensp;匹配到的所有报文的大小之和：bytes</p>
+<h4 id="演示：链管理"><a href="#演示：链管理" class="headerlink" title="演示：链管理"></a>演示：链管理</h4><p>1.-L 查看iptables的表和链<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 查看表，默认指的是filter表，有三个链</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -vnL</span></div><div class="line">Chain INPUT (policy ACCEPT 55 packets, 3796 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 35 packets, 4652 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination </div><div class="line"></div><div class="line"><span class="comment"># 查看nat表，有四个链</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -t nat -vnL</span></div><div class="line">Chain PREROUTING (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain INPUT (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain POSTROUTING (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination</div></pre></td></tr></table></figure></p>
+<p>2.-P 定义链的默认策略为DROP<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139             # 定义之前是能ping同</span></div><div class="line">PING 192.168.2.139 (192.168.2.139) 56(84) bytes of data.</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=1 ttl=64 time=0.345 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=2 ttl=64 time=0.770 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=3 ttl=64 time=0.208 ms</div><div class="line"><span class="comment"># 定义默认策略为DROP</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -t filter -P INPUT DROP </span></div><div class="line"> </div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nL</span></div><div class="line">Chain INPUT (policy DROP) <span class="comment"># INPUT 链默认由 ACCEPT 链转为DROP</span></div><div class="line">target     prot opt <span class="built_in">source</span>               destination         </div><div class="line"> </div><div class="line">Chain FORWARD (policy ACCEPT)</div><div class="line">target     prot opt <span class="built_in">source</span>               destination         </div><div class="line"> </div><div class="line">Chain OUTPUT (policy ACCEPT)</div><div class="line">target     prot opt <span class="built_in">source</span>               destination         </div><div class="line"> </div><div class="line"><span class="comment"># 定义之后ping不通了，链ssh远程登录都掉了</span></div><div class="line">[root@CentOS6 ~]<span class="comment">#  ping 192.168.2.139</span></div><div class="line">PING 192.168.1.12 (192.168.1.12) 56(84) bytes of data.</div></pre></td></tr></table></figure></p>
+<p>3.-N 自定义链<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy ACCEPT 62 packets, 5612 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 46 packets, 6417 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination     </div><div class="line"></div><div class="line"> <span class="comment"># 定义一个in_web的链    </span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -N in_web</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy ACCEPT 29 packets, 1924 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 17 packets, 1492 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain in_web (0 references)         <span class="comment"># 自定义的链，0次引用</span></div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination</div></pre></td></tr></table></figure></p>
+<p> 4.-X 删除自定义链<br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"> [root@centos7 ~]<span class="comment"># iptables -X</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy ACCEPT 8 packets, 528 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 5 packets, 524 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination</div></pre></td></tr></table></figure></p>
+<p>5.-E 重命名自定义的链<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -N in_web</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy ACCEPT 28 packets, 1848 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 15 packets, 1412 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain in_web (0 references)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">[root@centos7 ~]<span class="comment"># iptables -t filter -E in_web web_input_packet        # 重命名自定义链</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy ACCEPT 6 packets, 396 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 4 packets, 512 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain web_input_packet (0 references)          <span class="comment"># 重新定义完成</span></div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination</div></pre></td></tr></table></figure></p>
+<p>6.-Z 置零计数器，即规则置零<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy ACCEPT 64 packets, 4400 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 41 packets, 4516 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain web_input_packet (0 references)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">[root@centos7 ~]<span class="comment"># iptables -Z INPUT              # 置零</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy ACCEPT 6 packets, 396 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 4 packets, 416 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain web_input_packet (0 references)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination</div></pre></td></tr></table></figure></p>
+<h3 id="iptables的匹配条件"><a href="#iptables的匹配条件" class="headerlink" title="iptables的匹配条件"></a>iptables的匹配条件</h3><h4 id="匹配条件及规则"><a href="#匹配条件及规则" class="headerlink" title="匹配条件及规则"></a>匹配条件及规则</h4><p>★ 匹配条件：<br>⊙基本匹配条件：<br>&ensp;&ensp;&ensp;&ensp;主要是ip层（源地址，目标地址），传输层协议；<br>⊙扩展匹配条件：需要借助于扩展模块进行指定的匹配条件；<br>&ensp;&ensp;&ensp;&ensp;隐式扩展：已经在基本匹配条件中指明的协议相关的扩展；<br>&ensp;&ensp;&ensp;&ensp;显式扩展：隐式扩展之外的其它扩展匹配条件；<br>注意：<br>&ensp;&ensp;&ensp;&ensp;多重条件之间的隐含逻辑为“与”操作；<br>★ 匹配规则的原则：<br>&ensp;&ensp;&ensp;&ensp;如果被第一条规则所匹配到，就会做处理，处理完之后就到达不了第二条规则了；<br>&ensp;&ensp;&ensp;&ensp;不同类别服务的规则（比如控制web服务的，SSH服务的等），应该把访问比较频繁的服务所对应的规则放到前面，即：匹配机会更大的规则放到前面；<br>&ensp;&ensp;&ensp;&ensp;同一类别的规则，要把匹配条件苛刻的，范围较小的放到前面，而范围较大的放到后面。</p>
+<h4 id="基本匹配条件"><a href="#基本匹配条件" class="headerlink" title="基本匹配条件"></a>基本匹配条件</h4><p>★ 参数：<br>⊙[!]-s, - -source address[/mask][,…]：<br>&ensp;&ensp;&ensp;&ensp;检查报文中的源IP地址是否符合此处指定的地址或地址范围；<br>⊙[!]-d, - -destination address[/mask][,…]：<br>&ensp;&ensp;&ensp;&ensp;检查报文中的目标IP地址是否符合此处指定的地址或地址范围；<br>⊙[!] -p, - -protocol protocol：<br>&ensp;&ensp;&ensp;&ensp;检查报文中传输层的协议类型，支持tcp, udp,  udplite, icmp,icmpv6,esp, ah, sctp, mh，或者 “all”表示所有协议；<br>⊙[!] -i, - -in-interface name：<br>&ensp;&ensp;&ensp;&ensp;检查报文进入本机时的接口是否符合本处指定的接口；只适应 INPUT, FORWARD  and  PREROUTING ；<br>⊙[!] -o, - -out-interface name：<br>&ensp;&ensp;&ensp;&ensp;检查报文即将离开本机时经由的接口是否符合本处指定的接口；FORWARD, OUTPUT and POSTROUTING；<br>注意：这里的[!]为取反<br>⊙-m, - -match match：显式指明要使用的扩展模块；<br>⊙-j, - -jump target：跳转目标；<br>注意：<br>&ensp;&ensp;&ensp;&ensp;对于本地主机上的大多数的访问控制，如果只是本地作为服务器，那我们只需把INPUT链改为DROP，只放行合法的请求进来就可以；<br>&ensp;&ensp;&ensp;&ensp;而对于控制本机请求别人的服务时，我们应该把OUTPUT链设为DROP，只放行认为合法的请求出去就可以；<br>&ensp;&ensp;&ensp;&ensp;为了安全起见，建议INPUT和OUTUT链的默认策略应该均为DROP。</p>
+<h4 id="演示："><a href="#演示：" class="headerlink" title="演示："></a>演示：</h4><p>添加一条规则，仅使192.168.2.0/24网络中的主机可以访问本机服务，使用-A和-s即可，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">因为是控制访问服务，所以，请求报文会首先经过INPUT链，所以，要把INPUT链的默认策略设置为DROP，然后只针对符合源地址要求的报文放行；</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -t filter -P INPUT DROP </span></div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139</span></div><div class="line">PING 192.168.1.14 (192.168.2.129) 56(84) bytes of data. <span class="comment"># 发现ping不同</span></div><div class="line"> </div><div class="line">添加规则，凡是来自于192.168.1.2/24网络的地址，统统放行</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -t filter -A INPUT -s 192.168.1.0/24 -j ACCEPT</span></div><div class="line"> </div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139 # 马上就可以ping 通了</span></div><div class="line">64 bytes from 192.168.2.139: icmp_seq=42 ttl=64 time=0.250 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=43 ttl=64 time=0.397 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=44 ttl=64 time=0.277 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=45 ttl=64 time=0.190 ms</div><div class="line"> </div><div class="line">[root@centos7 ~]<span class="comment"># iptables -vnL</span></div><div class="line">Chain INPUT (policy DROP 16 packets, 1098 bytes)</div><div class="line"><span class="comment"># 报文  大小  处理动作    协议   选项               源地址                目标地址</span></div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">   74  7383 ACCEPT     all  --  *      *       192.168.2.0/24       0.0.0.0/0           </div><div class="line"> </div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"> </div><div class="line">Chain OUTPUT (policy ACCEPT 83 packets, 9411 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination</div></pre></td></tr></table></figure></p>
+<p>我想禁止192.168.2.0/24 网络中ip为192.168.2.129这台主机的访问，那就需要在上题定义的规则中添加规则了，使用 -I 选项 如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -I INPUT -s 192.168.2.129 -j REJECT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL          # 可以看到先后次序，同一类规则，范围小的放到前面</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)    </div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">    0     0 REJECT     all  --  *      *       192.168.2.129        0.0.0.0/0            reject-with icmp-port-unreachable</div><div class="line">  223 16610 ACCEPT     all  --  *      *       192.168.2.0/24       0.0.0.0/0           </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 4 packets, 512 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination           </div><div class="line"></div><div class="line">每次ping,都给你驳回了,这是REJECT</div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139</span></div><div class="line">PING 192.168.2.139 (192.168.2.139) 56(84) bytes of data.</div><div class="line">From 192.168.2.139 icmp_seq=1 Destination Port Unreachable</div><div class="line">From 192.168.2.139 icmp_seq=2 Destination Port Unreachable</div><div class="line">From 192.168.2.139 icmp_seq=3 Destination Port Unreachable</div></pre></td></tr></table></figure></p>
+<p>把规则上处理动作的REJECT换为DROP,使用-R 如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL --line-numbers</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1        3   252 REJECT     all  --  *      *       192.168.2.129        0.0.0.0/0            reject-with icmp-port-unreachable</div><div class="line">2      435 31382 ACCEPT     all  --  *      *       192.168.2.0/24       0.0.0.0/0           </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 126 packets, 12764 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -R INPUT 1 -s 192.168.2.129 -j DROP</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL --line-numbers</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1        0     0 DROP       all  --  *      *       192.168.2.129        0.0.0.0/0 <span class="comment"># 新替换的规则      </span></div><div class="line">2      632 45028 ACCEPT     all  --  *      *       192.168.2.0/24       0.0.0.0/0           </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 6 packets, 728 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">这是发现卡在这了,ping不通</div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139</span></div><div class="line">PING 192.168.2.139 (192.168.2.139) 56(84) bytes of data.</div></pre></td></tr></table></figure></p>
+<p>删除对ip为192.168.1.13主机的限制，使用-D选项<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">首先查看要删除规则的规则号</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL --line-numbers</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1     8318  699K DROP       all  --  *      *       192.168.2.129        0.0.0.0/0           </div><div class="line">2     1204 93808 ACCEPT     all  --  *      *       192.168.2.0/24       0.0.0.0/0           </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 236 packets, 18072 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">删除指定规则的规则号码即可        </div><div class="line">[root@centos7 ~]<span class="comment"># iptables -D INPUT 1</span></div><div class="line">注意：也可使用iptables -D INPUT 192.168.1.13 -j DROP 来指明确切的匹配条件，一定要写target</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL  # 查看规则已经被删除</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"> 1257 97388 ACCEPT     all  --  *      *       192.168.2.0/24       0.0.0.0/0           </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 9 packets, 876 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination</div></pre></td></tr></table></figure></p>
+<p>只允许指定网络192.168.1.0/24内的主机，对本机（目标地址为本机）上所有TCP协议的服务请求放行，添加一条规则，指明三重条件-s，-d，-p<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -s 192.168.2.0/24 -d 192.168.2.139 -p tcp -j ACCEPT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">   33  2224 ACCEPT     tcp  --  *      *       192.168.2.0/24       192.168.2.139       </div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT 4 packets, 264 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">访问web服务，可以</div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139</span></div><div class="line">192.168.2.139</div><div class="line">但是ping不通，因为只限制tcp协议可以访问</div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139</span></div><div class="line">PING 192.168.2.139 (192.168.2.139) 56(84) bytes of data.</div><div class="line">^C</div><div class="line">--- 192.168.2.139 ping statistics ---</div><div class="line">4 packets transmitted, 0 received, 100% packet loss, time 3875ms</div></pre></td></tr></table></figure></p>
+<h3 id="扩展匹配条件"><a href="#扩展匹配条件" class="headerlink" title="扩展匹配条件"></a>扩展匹配条件</h3><h4 id="隐式扩展条件"><a href="#隐式扩展条件" class="headerlink" title="隐式扩展条件"></a>隐式扩展条件</h4><p>★ 定义：<br>&ensp;&ensp;&ensp;&ensp;不用 -m 选项明确给出要使用的扩展机制的扩展；此处主要指使用-p {tcp|udp|icmp}给定协议后可直接对给定的协议所进行的扩展；<br>★ -p tcp：可直接使用tcp协议对应的扩展选项；<br>&ensp;&ensp;&ensp;&ensp;⊙[!] - -source-port，- -sport port[:port]：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;匹配报文中的传输层的源端口；可给出多个连接的端口；<br>&ensp;&ensp;&ensp;&ensp;⊙[!] - -destination-port，- -dport port[:port]：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;匹配报文中的传输层的目标端口；可给出多个连接的端口；<br>&ensp;&ensp;&ensp;&ensp;⊙[!] - -tcp-flags mask comp 标志位的检查机制<br>&ensp;&ensp;&ensp;&ensp;◆标志位：SYN，ACK，FIN，RST，URG，PSH；<br>&ensp;&ensp;&ensp;&ensp;◆mask：要检查的标志位列表，以逗号分隔；例如SYN,ACK,FIN,RST<br>&ensp;&ensp;&ensp;&ensp;◆comp：mask给定的众标志位中，其值必须为1的标志位列表，余下的必须为0；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;例如： - -tcp-flags SYN,ACK,FIN,RST SYN &ensp;&ensp;&ensp;&ensp;表示，要求只匹配tcp协议给定的这些标志位（SY&ensp;&ensp;&ensp;&ensp;N,ACK,FIN,RST）中SYN为1，而其余都为0的，这也就是tcp的第一次握手阶段。<br>&ensp;&ensp;&ensp;&ensp;⊙[!] - -syn：相当于- -tcp-flags SYN,ACK,FIN,RST SYN  上面的简写格式<br>★ -p udp：可直接使用udp协议对应的扩展选项；<br>&ensp;&ensp;&ensp;&ensp;⊙[!] - -source-port,- -sport port[:port]：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;匹配报文中的传输层的源端口；可给出多个连接的端口；<br>&ensp;&ensp;&ensp;&ensp;⊙[!] - -destination-port,- -dport port[:port]：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;匹配报文中的传输层的目标端口；可给出多个连接的端口；<br>★ -p icmp（互联网控制报文协议）：可直接使用icmp协议对应的扩展选项；<br>&ensp;&ensp;&ensp;&ensp;⊙[!] - -icmp-type {type[/code]|typename}<br>&ensp;&ensp;&ensp;&ensp;例如：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;- -icmp-type  0/0：匹配对ping请求的响应报文<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;- -icmp-type 8/0：匹配ping请求报文</p>
+<h4 id="演示：-1"><a href="#演示：-1" class="headerlink" title="演示："></a>演示：</h4><h4 id="TCP协议扩展"><a href="#TCP协议扩展" class="headerlink" title="TCP协议扩展"></a>TCP协议扩展</h4><p>只开放本地的SSH服务的22号端口给本地网络(192.168.2.0/24)<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">分析：请求报文入栈（INPUT）时源IP和port为192.168.2.0/24网络中的任意主机ip和端口，不确定，但是</div><div class="line">目标IP和port是确定的，都是本地服务器的ip和ssh服务tcp协议的22号端口，所以为如下规则：</div><div class="line"> </div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -s 192.168.2.0/24 -d 192.168.2.139 -p tcp --dport 22 -j ACCEPT</span></div><div class="line"> </div><div class="line">分析：请求报文出栈(OUTPUT)时源IP和port为本地服务器的ip（192.168.2.139）和ssh服务的22号端口，是确定，但是</div><div class="line">目标IP和port是192.168.2.0/24网络中的任意主机ip和端口，是不确定的，所以为如下规则：</div><div class="line"> </div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A OUTPUT -d 192.168.2.0/24 -s 192.168.2.139 -p tcp --sport 22 -j ACCEPT</span></div><div class="line"> </div><div class="line">然后修改本地服务器的INPUT和OUTPUT的默认策略为DROP</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -P INPUT DROP</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -P OUTPUT DROP</span></div><div class="line">查看所有规则如下：</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">   93  7341 ACCEPT     tcp  --  *      *       192.168.2.0/24       192.168.2.139     tcp dpt:22</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">   63  8719 ACCEPT     tcp  --  *      *       192.168.2.139        192.168.2.0/24    tcp spt:22</div></pre></td></tr></table></figure></p>
+<h4 id="ICMP协议扩展"><a href="#ICMP协议扩展" class="headerlink" title="ICMP协议扩展"></a>ICMP协议扩展</h4><p>开放本机的ping请求，即允许其他人ping本机<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">要想能够被别人ping到，即ping请求入栈，源ip是不确定的，目标ip是本地服务器确定，协议为icmp，其类型为8</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -s 192.168.2.0/24 -d 192.168.2.139 -p icmp --icmp-type 8 -j ACCEPT</span></div><div class="line">此时虽然，ping请求可以接受，但是只能入栈却不能出栈，通过抓包可以看出，有来自192.168.1.13的请求，但本机却未作出回应</div><div class="line">[root@centos7 ~]<span class="comment"># tcpdump -i eno16777736 -nn icmp</span></div><div class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</div><div class="line">listening on eno16777736, link-type EN10MB (Ethernet), capture size 65535 bytes</div><div class="line">17:46:00.836256 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 54027, seq 1, length 64</div><div class="line">17:46:01.837188 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 54027, seq 2, length 64</div><div class="line">17:46:02.837630 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 54027, seq 3, length 64</div><div class="line">17:46:03.837336 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 54027, seq 4, length 64</div><div class="line">17:46:04.837999 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 54027, seq 5, length 64</div><div class="line">开放本机的ping响应报文</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A OUTPUT -d 192.168.2.0/24 -s 192.168.2.139 -p icmp --icmp-type 0 -j ACCEPT</span></div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139     # 客户端已经可以ping通</span></div><div class="line">PING 192.168.2.139 (192.168.2.139) 56(84) bytes of data.</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=1 ttl=64 time=0.324 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=2 ttl=64 time=0.284 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=3 ttl=64 time=0.239 ms</div><div class="line">此时请求和回应都有了</div><div class="line">[root@centos7 ~]<span class="comment"># tcpdump -i eno16777736 -nn icmp</span></div><div class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</div><div class="line">listening on eno16777736, link-type EN10MB (Ethernet), capture size 65535 bytes</div><div class="line">17:49:36.501339 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 61963, seq 1, length 64</div><div class="line">17:49:36.501395 IP 192.168.2.139 &gt; 192.168.2.129: ICMP <span class="built_in">echo</span> reply, id 61963, seq 1, length 64</div><div class="line">17:49:37.501887 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 61963, seq 2, length 64</div><div class="line">17:49:37.501945 IP 192.168.2.139 &gt; 192.168.2.129: ICMP <span class="built_in">echo</span> reply, id 61963, seq 2, length 64</div><div class="line">17:49:38.502187 IP 192.168.2.129 &gt; 192.168.2.139: ICMP <span class="built_in">echo</span> request, id 61963, seq 3, length 64</div><div class="line">查看规则：</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 7 packets, 697 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>    out    <span class="built_in">source</span>            destination         </div><div class="line">  987 69948 ACCEPT     tcp  --  *     *      192.168.2.0/24    192.168.2.139    tcp dpt:22</div><div class="line">   18  1512 ACCEPT     icmp --  *     *      192.168.2.0/24    192.168.2.139    icmptype 8</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>    out    <span class="built_in">source</span>            destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 5 packets, 1640 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>    out    <span class="built_in">source</span>            destination         </div><div class="line">  470 47932 ACCEPT     tcp  --  *     *      192.168.2.139     192.168.2.0/24    tcp spt:22</div><div class="line">   10   840 ACCEPT     icmp --  *     *      192.168.2.139     192.168.2.0/24    icmptype 0</div></pre></td></tr></table></figure></p>
+<p>如果想让本地主机可以ping互联网上的任意主机，规则如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">现在本地主机是ping不了其他主机的，因为本地主机发送不了ping的请求报文</div><div class="line">[root@centos7 ~]<span class="comment"># ping 192.168.2.129</span></div><div class="line">PING 192.168.2.129 (192.168.2.129) 56(84) bytes of data.</div><div class="line">ping: sendmsg: Operation not permitted</div><div class="line">ping: sendmsg: Operation not permitted</div><div class="line">ping: sendmsg: Operation not permitted</div><div class="line">要想能够ping其他主机要在OUTPUT上定义出栈的请求报文，如下：</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A OUTPUT -s 192.168.2.139 -d 192.168.2.0/24 -p icmp --icmp-type 8 -j ACCEPT</span></div><div class="line">本地主机ping ip为192.168.1.13 的其他主机</div><div class="line">[root@centos7 ~]<span class="comment"># ping 192.168.2.129</span></div><div class="line">PING 192.168.2.129 (192.168.2.129) 56(84) bytes of data.</div><div class="line">^C</div><div class="line">--- 192.168.2.129 ping statistics ---</div><div class="line">2 packets transmitted, 0 received, 100% packet loss, time 1000ms</div><div class="line">虽然本地主机的ping请求发送出去了，但是ping的其他主机的响应报文不能入栈，所以要定义其他主机</div><div class="line">的响应报文入栈，如下：</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -d 192.168.2.139 -s 192.168.2.0/24 -p icmp --icmp-type 0 -j ACCEPT</span></div><div class="line">[root@centos7 ~]<span class="comment"># ping 192.168.2.129</span></div><div class="line">PING 192.168.2.129 (192.168.2.129) 56(84) bytes of data.</div><div class="line">64 bytes from 192.168.2.129: icmp_seq=1 ttl=64 time=0.261 ms</div><div class="line">64 bytes from 192.168.2.129: icmp_seq=2 ttl=64 time=0.222 ms</div><div class="line">64 bytes from 192.168.2.129: icmp_seq=3 ttl=64 time=0.186 ms</div><div class="line">查看规则</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 1 packets, 229 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>   out   <span class="built_in">source</span>            destination         </div><div class="line"> 1564  111K ACCEPT     tcp  --  *    *     192.168.2.0/24    192.168.2.139     tcp dpt:22</div><div class="line">   18  1512 ACCEPT     icmp --  *    *     192.168.2.0/24    192.168.2.139     icmptype 8</div><div class="line">   15  1260 ACCEPT     icmp --  *    *     192.168.2.0/24    192.168.2.139     icmptype 0</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>   out   <span class="built_in">source</span>             destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 10 packets, 3280 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>   out   <span class="built_in">source</span>             destination         </div><div class="line">  865 87324 ACCEPT     tcp  --  *    *     192.168.2.139      192.168.2.0/24    tcp spt:22</div><div class="line">   10   840 ACCEPT     icmp --  *    *     192.168.2.139      192.168.2.0/24    icmptype 0</div><div class="line">   64  5376 ACCEPT     icmp --  *    *     192.168.2.139      192.168.2.0/24    icmptype 8</div></pre></td></tr></table></figure></p>
+<h4 id="显式扩展条件"><a href="#显式扩展条件" class="headerlink" title="显式扩展条件"></a>显式扩展条件</h4><p>★ 定义：<br>&ensp;&ensp;&ensp;&ensp;必须使用-m选项给出matchname的扩展，而且有些扩展都还存在专用选项；<br>★ multiport<br>&ensp;&ensp;&ensp;&ensp;以离散或连续的方式定义的多端口匹配条件； (最多不超过15个）.<br>⊙[!] - -source-ports,- -sports port[,port|,port:port]…：指定多个源端口；<br>⊙[!] - -destination-ports,- -dports port[,port|,port:port]…：指定多个目标端口；<br>⊙[!] - -ports port[,port|,port:port]…：匹配此处指定的源或目标端口；</p>
+<h4 id="演示：-2"><a href="#演示：-2" class="headerlink" title="演示："></a>演示：</h4><p>使用一条规则开放本机的22,80和23号端口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -F     # 首先清空所有的规则</span></div><div class="line">定义入栈的规则，这里不指明源ip和端口，默认为网络中所有的主机</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -d 192.168.2.139 -p tcp -m multiport --dports 22,23,80 -j ACCEPT</span></div><div class="line">定义出栈规则，同样这里不指明目标ip和端口，默认为网络中所有的主机</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A OUTPUT -s 192.168.2.139 -p tcp -m multiport --sports 22,23,80 -j ACCEPT</span></div><div class="line">定义入栈，出栈的默认策略为DROP</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -P INPUT DROP</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -P OUTPUT DROP</span></div><div class="line">查看规则如下：</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 1 packets, 78 bytes)</div><div class="line"> pkts bytes target   prot opt <span class="keyword">in</span>  out  <span class="built_in">source</span>        destination         </div><div class="line">  277 21152 ACCEPT   tcp  --  *   *    0.0.0.0/0     192.168.2.139  multiport dports 22,23,80</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target   prot opt <span class="keyword">in</span>  out  <span class="built_in">source</span>        destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target   prot opt <span class="keyword">in</span>  out  <span class="built_in">source</span>        destination         </div><div class="line">   50  5024 ACCEPT   tcp  --  *   *    192.168.2.139 0.0.0.0/0      multiport sports 22,23,80</div><div class="line">测试如下：</div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139       # 测试httpd 的80端口成功</span></div><div class="line">192.168.2.139</div><div class="line">[root@CentOS6 ~]<span class="comment"># ssh 192.168.2.139        # ssh服务的22号端口正常</span></div><div class="line">The authenticity of host <span class="string">'192.168.2.139 (192.168.2.139)'</span> can<span class="string">'t be established.</span></div><div class="line">RSA key fingerprint is 2c:c7:3a:51:f6:2f:f4:57:c3:a2:14:ad:0f:34:e3:01.</div><div class="line">Are you sure you want to continue connecting (yes/no)? yes</div><div class="line">Warning: Permanently added '192.168.2.139<span class="string">' (RSA) to the list of known hosts.</span></div><div class="line">root@192.168.2.139's password: </div><div class="line">Last login: Sun Aug 27 18:20:35 2017 from 192.168.2.1</div><div class="line">[root@centos7 ~]<span class="comment">#</span></div></pre></td></tr></table></figure></p>
+<p>★ iprange<br>以连续的ip地址范围指明多地址匹配条件；<br>&ensp;&ensp;&ensp;&ensp;[!] - -src-range from[-to] ：指明匹配多个源地址；<br>&ensp;&ensp;&ensp;&ensp;[!] - -dst-range from[-to] ：指明匹配多个目标地址；<br>★ string<br>对报文中的应用层数据做字符串匹配检测；<br>&ensp;&ensp;&ensp;&ensp;[!] - -string pattern：字符串匹配模式检测<br>&ensp;&ensp;&ensp;&ensp;[!] - -hex-string pattern：把字符串转换成16进制的字符格式，效率更高<br>&ensp;&ensp;&ensp;&ensp;- -algo {bm|kmp}：字符串匹配检查算法；<br>&ensp;&ensp;&ensp;&ensp;- -from offset： 从最开始出偏移多少个字节开始检查；<br>&ensp;&ensp;&ensp;&ensp;- -to offset  ：设置我们要检查匹配到何处结束；<br>注意：<br>&ensp;&ensp;&ensp;&ensp;前二者选其一，是必须要给定的，算法也是必须要给定的；<br>&ensp;&ensp;&ensp;&ensp;–from和–to 如果二者不给定的话，就是检查整个报文</p>
+<h4 id="演示：-3"><a href="#演示：-3" class="headerlink" title="演示："></a>演示：</h4><p>对互联网中的敏感词汇sex做规则匹配<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">没有设定规则前，含敏感词汇的和不含的文件，都可以正常访问，如下：</div><div class="line"><span class="comment">#不含敏感词汇</span></div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/index.html</span></div><div class="line">&lt;html&gt;</div><div class="line">      &lt;head&gt;</div><div class="line">           &lt;title&gt;Test Page&lt;/title&gt;</div><div class="line">      &lt;/head&gt;</div><div class="line">      &lt;body&gt;</div><div class="line">           &lt;h1&gt;My Test Page&lt;/h1&gt;</div><div class="line">      &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line"><span class="comment"># 含敏感词汇sex</span></div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/test.html</span></div><div class="line">&lt;html&gt;</div><div class="line">      &lt;head&gt;</div><div class="line">           &lt;title&gt;Test Page&lt;/title&gt;</div><div class="line">      &lt;/head&gt;</div><div class="line">      &lt;body&gt;</div><div class="line">           &lt;h1&gt;My Sex Test Page&lt;/h1&gt;</div><div class="line">      &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">分析：本题是在web服务上做了更加严格的规则，同类规则中匹配严格的要放到前面，优先检查；</div><div class="line">因为响应报文中包含敏感词汇，所以，我们要在出栈上做定义，源ip为本主机，这里只限定web服务</div><div class="line">所以源端口为80，如果所有的服务都限定，不用指明端口即可，然后匹配sex，匹配到后执行REJECT</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -I OUTPUT -s 192.168.2.139 -p tcp --sport 80 -m string --string "sex" --algo bm -j REJECT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"> 1189 87006 ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 22,23,80</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 1 packets, 328 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">    0     0 REJECT     tcp  --  *      *       192.168.2.139        0.0.0.0/0            tcp spt:80 STRING match  <span class="string">"sex"</span> ALGO name bm TO 65535 reject-with icmp-port-unreachable</div><div class="line">  609 69485 ACCEPT     tcp  --  *      *       192.168.2.139        0.0.0.0/0            multiport sports 22,23,80</div><div class="line">设定规则后，再次访问，可以发现，不含敏感词汇的可以正常访问，含有敏感词汇sex的，不能正常访问</div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/index.html</span></div><div class="line">&lt;html&gt;</div><div class="line">      &lt;head&gt;</div><div class="line">           &lt;title&gt;Test Page&lt;/title&gt;</div><div class="line">      &lt;/head&gt;</div><div class="line">      &lt;body&gt;</div><div class="line">           &lt;h1&gt;My Test Page&lt;/h1&gt;</div><div class="line">      &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/test.html     # 卡着不动了，说明访问不了</span></div><div class="line">^C</div></pre></td></tr></table></figure></p>
+<p>★ time<br>  根据报文到达的时间与指定的时间范围进行匹配度检测；<br>&ensp;&ensp;&ensp;&ensp;- -datestart YYYY[-MM[-DD[Thh[:mm[:ss]]]]]：哪一年什么具体时间开始到;<br>&ensp;&ensp;&ensp;&ensp;- -datestop YYYY[-MM[-DD[Thh[:mm[:ss]]]]]：哪一年的具体时间结束；<br>&ensp;&ensp;&ensp;&ensp;- -timestart hh:mm[:ss]：没有日期只有时间，表示每天的什么时间开始；<br>&ensp;&ensp;&ensp;&ensp;- -timestop hh:mm[:ss] ：什么时间结束<br>&ensp;&ensp;&ensp;&ensp;[!] –monthdays day[,day…]：限定每月的哪几天有效；<br>&ensp;&ensp;&ensp;&ensp;[!] –weekdays day[,day…]：限定每周的周几有效；<br>注意：<br>&ensp;&ensp;&ensp;&ensp;设置访问时间规则时，一定要校正系统时间</p>
+<h4 id="演示：-4"><a href="#演示：-4" class="headerlink" title="演示："></a>演示：</h4><p>为了演示效果，这里禁止web服务在每周日访问，定义规则如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">规则设定之前可以正常访问web服务</div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/index.html</span></div><div class="line">&lt;html&gt;</div><div class="line">      &lt;head&gt;</div><div class="line">           &lt;title&gt;Test Page&lt;/title&gt;</div><div class="line">      &lt;/head&gt;</div><div class="line">      &lt;body&gt;</div><div class="line">           &lt;h1&gt;My Test Page&lt;/h1&gt;</div><div class="line">      &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">[root@centos7 ~]<span class="comment"># date            # 当前时间</span></div><div class="line">Sun Aug 27 19:00:50 CST 2017</div><div class="line">设定规则，如下：</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -I INPUT -d 192.168.2.139 -p tcp --dport 80 -m time --weekdays 7 -j REJECT</span></div><div class="line">查看规则</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">    0     0 REJECT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        tcp dpt:80 TIME on Sun UTC reject-with icmp-port-unreachable</div><div class="line"> 1635  118K ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 22,23,80</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">   53 23204 REJECT     tcp  --  *      *       192.168.2.139        0.0.0.0/0            tcp spt:80 STRING match  <span class="string">"sex"</span> ALGO name bm TO 65535 reject-with icmp-port-unreachable</div><div class="line">  871 97781 ACCEPT     tcp  --  *      *       192.168.2.139        0.0.0.0/0            multiport sports 22,23,80</div><div class="line"> 客户端测试</div><div class="line"> [root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/index.html      # 卡在这里不动了，规则设定之前是可以访问的</span></div><div class="line">^C</div></pre></td></tr></table></figure></p>
+<p>★ connlimit<br>根据每客户端IP做并发连接数限制，即限制单IP可同时发起的连接请求数；<br>&ensp;&ensp;&ensp;&ensp;- -connlimit-upto n：连接数小于等于阈值（上限）；<br>&ensp;&ensp;&ensp;&ensp;- -connlimit-above n：连接数超出阈值；</p>
+<h4 id="演示：-5"><a href="#演示：-5" class="headerlink" title="演示："></a>演示：</h4><p>对于ssh服务，每客户端发起的单ip不能超过2个，规则如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -I INPUT -d 192.168.2.139 -p tcp --dport 22 -m connlimit --connlimit-above 2 -j REJECT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">    0     0 REJECT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        tcp dpt:22 <span class="comment">#conn src/32 &gt; 2 reject-with icmp-port-unreachable</span></div><div class="line">    2   120 REJECT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        tcp dpt:80 TIME on Sun UTC reject-with icmp-port-unreachable</div><div class="line"> 1861  133K ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 22,23,80</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">   53 23204 REJECT     tcp  --  *      *       192.168.2.139        0.0.0.0/0            tcp spt:80 STRING match  <span class="string">"sex"</span> ALGO name bm TO 65535 reject-with icmp-port-unreachable</div><div class="line">  991  110K ACCEPT     tcp  --  *      *       192.168.2.139        0.0.0.0/0            multiport sports 22,23,80</div><div class="line">客户端测试</div><div class="line">[root@centos7 ~]<span class="comment"># who         # 从服务器端看192.168.2.129已经连接两ssh</span></div><div class="line">root     tty1         2017-08-27 13:28</div><div class="line">root     pts/0        2017-08-27 17:22 (192.168.2.1)</div><div class="line">root     pts/1        2017-08-27 18:20 (192.168.2.1)</div><div class="line">root     pts/2        2017-08-27 19:10 (192.168.2.129)</div><div class="line">root     pts/3        2017-08-27 19:11 (192.168.2.129)</div><div class="line">[root@CentOS6 ~]<span class="comment"># ssh 192.168.2.139    #当192.168.2.129发起第三个连接时超时</span></div><div class="line">ssh: connect to host 192.168.2.139 port 22: Connection timed out</div></pre></td></tr></table></figure></p>
+<p>★ limit<br>基于收发报文的速率进行匹配；<br>&ensp;&ensp;&ensp;&ensp;- -limit rate[/second|/minute|/hour|/day]：每秒/分/小时/天 限制多少个<br>&ensp;&ensp;&ensp;&ensp;- -limit-burst number：指定令牌桶，默认为5个</p>
+<h4 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">定义规则，指定令牌通为3个，每分钟20个ping报文到达</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -d 192.168.2.139 -p icmp --icmp-type 8 -m limit --limit-burst 3 --limit 20/minute -j ACCEPT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A OUTPUT -s 192.168.2.139 -p icmp --icmp-type 0 -j ACCEPT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 34 packets, 2516 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">    0     0 ACCEPT     icmp --  *      *       0.0.0.0/0            192.168.2.139        icmptype 8 <span class="built_in">limit</span>: avg 20/min burst 3</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 20 packets, 2004 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">    0     0 ACCEPT     icmp --  *      *       192.168.2.139        0.0.0.0/0            icmptype 0</div><div class="line">客户端测试：前三个一次放行，后面的都是3秒钟一个</div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139</span></div><div class="line">PING 192.168.2.139 (192.168.2.139) 56(84) bytes of data.</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=1 ttl=64 time=0.597 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=2 ttl=64 time=0.247 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=3 ttl=64 time=1.18 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=4 ttl=64 time=0.714 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=7 ttl=64 time=0.258 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=10 ttl=64 time=0.235 ms</div></pre></td></tr></table></figure>
+<p>★ state （重要）<br>状态检测：连接追踪机制（conntrack）<br>☉连接状态<br>&ensp;&ensp;&ensp;&ensp;NEW：新连接<br>&ensp;&ensp;&ensp;&ensp;ESTABLISHED：已建立的连接<br>&ensp;&ensp;&ensp;&ensp;RELATED：相关联的连接<br>&ensp;&ensp;&ensp;&ensp;INVALID：无法识别的连接<br>&ensp;&ensp;&ensp;&ensp;UNTRACKED：未被追踪连接；<br>&ensp;&ensp;&ensp;&ensp;☉相关的内核模块：<br>&ensp;&ensp;&ensp;&ensp;nf_conntrack<br>&ensp;&ensp;&ensp;&ensp;nf_conntrack_ipv4<br>&ensp;&ensp;&ensp;&ensp;nf_conntrack_ftp<br>☉定义的文件<br>&ensp;&ensp;&ensp;&ensp;追踪到的连接定义在：/proc/net/nf_conntrack 文件中；<br>&ensp;&ensp;&ensp;&ensp;能追踪的最大连接数量定义在：/proc/sys/net/nf_conntrack_max，建议调整至足够大；<br>&ensp;&ensp;&ensp;&ensp;不同协议的连接追踪时长定义在：/proc/sys/net/netfilter/<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># modprobe nf_conntrack</span></div><div class="line">[root@centos7 ~]<span class="comment"># lsmod |grep nf_</span></div><div class="line">nf_conntrack          105745  0 </div><div class="line">[root@centos7 ~]<span class="comment"># cat /proc/net/nf_conntrack</span></div><div class="line"><span class="comment"># 能追踪的最大连接数量，达到之后再有请求就会拒绝</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /proc/sys/net/nf_conntrack_max </span></div><div class="line">31288</div></pre></td></tr></table></figure></p>
+<p>☉选项：<br>&ensp;&ensp;&ensp;&ensp;[!] - -state state  定义什么状态<br>注意：<br>&ensp;&ensp;&ensp;&ensp;如果主机为一个负载均衡器（前端调度器），状态连接追踪机制最好不要开启，因为其已经承载了非常大的并发连接数量，如果开启可能会拒绝很多请求服务，这对于一个线上服务器来说几乎是致命的！至于其他主机（单台服务器）是可以开启的；</p>
+<h4 id="演示：-6"><a href="#演示：-6" class="headerlink" title="演示："></a>演示：</h4><p>使用状态连接追踪机制<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">添加规则如下：只允许其他主机新链接和已建立的连接，访问本地主机的22,23和80端口</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -d 192.168.2.139 -p tcp -m multiport --dports 22,23,80 -m state --state NEW,ESTABLISHED -j ACCEPT</span></div><div class="line">新定义新出栈规则，只放行已建立的连接</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -A OUTPUT -m state --state ESTABLISHED -j ACCEPT</span></div><div class="line">现在的规则如下：</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL --line-numbers</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1      898 61656 ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 22,23,80 state NEW,ESTABLISHED</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1      361 35252 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state ESTABLISHED</div><div class="line"></div><div class="line">测试访问，没有问题，因为我们定义了只放行从22,23,80端口出去的已建立的连接</div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/index.html</span></div><div class="line">&lt;html&gt;</div><div class="line">      &lt;head&gt;</div><div class="line">           &lt;title&gt;Test Page&lt;/title&gt;</div><div class="line">      &lt;/head&gt;</div><div class="line">      &lt;body&gt;</div><div class="line">           &lt;h1&gt;My Test Page&lt;/h1&gt;</div><div class="line">      &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">[root@CentOS6 ~]<span class="comment"># curl 192.168.2.139/test.html</span></div><div class="line">&lt;html&gt;</div><div class="line">      &lt;head&gt;</div><div class="line">           &lt;title&gt;Test Page&lt;/title&gt;</div><div class="line">      &lt;/head&gt;</div><div class="line">      &lt;body&gt;</div><div class="line">           &lt;h1&gt;My sex Test Page&lt;/h1&gt;</div><div class="line">      &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>现在如果允许任何主机都可以ping本机<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -A INPUT -d 192.168.2.139 -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED -j ACCEPT</span></div><div class="line">测试能否ping通</div><div class="line">[root@CentOS6 ~]<span class="comment"># ping 192.168.2.139</span></div><div class="line">PING 192.168.2.139 (192.168.2.139) 56(84) bytes of data.</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=1 ttl=64 time=0.267 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=2 ttl=64 time=0.265 ms</div><div class="line">64 bytes from 192.168.2.139: icmp_seq=3 ttl=64 time=0.792 ms</div><div class="line"><span class="comment"># 发现是可以ping通的，因为我们出栈定义的是放行任何已建立的所有协议的连接，即，不管其他，只要状态为ESTABLISHED的统统放行；</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"> 1587  111K ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 22,23,80 state NEW,ESTABLISHED</div><div class="line">    3   252 ACCEPT     icmp --  *      *       0.0.0.0/0            192.168.2.139        icmptype 8 state NEW,ESTABLISHED</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">  818 72847 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state ESTABLISHED</div></pre></td></tr></table></figure></p>
+<p>如何开放本机的ftp服务呢<br>分析：要想开放本机的ftp服务，就要开放本机的21号端口，和所有的随机端口；但是我们考虑做连接<br>追踪的话，要开放21号端口，状态为NEW和RELATED(相关联的连接)，出栈为RELATED就可以出去，但是入栈<br>的随机端口要放行状态为ESTABLISHED和RELATED；既然所有的连接第一次都为NEW，后面的都是RELATED<br>那么我们把所有服务的RELATED放在一起，定义一条规则即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">定义入栈规则，所有相关联的和第二次访问的报文统统放行</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL --line-numbers;</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1        9   604 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED</div><div class="line">2     1862  129K ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 22,23,80 state NEW,ESTABLISHED</div><div class="line">3        3   252 ACCEPT     icmp --  *      *       0.0.0.0/0            192.168.2.139        icmptype 8 state NEW,ESTABLISHED</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 1 packets, 328 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1      974 89355 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state ESTABLISHED</div><div class="line">修改第2条规则，因为入栈的第一条规则已经定义状态为ESTABLISHED的放行，所以此处只需定义第一次访问</div><div class="line">21,22,23,80端口的服务，即NEW状态的放行即可</div><div class="line">[root@centos7 ~]<span class="comment"># iptables -R INPUT 2 -d 192.168.2.139 -p tcp -m multiport --dports 21,22,23,80 -m state --state NEW -j ACCEPT</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL --line-numbers;</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1      306 20236 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED</div><div class="line">2        0     0 ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 21,22,23,80 state NEW</div><div class="line">3        3   252 ACCEPT     icmp --  *      *       0.0.0.0/0            192.168.2.139        icmptype 8 state NEW,ESTABLISHED</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">1     1132  106K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state ESTABLISHED</div><div class="line"></div><div class="line">启动本地vsftpd服务，测试，看能否连接</div><div class="line">[root@CentOS6 ~]<span class="comment"># lftp 192.168.2.139</span></div><div class="line">lftp 10.1.252.161:~&gt; ls              </div><div class="line">`ls<span class="string">' at 0 [Making data connection...]</span></div><div class="line"> </div><div class="line">这时我们发现仍然无法连接，这是因为追踪ftp的模块没有被指定</div><div class="line">[root@centos7 ~]# lsmod |grep ftp</div><div class="line"> </div><div class="line"># 启动追踪 ftp 的模块</div><div class="line">[root@centos7 ~]# modprobe nf_conntrack_ftp</div><div class="line">[root@centos7 ~]# lsmod |grep ftp</div><div class="line">nf_conntrack_ftp       18638  0 </div><div class="line">nf_conntrack          105107  4 xt_connlimit,xt_conntrack,nf_conntrack_ftp,nf_conntrack_ipv4</div><div class="line"> </div><div class="line">再次连接ftp服务，可以正常连接</div><div class="line">[root@CentOS6 ~]# lftp 192.168.2.139</div><div class="line">lftp 10.1.252.161:~&gt; ls</div><div class="line">drwxr-xr-x    2 0        0               6 Nov 20  2015 pub</div><div class="line">drwxrwxr-x    2 0        0              22 Oct 18 03:06 upload</div></pre></td></tr></table></figure></p>
+<p><img src="\images\iptables\ftp.png" alt="iptables"></p>
+<h3 id="处理动作（跳转目标）"><a href="#处理动作（跳转目标）" class="headerlink" title="处理动作（跳转目标）"></a>处理动作（跳转目标）</h3><p>★ 语法：<br>&ensp;&ensp;&ensp;&ensp;-j tagetname [per-target-options]<br>★ 简单target：<br>&ensp;&ensp;&ensp;&ensp;ACCEPT<br>&ensp;&ensp;&ensp;&ensp;DROP<br>★ 扩展target：<br>☉REJECT：</p>
+<ul>
+<li>-reject-with type<br>&ensp;&ensp;&ensp;&ensp;icmp-net-unreachable, icmp-host-unreachable, icmp-port-unreachable, icmp-proto-unreach‐able, icmp-net-prohibited, icmp-host-prohibited, or icmp-admin-prohibited，默认为icmp-port-unreachable；<br>☉LOG：记录日志<br>run  on  kernel  logging of matching packets.<br>&ensp;&ensp;&ensp;&ensp;- -log-level level<br>&ensp;&ensp;&ensp;&ensp;- -log-prefix prefix：日志信息的前导信息；<h4 id="演示-1"><a href="#演示-1" class="headerlink" title="演示"></a>演示</h4>添加对连接本机的ssh服务的日志记录<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 添加规则前查看规则记录</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 3 packets, 801 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">  565 35412 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED</div><div class="line">    0     0 ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 21,22,23,80 state NEW</div><div class="line">    3   252 ACCEPT     icmp --  *      *       0.0.0.0/0            192.168.2.139        icmptype 8 state NEW,ESTABLISHED</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 160 packets, 11204 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"> 1385  784K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state ESTABLISHED</div><div class="line"></div><div class="line"><span class="comment"># 添加日志记录规则，这里在第2条规则前插入，因为只对新链接的ssh服务记录日志</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -I INPUT 2 -d 192.168.2.139 -p tcp --dport 22 -j LOG --log-prefix "openssh from kernel:"</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables -nvL</span></div><div class="line">Chain INPUT (policy DROP 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line">  833 53124 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED</div><div class="line">    0     0 LOG        tcp  --  *      *       0.0.0.0/0            192.168.2.139        tcp dpt:22 LOG flags 0 level 4 prefix <span class="string">"openssh from kernel:"</span></div><div class="line">    0     0 ACCEPT     tcp  --  *      *       0.0.0.0/0            192.168.2.139        multiport dports 21,22,23,80 state NEW</div><div class="line">    3   252 ACCEPT     icmp --  *      *       0.0.0.0/0            192.168.2.139        icmptype 8 state NEW,ESTABLISHED</div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"></div><div class="line">Chain OUTPUT (policy DROP 1 packets, 328 bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </div><div class="line"> 1530  798K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state ESTABLISHED</div><div class="line"></div><div class="line"><span class="comment"># 查看日志文件</span></div><div class="line">Aug 28 15:43:30 centos7 kernel: openssh from kernel:IN=eno16777736 OUT= MAC=00:0c:29:7c:c9:87:00:0c:29:9e:cf:05:08:00 SRC=192.168.2.129 DST=192.168.2.139 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=41423 DF PROTO=TCP SPT=32978 DPT=22 WINDOW=14600 RES=0x00 SYN URGP=0</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="保存和载入规则"><a href="#保存和载入规则" class="headerlink" title="保存和载入规则"></a>保存和载入规则</h3><p>★ 保存：<br>&ensp;&ensp;&ensp;&ensp;iptables-save &gt; /PATH/TO/SOME_RULE_FILE<br>★ 重载：<br>&ensp;&ensp;&ensp;&ensp;iptables-restore &lt; /PATH/FROM/SOME_RULE_FILE<br>☉选项：<br>&ensp;&ensp;&ensp;&ensp;-n, - -noflush：不清除原有规则<br>&ensp;&ensp;&ensp;&ensp;-t, - -test：仅分析生成规则集，但不予提交；</p>
+<h4 id="演示-2"><a href="#演示-2" class="headerlink" title="演示"></a>演示</h4><p>iptables-save保存规则<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables-save </span></div><div class="line"><span class="comment"># Generated by iptables-save v1.4.21 on Mon Aug 28 15:47:53 2017</span></div><div class="line">*filter</div><div class="line">:INPUT DROP [0:0]</div><div class="line">:FORWARD ACCEPT [0:0]</div><div class="line">:OUTPUT DROP [27:8344]</div><div class="line">-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A INPUT <span class="_">-d</span> 192.168.2.139/32 -p tcp -m tcp --dport 22 -j LOG --log-prefix <span class="string">"openssh from kernel:"</span></div><div class="line">-A INPUT <span class="_">-d</span> 192.168.2.139/32 -p tcp -m multiport --dports 21,22,23,80 -m state --state NEW -j ACCEPT</div><div class="line">-A INPUT <span class="_">-d</span> 192.168.2.139/32 -p icmp -m icmp --icmp-type 8 -m state --state NEW,ESTABLISHED -j ACCEPT</div><div class="line">-A OUTPUT -m state --state ESTABLISHED -j ACCEPT</div><div class="line">COMMIT</div><div class="line"><span class="comment"># Completed on Mon Aug 28 15:47:53 2017</span></div><div class="line"><span class="comment"># 保存至/etc/sysconfig/iptables</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables-save &gt; /etc/sysconfig/iptables</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat /etc/sysconfig/iptables</span></div><div class="line"><span class="comment"># Generated by iptables-save v1.4.21 on Mon Aug 28 15:50:12 2017</span></div><div class="line">*filter</div><div class="line">:INPUT DROP [0:0]</div><div class="line">:FORWARD ACCEPT [0:0]</div><div class="line">:OUTPUT DROP [38:11952]</div><div class="line">-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A INPUT <span class="_">-d</span> 192.168.2.139/32 -p tcp -m tcp --dport 22 -j LOG --log-prefix <span class="string">"openssh from kernel:"</span></div><div class="line">-A INPUT <span class="_">-d</span> 192.168.2.139/32 -p tcp -m multiport --dports 21,22,23,80 -m state --state NEW -j ACCEPT</div><div class="line">-A INPUT <span class="_">-d</span> 192.168.2.139/32 -p icmp -m icmp --icmp-type 8 -m state --state NEW,ESTABLISHED -j ACCEPT</div><div class="line">-A OUTPUT -m state --state ESTABLISHED -j ACCEPT</div><div class="line">COMMIT</div><div class="line"><span class="comment"># Completed on Mon Aug 28 15:50:12 2017</span></div></pre></td></tr></table></figure></p>
+<p>iptables-restore重载规则<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># iptables -F</span></div><div class="line">[root@centos7 ~]<span class="comment"># iptables-restore &lt; /etc/sysconfig/iptables</span></div></pre></td></tr></table></figure></p>
+<h3 id="【CentOS-6】"><a href="#【CentOS-6】" class="headerlink" title="【CentOS 6】"></a>【CentOS 6】</h3><p>★ 保存规则：service iptables save<br>&ensp;&ensp;&ensp;&ensp;保存规则于 /etc/sysconfig/iptables，保存操作会清除文件中原有的内容；<br>★ 重载规则：server iptables restart<br>&ensp;&ensp;&ensp;&ensp;默认重载 /etc/sysconfig/iptables文件中的规则<br>★ 脚本配置文件：/etc/sysconfig/iptables-config<br>&ensp;&ensp;&ensp;&ensp;用于指明要装载的模块；</p>
+<h4 id="演示-3"><a href="#演示-3" class="headerlink" title="演示"></a>演示</h4><p>[root@CentOS6 ~]# vim  /etc/sysconfig/iptables-config<br><img src="\images\iptables\iptables-config.png" alt="iptables"><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 要首先创建一个/etc/sysconfig/iptables 空文件</span></div><div class="line">[root@CentOS6 ~]<span class="comment">#  touch /etc/sysconfig/iptables </span></div><div class="line"> </div><div class="line">[root@CentOS6 ~]<span class="comment"># service iptables save # 保存</span></div><div class="line">iptables: Nothing to save.                                 [WARNING]</div><div class="line"> </div><div class="line">[root@CentOS6 ~]<span class="comment"># service iptables restart #重载</span></div><div class="line">iptables: Applying firewall rules:                         [  OK  ]</div><div class="line">iptables: Loading additional modules: nf_conntrack_ftp     [  OK  ]</div><div class="line"> </div><div class="line">[root@CentOS6 ~]<span class="comment"># lsmod |grep ftp</span></div><div class="line">nf_conntrack_ftp       12049  0 </div><div class="line">nf_conntrack           79537  1 nf_conntrack_ftp</div></pre></td></tr></table></figure></p>
+<p>★ CentOS 7开机自动生效规则：<br>&ensp;&ensp;&ensp;&ensp;firewalld服务；<br>&ensp;&ensp;&ensp;&ensp;shell脚本，直接记录iptables命令<br>&ensp;&ensp;&ensp;&ensp;自定义unit file或init script；</p>
+<h3 id="规则优化思路"><a href="#规则优化思路" class="headerlink" title="规则优化思路"></a>规则优化思路</h3><p>★ 优化思路：<br>☉优先放行双方向状态为ESTABLISHED的报文；<br>☉服务于不同类别的功能的规则，匹配到报文可能性更大的放前面；<br>☉服务于同一类别的功能的规则，匹配条件较为严格的放前面；<br>☉设置默认策略：白名单机制<br>&ensp;&ensp;&ensp;&ensp;可使用iptables -P设定默认策略；<br>&ensp;&ensp;&ensp;&ensp;建议在规则链的最后定义规则做为默认策略；</p>
+<h3 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h3><p><img src="\images\iptables\iptables-review.png" alt="iptables"></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">iptables</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/08/22/linux服务之iptables/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/08/20/linux服务之ssh/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          linux服务之SSH
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/08/23/linux服务之iptables二/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">linux服务之iptables网络防火墙</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>linux之shell脚本编程之语句控制 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp; &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp; shell脚">
+<meta name="keywords" content="shell脚本编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux之shell脚本编程之语句控制">
+<meta property="og:url" content="http://yoursite.com/2017/07/01/linux之shell脚本编程之语句控制/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp; &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp; shell脚">
+<meta property="og:updated_time" content="2017-08-22T02:27:00.246Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux之shell脚本编程之语句控制">
+<meta name="twitter:description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp; &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp; shell脚">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-linux之shell脚本编程之语句控制" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      linux之shell脚本编程之语句控制
+    </h1>
+  
+
+        
+        <a href="/2017/07/01/linux之shell脚本编程之语句控制/" class="archive-article-date">
+  	<time datetime="2017-07-01T12:50:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-shell脚本编程之语句控制"><a href="#ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-ensp-shell脚本编程之语句控制" class="headerlink" title="&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp; &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp; shell脚本编程之语句控制"></a>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp; &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp; shell脚本编程之语句控制</h3><h3 id="过程式编程语言的代码执行顺序"><a href="#过程式编程语言的代码执行顺序" class="headerlink" title="过程式编程语言的代码执行顺序"></a>过程式编程语言的代码执行顺序</h3><p>★ 顺序执行<br>&ensp;&ensp;&ensp;&ensp;按照顺序一条一条语句执行；<br>★ 选择执行<br>&ensp;&ensp;&ensp;&ensp;代码有一个分支：条件满足时才会执行；<br>&ensp;&ensp;&ensp;&ensp;两个或以上的分支：只会执行其中一个满足条件的分支；<br>★ 循环执行<br>&ensp;&ensp;&ensp;&ensp;代码片段（循环体）要执行0,1或多个来回<br>注意：<br>&ensp;&ensp;&ensp;&ensp;顺序执行不需要特定的控制，只需按照语句依次执行即可；选择执行，则需要特定的控制语句（如：if，case）来判断执行；循环执行则需要特定的循环控制控制（如：for，while等）。</p>
+<h3 id="bash脚本编程之用户交互"><a href="#bash脚本编程之用户交互" class="headerlink" title="bash脚本编程之用户交互"></a>bash脚本编程之用户交互</h3><p>在bash脚本编程过程当中有时程序需要与用户之间进行交互（通过键盘输入数据），如提示用户输入一些参数等，此时，我们可以使用read命令来完成此功能  。<br>★ read<br>☉功能：<br>&ensp;&ensp;&ensp;&ensp;和用户进行交互，通过键盘输入数据，从而完成变量赋值工作；<br>☉语法：<br>&ensp;&ensp;&ensp;&ensp;read [option]…[name…]<br>☉选项：<br>&ensp;&ensp;&ensp;&ensp;-p ：“说明信息”，指示要显示的提示；<br>&ensp;&ensp;&ensp;&ensp;-t ：TIMEOUT ， 多长时间不输入后就退出；<br>注意：<br>&ensp;&ensp;&ensp;&ensp;read从标准输入中读取值，给每个单词分配一个变量，所有剩余单词都被分配给最后一个变量</p>
+<h4 id="示例："><a href="#示例：" class="headerlink" title="示例："></a>示例：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># read name</span></div><div class="line">jack</div><div class="line">[root@centos7 lab]<span class="comment"># echo $name</span></div><div class="line">jack</div><div class="line">[root@centos7 lab]<span class="comment"># read a b</span></div><div class="line">tom jerry</div><div class="line">[root@centos7 lab]<span class="comment"># echo $a</span></div><div class="line">tom</div><div class="line">[root@centos7 lab]<span class="comment"># echo $b</span></div><div class="line">jerry</div><div class="line"></div><div class="line"><span class="comment"># 如果给定的参数少于变量个数，那么对应的参数为空的变量将为空</span></div><div class="line">[root@centos7 lab]<span class="comment"># read a b c</span></div><div class="line">tom jerry</div><div class="line">[root@centos7 lab]<span class="comment"># echo $a</span></div><div class="line">tom</div><div class="line">[root@centos7 lab]<span class="comment"># echo $b</span></div><div class="line">jerry</div><div class="line">[root@centos7 lab]<span class="comment"># echo $c</span></div><div class="line"></div><div class="line"><span class="comment"># 如果给定的参数多于变量，那么多余的参数都将赋值给最后一个变量</span></div><div class="line">[root@centos7 lab]<span class="comment"># read a b c</span></div><div class="line">jack tom jerry xiu</div><div class="line">[root@centos7 lab]<span class="comment"># echo $a</span></div><div class="line">jack</div><div class="line">[root@centos7 lab]<span class="comment"># echo $b</span></div><div class="line">tom</div><div class="line">[root@centos7 lab]<span class="comment"># echo $c</span></div><div class="line">jerry xiu</div><div class="line"></div><div class="line">[root@centos7 lab]<span class="comment"># echo -n "Enter your name: ";read name</span></div><div class="line">Enter your name: jack</div><div class="line">[root@centos7 lab]<span class="comment"># echo $name</span></div><div class="line">jack</div><div class="line">[root@centos7 lab]<span class="comment"># read -p "Enter your name: " name</span></div><div class="line">Enter your name: jack</div><div class="line">[root@centos7 lab]<span class="comment"># echo $name</span></div><div class="line">jack</div><div class="line"></div><div class="line">[root@centos7 lab]<span class="comment"># read -p "Enter your name: " name</span></div><div class="line">Enter your name: jack</div><div class="line">[root@centos7 lab]<span class="comment"># [ -z $name ] &amp;&amp; name="tom"    # 如果变量为空时赋值为tom</span></div><div class="line">[root@centos7 lab]<span class="comment"># echo $name</span></div><div class="line">jack</div></pre></td></tr></table></figure>
+<h4 id="示例脚本"><a href="#示例脚本" class="headerlink" title="示例脚本"></a>示例脚本</h4><p>添加用户<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat useradd1.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># 提示用户输入一个用户名，如果用户未输入，则提示用户必须输出一个用户名，然后退出</span></div><div class="line"><span class="built_in">read</span> -p <span class="string">"Enter a username: "</span> name</div><div class="line">[ -z <span class="variable">$name</span> ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"A username is needed"</span> &amp;&amp; <span class="built_in">exit</span> 2</div><div class="line"></div><div class="line"><span class="comment"># 判断用户是否存在，如果输出的用户存在，返回用户已存在，否则提示用户输出用户密码，如果用户未输出密码，则使用给的默认密码password.</span></div><div class="line"><span class="keyword">if</span> id <span class="variable">$name</span> &amp;&gt;/dev/null;<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"This user is exsit."</span></div><div class="line"><span class="keyword">else</span></div><div class="line">   <span class="built_in">read</span> -p <span class="string">"Please enter password for <span class="variable">$name</span>: "</span> password</div><div class="line">   [ -z <span class="variable">$passwd</span> ] &amp;&amp; password=<span class="string">"password"</span></div><div class="line">   useradd <span class="variable">$name</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"<span class="variable">$passwd</span>"</span> | passwd --stdin <span class="variable">$name</span> &amp;&gt;/dev/null</div><div class="line">   <span class="built_in">echo</span> <span class="string">"Add user <span class="variable">$name</span> finished"</span></div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>执行脚本输出：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># bash useradd1.sh </span></div><div class="line">Enter a username: tom</div><div class="line">Please enter password <span class="keyword">for</span> tom: tom123</div><div class="line">Add user tom finished</div><div class="line">[root@centos7 lab]<span class="comment"># bash useradd1.sh </span></div><div class="line">Enter a username: jerry</div><div class="line">Please enter password <span class="keyword">for</span> jerry: </div><div class="line">Add user jerry finished</div><div class="line">[root@centos7 lab]<span class="comment"># id tom</span></div><div class="line">uid=1027(tom) gid=1027(tom) groups=1027(tom)</div><div class="line">[root@centos7 lab]<span class="comment"># id jerry</span></div><div class="line">uid=1028(jerry) gid=1028(jerry) groups=1028(jerry)</div></pre></td></tr></table></figure></p>
+<h3 id="选择执行"><a href="#选择执行" class="headerlink" title="选择执行"></a>选择执行</h3><h4 id="if-语句"><a href="#if-语句" class="headerlink" title="if 语句"></a>if 语句</h4><p>★语法：<br>☉单分支<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> 判断条件；<span class="keyword">then</span></div><div class="line">   代码分支</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>☉双分支（布尔型条件）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> 判断条件; <span class="keyword">then</span></div><div class="line">    条件为真时执行的分支</div><div class="line"><span class="keyword">else</span></div><div class="line">    条件为假时执行的分支</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>☉多分支<br>从上而下逐条件进行判断，第一次遇到为“真”条件时，执行其分支，而后结束整个if语句；<br>即便多个条件可能同时满足，分支也只会执行其中一个，即首先测试为真的那个；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> CONDITION1; <span class="keyword">then</span></div><div class="line">     <span class="keyword">if</span>-true</div><div class="line"><span class="keyword">elif</span> CONDITION2; <span class="keyword">then</span></div><div class="line">     <span class="keyword">if</span>-ture</div><div class="line"><span class="keyword">elif</span> CONDITION3; <span class="keyword">then</span></div><div class="line">     <span class="keyword">if</span>-ture</div><div class="line"> ...</div><div class="line"><span class="keyword">else</span></div><div class="line">     all-false</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>注意：<br>&ensp;&ensp;&ensp;&ensp;if语句可嵌套（if是一个关键字，不是一个命令。）</p>
+<h4 id="示例：-1"><a href="#示例：-1" class="headerlink" title="示例："></a>示例：</h4><p>1.通过参数传递一个用户名给脚本，此用户不存在时，则添加<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 单分支语句：</span></div><div class="line">[root@centos7 lab]<span class="comment"># cat useradd2.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> <span class="_">-lt</span> 1 ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"At least one username"</span></div><div class="line">   <span class="built_in">exit</span> 2</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">if</span> ! grep <span class="string">"^<span class="variable">$1</span>\&gt;"</span> /etc/passwd &amp;&gt;/dev/null;<span class="keyword">then</span></div><div class="line">   useradd <span class="variable">$1</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"<span class="variable">$1</span>"</span>|passwd --stdin <span class="variable">$1</span> &amp;&gt;/dev/null</div><div class="line">   <span class="built_in">echo</span> <span class="string">"Add user <span class="variable">$1</span> finished."</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="comment"># 双分支语句：</span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> <span class="_">-lt</span> 1 ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"At least one username"</span></div><div class="line">   <span class="built_in">exit</span> 2</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">if</span> grep <span class="string">"^<span class="variable">$1</span>\&gt;"</span> /etc/passwd &amp;&gt;/dev/null;<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"The user <span class="variable">$1</span> exsits."</span></div><div class="line"><span class="keyword">else</span></div><div class="line">   useradd <span class="variable">$1</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"<span class="variable">$1</span>"</span>|passwd --stdin <span class="variable">$1</span> &amp;&gt;/dev/null</div><div class="line">   <span class="built_in">echo</span> <span class="string">"Add user <span class="variable">$1</span> finished."</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="comment"># 双分支语句：方法二</span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line">[ <span class="variable">$#</span> <span class="_">-lt</span> 1 ] &amp;&amp;  <span class="built_in">echo</span> <span class="string">"At least one username"</span> &amp;&amp; <span class="built_in">exit</span> 2</div><div class="line"><span class="keyword">if</span> id <span class="variable">$1</span> &amp;&gt;/dev/null;<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"The user <span class="variable">$1</span> exsits."</span></div><div class="line"><span class="keyword">else</span></div><div class="line">   useradd <span class="variable">$1</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"<span class="variable">$1</span>"</span>|passwd --stdin <span class="variable">$1</span> &amp;&gt;/dev/null</div><div class="line">   <span class="built_in">echo</span> <span class="string">"Add user <span class="variable">$1</span> finished."</span></div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>2.写一个脚本filetype.sh,判断用户输入文件路径，显示其文件类型（普通，目录，链接，其它文件类型）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat filetype.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> <span class="_">-lt</span> 1 ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"At least input one file."</span></div><div class="line">   <span class="built_in">exit</span> 1</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">if</span> ! [ <span class="_">-e</span> <span class="variable">$1</span> ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"No such file."</span></div><div class="line">   <span class="built_in">exit</span> 2</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">if</span> [ <span class="_">-f</span> <span class="variable">$1</span> ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"Common file"</span></div><div class="line"><span class="keyword">elif</span> [ <span class="_">-d</span> <span class="variable">$1</span> ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"Directory"</span></div><div class="line"><span class="keyword">elif</span> [ -b <span class="variable">$1</span> ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"Block special file"</span></div><div class="line"><span class="keyword">elif</span> [ -c <span class="variable">$1</span> ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"Character special file"</span></div><div class="line"><span class="keyword">elif</span> [ <span class="_">-s</span> <span class="variable">$1</span> ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"Socket file"</span></div><div class="line"><span class="keyword">else</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"Unkonw"</span></div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>3.根据提示让用户选择输入的信息：cpu，mem，disks，quit，正确就的选择就给出相应的信息，否则就提示重新选择正确的选项<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat menu.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line">cat &lt;&lt; EOF</div><div class="line">CPU)dispaly cpu information.</div><div class="line">MEM)display memory information.</div><div class="line">Disks)display disk information.</div><div class="line">Quit)quit.</div><div class="line">===============================</div><div class="line">EOF</div><div class="line"></div><div class="line"><span class="built_in">read</span> -p <span class="string">"Please choice a option: "</span> option</div><div class="line"></div><div class="line"><span class="keyword">while</span> [ <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"CPU"</span> <span class="_">-a</span> <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"MEM"</span> <span class="_">-a</span> <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"Disks"</span> <span class="_">-a</span> <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"Quit"</span> ];<span class="keyword">do</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"CPU,MEM,Disks,Quit"</span></div><div class="line">    <span class="built_in">read</span> -p <span class="string">"Enter your option:"</span> option</div><div class="line"><span class="keyword">done</span></div><div class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$option</span>"</span> == <span class="string">"CPU"</span> ];<span class="keyword">then</span></div><div class="line">   lscpu</div><div class="line"><span class="keyword">elif</span> [ <span class="string">"<span class="variable">$option</span>"</span> == <span class="string">"MEM"</span> ];<span class="keyword">then</span></div><div class="line">   free -m</div><div class="line"><span class="keyword">elif</span> [ <span class="string">"<span class="variable">$option</span>"</span> == <span class="string">"Disks"</span> ];<span class="keyword">then</span></div><div class="line">   fdisk <span class="_">-l</span> /dev/sd[a-z]</div><div class="line"><span class="keyword">elif</span> [ <span class="string">"<span class="variable">$options</span>"</span> == <span class="string">"Quit"</span> ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"quit"</span></div><div class="line">   <span class="built_in">exit</span> 1</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<h3 id="条件判断case语句"><a href="#条件判断case语句" class="headerlink" title="条件判断case语句"></a>条件判断case语句</h3><p>★ 条件判断case语句（主要用于离散值的匹配）<br>☉使用场景：<br>&ensp;&ensp;&ensp;&ensp;case 语句在很多场景当中可以替换多分支的 if 语句，显示为更为简洁的格式，但其仅适用于：一个变量与多个取值之间作等值或者模式匹配时才可以用（即：拿一个变量来回跟多个可能的变量取值作比较才能使用或者说是，一个大的变量里面还有许多小的变量要选择才会用到），否则的话，只能用多分支的 if 语句<br>☉语法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> 变量引量 <span class="keyword">in</span></div><div class="line"> PAT1)</div><div class="line">      分支1</div><div class="line">  ;;</div><div class="line"> PAT2)</div><div class="line">      分支2</div><div class="line">  ;;</div><div class="line">     ...</div><div class="line"> *)</div><div class="line">      默认分支</div><div class="line">  ;;</div><div class="line"> <span class="keyword">esac</span></div></pre></td></tr></table></figure></p>
+<p>☉case仅支持glob风格的通配符：<br>&ensp;&ensp;&ensp;&ensp;*：任意长度任意字符<br>&ensp;&ensp;&ensp;&ensp;?：任意单个字符<br>&ensp;&ensp;&ensp;&ensp;[]：指定范围内的任意单个字符[adc]（也可以表示范围[1-10]）<br>&ensp;&ensp;&ensp;&ensp;a|b：a或b</p>
+<h4 id="示例：-2"><a href="#示例：-2" class="headerlink" title="示例："></a>示例：</h4><p>1.根据提示让用户选择输入的信息：cpu，mem，disks，quit，正确就的选择就给出相应的信息，否则就提示重新选择正确的选项<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat menu.sh</span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line">cat &lt;&lt; EOF</div><div class="line">CPU)dispaly cpu information.</div><div class="line">MEM)display memory information.</div><div class="line">Disks)display disk information.</div><div class="line">Quit)quit.</div><div class="line">===============================</div><div class="line">EOF</div><div class="line"></div><div class="line"><span class="built_in">read</span> -p <span class="string">"Please choice a option: "</span> option</div><div class="line"></div><div class="line"><span class="keyword">while</span> [ <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"CPU"</span> <span class="_">-a</span> <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"MEM"</span> <span class="_">-a</span> <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"Disks"</span> <span class="_">-a</span> <span class="string">"<span class="variable">$option</span>"</span> != <span class="string">"Quit"</span> ];<span class="keyword">do</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"CPU,MEM,Disks,Quit"</span></div><div class="line">    <span class="built_in">read</span> -p <span class="string">"Enter your option:"</span> option</div><div class="line"><span class="keyword">done</span></div><div class="line"><span class="keyword">case</span> <span class="variable">$option</span> <span class="keyword">in</span></div><div class="line">CPU)</div><div class="line">  lscpu</div><div class="line">  ;;</div><div class="line">MEM)</div><div class="line">  free -m</div><div class="line">  ;;</div><div class="line">Disks)</div><div class="line">  fdisk<span class="_">-l</span> /dev/sd[a-z]</div><div class="line">  ;;</div><div class="line">*)</div><div class="line">  <span class="built_in">echo</span> <span class="string">"quit"</span></div><div class="line">  <span class="built_in">exit</span> 0</div><div class="line">  ;;</div><div class="line"><span class="keyword">esac</span></div></pre></td></tr></table></figure></p>
+<p>2.写一个服务脚本，<br>1）支持接受start，stop，restart，status四个参数之一；<br>2）如果参数非此四值，则提示使用帮助后退出；<br>3）start则创建lockfile，并启动；stop则删除lockfile，显示停止；restart，则先删除此文件，再创建此文件，而后显示启动完成；status，如果lockfile存在，则显示running，不存在，则显示 stopped<br>编写服务脚本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat testservice2 </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#chkconfig: - 50 50</span></div><div class="line"><span class="comment">#description: test service script</span></div><div class="line"><span class="comment">#</span></div><div class="line"></div><div class="line">prog=$(basename <span class="variable">$0</span>)</div><div class="line">lockfile=/var/lock/subsys/<span class="variable">$prog</span></div><div class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></div><div class="line">start)</div><div class="line">     <span class="keyword">if</span> [ <span class="_">-f</span> <span class="variable">$lockfile</span> ];<span class="keyword">then</span></div><div class="line">        <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is running"</span></div><div class="line">     <span class="keyword">else</span></div><div class="line">        touch <span class="variable">$lockfile</span></div><div class="line">        [ $? <span class="_">-eq</span> 0 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is started"</span></div><div class="line">     <span class="keyword">fi</span></div><div class="line">     ;;</div><div class="line">stop)</div><div class="line">     <span class="keyword">if</span> [ <span class="_">-f</span> <span class="variable">$lockfile</span> ];<span class="keyword">then</span></div><div class="line">        rm -rf <span class="variable">$lockfile</span></div><div class="line">        [ $? <span class="_">-eq</span> 0 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is stopped"</span></div><div class="line">     <span class="keyword">else</span></div><div class="line">        <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is not running"</span></div><div class="line">     <span class="keyword">fi</span></div><div class="line">     ;;</div><div class="line">restart)</div><div class="line">     <span class="keyword">if</span> [ <span class="_">-f</span> <span class="variable">$lockfile</span> ];<span class="keyword">then</span></div><div class="line">        rm -rf <span class="variable">$lockfile</span></div><div class="line">        [ $? <span class="_">-eq</span> 0 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is stopped"</span></div><div class="line">        touch <span class="variable">$lockfile</span></div><div class="line">        [ $? <span class="_">-eq</span> 0 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is started"</span></div><div class="line">     <span class="keyword">else</span></div><div class="line">        touch <span class="variable">$lockfile</span></div><div class="line">        [ $? <span class="_">-eq</span> 0 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is started"</span></div><div class="line">     <span class="keyword">fi</span></div><div class="line">     ;;</div><div class="line">status)</div><div class="line">      <span class="keyword">if</span> [ <span class="_">-f</span> <span class="variable">$lockfile</span> ];<span class="keyword">then</span></div><div class="line">         <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is started"</span></div><div class="line">      <span class="keyword">else</span></div><div class="line">         <span class="built_in">echo</span> <span class="string">"<span class="variable">$prog</span> is stopped"</span></div><div class="line">      <span class="keyword">fi</span></div><div class="line">      ;;</div><div class="line">*)</div><div class="line">      <span class="built_in">echo</span> <span class="string">"Usage:<span class="variable">$prog</span> &#123;start|stop|restart|status&#125;"</span></div><div class="line">      <span class="built_in">exit</span> 1</div><div class="line">      ;;</div><div class="line"><span class="keyword">esac</span></div></pre></td></tr></table></figure></p>
+<p>添加服务项：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 复制到 /etc/init.d/ 目录下：</span></div><div class="line">[root@centos7 lab]<span class="comment"># cp testservice2 /etc/init.d/</span></div><div class="line"></div><div class="line"><span class="comment"># 加入到 SysV 服务中去，使用 service 命令管控</span></div><div class="line">[root@centos7 lab]<span class="comment"># chkconfig --add testservice2</span></div><div class="line">[root@centos7 lab]<span class="comment"># chkconfig --list testservice2</span></div><div class="line"></div><div class="line">Note: This output shows SysV services only and does not include native</div><div class="line">      systemd services. SysV configuration data might be overridden by native</div><div class="line">      systemd configuration.</div><div class="line"></div><div class="line">      If you want to list systemd services use <span class="string">'systemctl list-unit-files'</span>.</div><div class="line">      To see services enabled on particular target use</div><div class="line">      <span class="string">'systemctl list-dependencies [target]'</span>.</div><div class="line"></div><div class="line">testservice2   	0:off	1:off	2:off	3:off	4:off	5:off	6:off</div><div class="line"></div><div class="line"><span class="comment"># 给脚本一个执行权限</span></div><div class="line">[root@centos7 bin]<span class="comment"># chmod +x /etc/init.d/testservice</span></div></pre></td></tr></table></figure></p>
+<p>服务脚本测试：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 start</span></div><div class="line">testservice2 is started</div><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 start</span></div><div class="line">testservice2 is running</div><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 stop</span></div><div class="line">testservice2 is stopped</div><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 status</span></div><div class="line">testservice2 is stopped</div><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 start</span></div><div class="line">testservice2 is started</div><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 restart</span></div><div class="line">testservice2 is stopped</div><div class="line">testservice2 is started</div><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 stop</span></div><div class="line">testservice2 is stopped</div><div class="line">You have new mail <span class="keyword">in</span> /var/spool/mail/root</div><div class="line">[root@centos7 lab]<span class="comment"># service testservice2 restart</span></div><div class="line">testservice2 is started</div><div class="line"></div><div class="line"><span class="comment"># 注意：通过服务控制的脚本都会在启动完成后在 /var/lock/subsys/ 下创建一个锁文件</span></div><div class="line">[root@centos7 lab]<span class="comment"># ls /var/lock/subsys/</span></div><div class="line">network  testservice2</div></pre></td></tr></table></figure></p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>★ 总结：<br>&ensp;&ensp;&ensp;&ensp;◆if语句在使用过程中，可以实现多重嵌套，这里一定要注意书写的格式，分好层次，不要写乱了；<br>&ensp;&ensp;&ensp;&ensp;◆case一般是在拿一个变量来回跟多个可能的变量取值作比较才能使用，才会使用到。一定要注意书写格式.<br>&ensp;&ensp;&ensp;&ensp;◆在写脚本的时候不能着急，要构思清新，每一种情况都要考虑到</p>
+<h4 id="练习："><a href="#练习：" class="headerlink" title="练习："></a>练习：</h4><p>1.写一个脚本/root/bin/createuser.sh，实现如下功能：使用一个用户名做为参数，如果指定参数的用户存在，就显示其存在，否则添加之；显示添加的用户的id号等信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat createuser.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line">[ <span class="variable">$#</span> <span class="_">-lt</span> 1 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"You must input a username"</span> &amp;&amp; <span class="built_in">exit</span> 1</div><div class="line"></div><div class="line">id <span class="variable">$1</span> &amp;&gt;/dev/null</div><div class="line"><span class="keyword">if</span> [ $? <span class="_">-eq</span> 0 ];<span class="keyword">then</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"The user <span class="variable">$1</span> exsits"</span></div><div class="line"><span class="keyword">else</span></div><div class="line">   useradd <span class="variable">$1</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"The username is: <span class="variable">$1</span> and id is: <span class="variable">$(id -u $1)</span>"</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash createuser.sh jack</span></div><div class="line">The user jack exsits</div><div class="line">[root@centos7 lab]<span class="comment"># bash createuser.sh zhou</span></div><div class="line">The username is: zhou and id is: 1030</div></pre></td></tr></table></figure></p>
+<p>2.写一个脚本yesorno.sh，提示用户输入yes或no,并判断用户输入的是yes还是no,或是其它信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat yesorno.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="built_in">read</span> -p <span class="string">"Please enter yes or no:"</span> choice</div><div class="line"></div><div class="line"><span class="keyword">case</span> <span class="variable">$choice</span> <span class="keyword">in</span></div><div class="line">[Yy][Ee][Ss]|[yY])</div><div class="line">	<span class="built_in">echo</span> <span class="string">"Yes!!!"</span></div><div class="line">        ;;</div><div class="line">[Nn][Oo]|[nN])</div><div class="line">        <span class="built_in">echo</span> <span class="string">"No!!!"</span></div><div class="line">        ;;</div><div class="line">*)</div><div class="line">        <span class="built_in">echo</span> <span class="string">"Other char"</span></div><div class="line">        ;;</div><div class="line"><span class="keyword">esac</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash yesorno.sh</span></div><div class="line">Please enter yes or no:y</div><div class="line">Yes!!!</div><div class="line">[root@centos7 lab]<span class="comment"># bash yesorno.sh</span></div><div class="line">Please enter yes or no:n</div><div class="line">No!!!</div><div class="line">[root@centos7 lab]<span class="comment"># bash yesorno.sh</span></div><div class="line">Please enter yes or no:yes</div><div class="line">Yes!!!</div><div class="line">[root@centos7 lab]<span class="comment"># bash yesorno.sh</span></div><div class="line">Please enter yes or no:NO</div><div class="line">No!!!</div><div class="line">[root@centos7 lab]<span class="comment"># bash yesorno.sh</span></div><div class="line">Please enter yes or no:123</div><div class="line">Other char</div></pre></td></tr></table></figure></p>
+<h3 id="循环执行"><a href="#循环执行" class="headerlink" title="循环执行"></a>循环执行</h3><p>★ 循环执行：<br>&ensp;&ensp;&ensp;&ensp;将一段代码段重复执行0，1或多次<br>☉进入条件：<br>&ensp;&ensp;&ensp;&ensp;条件满足时才进入循环；<br>☉退出条件：<br>&ensp;&ensp;&ensp;&ensp;每个循环都应该有退出条件，以有机会退出循环；<br>★ bash脚本的循环<br>&ensp;&ensp;&ensp;&ensp;◆for 循环；<br>&ensp;&ensp;&ensp;&ensp;◆while 循环；<br>&ensp;&ensp;&ensp;&ensp;◆until 循环；</p>
+<h3 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h3><p>★ for循环<br>☉两种格式：<br>&ensp;&ensp;&ensp;&ensp;遍历列表；<br>&ensp;&ensp;&ensp;&ensp;控制变量；<br>★ 遍历列表方式：<br>☉语法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> VARAIBLE <span class="keyword">in</span> LIST ;<span class="keyword">do</span></div><div class="line">       循环体</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p>☉进入条件：<br>&ensp;&ensp;&ensp;&ensp;只要列表有元素，即可进入循环；<br>☉退出条件：<br>&ensp;&ensp;&ensp;&ensp;列表中的元素遍历完成。<br>☉执行机制：<br>&ensp;&ensp;&ensp;&ensp;依次将列表中的元素赋值给“变量名”; 每次赋值后即执行一次循环体; 直到列表中的元素耗尽，循环结束。（遍历列表）<br>☉列表生成方式<br>&ensp;&ensp;&ensp;&ensp;直接给出列表；<br>&ensp;&ensp;&ensp;&ensp;整数列表：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;1）{start..end}；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;2）$(seq[start [step]] end)；step 为步长<br>&ensp;&ensp;&ensp;&ensp;返回列表的命令； $(COMMAND)   $() = `` 都是变量引用<br>&ensp;&ensp;&ensp;&ensp;使用glob，如：<em>.sh<br>&ensp;&ensp;&ensp;&ensp;变量引用：$@，$</em><br>&ensp;&ensp;&ensp;&ensp;…</p>
+<h4 id="示例：-3"><a href="#示例：-3" class="headerlink" title="示例："></a>示例：</h4><p>1.求100以内所有正整数之和<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat sum100.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="built_in">declare</span> -i i=1</div><div class="line"><span class="built_in">declare</span> -i sum=0</div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;1..100&#125;;<span class="keyword">do</span></div><div class="line">   <span class="built_in">echo</span> <span class="string">"\$sum is <span class="variable">$sum</span>,\$i is <span class="variable">$i</span>."</span></div><div class="line">   sum=$[<span class="variable">$sum</span>+<span class="variable">$i</span>]</div><div class="line"><span class="keyword">done</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"sum is: <span class="variable">$sum</span>"</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash sum100.sh </span></div><div class="line"><span class="variable">$sum</span> is 0,<span class="variable">$i</span> is 1.</div><div class="line"><span class="variable">$sum</span> is 1,<span class="variable">$i</span> is 2.</div><div class="line"><span class="variable">$sum</span> is 3,<span class="variable">$i</span> is 3.</div><div class="line"><span class="variable">$sum</span> is 6,<span class="variable">$i</span> is 4.</div><div class="line"><span class="variable">$sum</span> is 10,<span class="variable">$i</span> is 5.</div><div class="line">...</div><div class="line">sum is: 5050</div><div class="line"></div><div class="line"><span class="comment"># 100 以内所有偶数之和</span></div><div class="line">[root@centos7 lab]<span class="comment"># sum=0;for i in `seq 2 2 100`;do sum=$[$sum+$i];done;echo "$sum"</span></div><div class="line">2550</div><div class="line"></div><div class="line"><span class="comment"># 100 以内所有奇数之和</span></div><div class="line">[root@centos7 lab]<span class="comment"># sum=0;for i in `seq 1 2 100`;do sum=$[$sum+$i];done;echo "$sum"</span></div><div class="line">2500</div><div class="line"></div><div class="line"><span class="comment"># 求当前系统上所有用户的id之和</span></div><div class="line">[root@centos7 lab]<span class="comment"># sum=0;for i in $(cat /etc/passwd|cut -d: -f3);do sum=$[$sum+$i];done;echo "$sum"</span></div><div class="line">35397</div></pre></td></tr></table></figure></p>
+<p>2.判断/var/log/目录下所有文件的文件类型：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># cat filetype1.sh </span></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="keyword">for</span> file <span class="keyword">in</span> /var/<span class="built_in">log</span>/*;<span class="keyword">do</span></div><div class="line">    <span class="keyword">if</span> [ <span class="_">-f</span> <span class="variable">$file</span> ];<span class="keyword">then</span></div><div class="line">       <span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span> is common file."</span></div><div class="line">    <span class="keyword">elif</span> [ <span class="_">-d</span> <span class="variable">$file</span> ];<span class="keyword">then</span></div><div class="line">       <span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span> is directory."</span></div><div class="line">    <span class="keyword">elif</span> [ -c <span class="variable">$file</span> ];<span class="keyword">then</span></div><div class="line">       <span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span> is character file."</span></div><div class="line">    <span class="keyword">elif</span> [ -b <span class="variable">$file</span> ];<span class="keyword">then</span></div><div class="line">       <span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span> is block file."</span></div><div class="line">    <span class="keyword">elif</span> [ <span class="_">-s</span> <span class="variable">$file</span> ];<span class="keyword">then</span></div><div class="line">       <span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span> is socket file."</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">       <span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span> is unknow."</span></div><div class="line">    <span class="keyword">fi</span></div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash filetype1.sh </span></div><div class="line">/var/<span class="built_in">log</span>/anaconda is directory.</div><div class="line">/var/<span class="built_in">log</span>/audit is directory.</div><div class="line">/var/<span class="built_in">log</span>/boot.log is common file.</div><div class="line">/var/<span class="built_in">log</span>/btmp is common file.</div><div class="line">/var/<span class="built_in">log</span>/btmp-20170801 is common file.</div><div class="line">/var/<span class="built_in">log</span>/cron is common file.</div><div class="line">/var/<span class="built_in">log</span>/cron-20170716 is common file.</div></pre></td></tr></table></figure></p>
+<h3 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h3><p>★ while循环<br>☉语法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> CONDITION; <span class="keyword">do</span></div><div class="line">         循环体</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p>☉进入条件：<br>&ensp;&ensp;&ensp;&ensp;CONDITION为true；<br>☉退出条件：<br>&ensp;&ensp;&ensp;&ensp;CONDITION为 false；<br>☉CONDITION（循环控制条件）：<br>&ensp;&ensp;&ensp;&ensp;进入循环之前，先做一次判断；每一次循环之后会再次做判断；条件为“true”，则执行一次循环；直到条件测试状态为“false”终止循环；<br>&ensp;&ensp;&ensp;&ensp;因此：CONDTION一般应该有循环控制变量；而此变量的值会在循环体不断地被修正；一般为布尔型表达式</p>
+<h4 id="示例：-4"><a href="#示例：-4" class="headerlink" title="示例："></a>示例：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim sum100_1.sh</span></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="comment">#</span></div><div class="line">  3 <span class="built_in">declare</span> -i i=1</div><div class="line">  4 <span class="built_in">declare</span> -i sum=0</div><div class="line">  5 <span class="keyword">while</span> [ <span class="variable">$i</span> -le 100 ];<span class="keyword">do</span></div><div class="line">  6       sum=$[<span class="variable">$sum</span>+<span class="variable">$i</span>]</div><div class="line">  7 <span class="comment">#     let i=$i+1</span></div><div class="line">  8       <span class="built_in">let</span> i++</div><div class="line">  9 <span class="keyword">done</span></div><div class="line"> 10 <span class="built_in">echo</span> <span class="string">"sum is:<span class="variable">$sum</span>"</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash sum100_1.sh </span></div><div class="line">sum is:5050</div></pre></td></tr></table></figure>
+<h3 id="until循环"><a href="#until循环" class="headerlink" title="until循环"></a>until循环</h3><p>★ until循环（相当于在wehile控制条件之前加 “！”）<br>★ 语法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">until CONDITION; <span class="keyword">do</span></div><div class="line">       循环体</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p>☉进入条件：<br>&ensp;&ensp;&ensp;&ensp;CONDITION为 flase；<br>☉退出条件：<br>&ensp;&ensp;&ensp;&ensp;CONDITION为 true；</p>
+<h4 id="示例：-5"><a href="#示例：-5" class="headerlink" title="示例："></a>示例：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim sum100_2.sh</span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="built_in">declare</span> -i sum=0</div><div class="line">  3 <span class="built_in">declare</span> -i i=1</div><div class="line">  4 until [ <span class="variable">$i</span> <span class="_">-gt</span> 100 ];<span class="keyword">do</span></div><div class="line">  5      sum=$[<span class="variable">$sum</span>+<span class="variable">$i</span>]</div><div class="line">  6      <span class="built_in">let</span> i++</div><div class="line">  7 <span class="keyword">done</span></div><div class="line">  8 <span class="built_in">echo</span> <span class="string">"sum is: <span class="variable">$sum</span>"</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash sum100_2.sh </span></div><div class="line">sum is: 5050</div></pre></td></tr></table></figure>
+<h3 id="创建无限循环"><a href="#创建无限循环" class="headerlink" title="创建无限循环"></a>创建无限循环</h3><p>★ while 无限循环<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="literal">true</span>；<span class="keyword">do</span></div><div class="line">    循环体</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p>★ until 无限循环<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">until flase； <span class="keyword">do</span></div><div class="line">   循环体</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<h3 id="循环控制语句"><a href="#循环控制语句" class="headerlink" title="循环控制语句"></a>循环控制语句</h3><p>★ continue [N]：<br>提前结束本轮循环，而直接进入下一轮循环判断<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> CONDITION1;DO</div><div class="line">    CMD1</div><div class="line">    ...</div><div class="line">    <span class="keyword">if</span> CONDITION2;<span class="keyword">then</span></div><div class="line">         <span class="built_in">continue</span></div><div class="line">    <span class="keyword">fi</span></div><div class="line">    CMDn</div><div class="line">    ...</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p>★ break [N]：<br>提前跳出循环<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">   <span class="keyword">while</span>  CONDITION1; <span class="keyword">do</span></div><div class="line">	CMD1</div><div class="line">	...</div><div class="line">	<span class="keyword">if</span>  CONDITION2; <span class="keyword">then</span></div><div class="line">		<span class="built_in">break</span></div><div class="line">	<span class="keyword">fi</span></div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p>1.求100以内所有偶数之和：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim sumeven.sh</span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="comment">#</span></div><div class="line">  3 <span class="built_in">declare</span> -i i=0</div><div class="line">  4 <span class="built_in">declare</span> -i evensum=0</div><div class="line">  5 <span class="keyword">while</span> [ <span class="variable">$i</span> -le 100 ];<span class="keyword">do</span></div><div class="line">  6       <span class="built_in">let</span> i++</div><div class="line">  7       <span class="keyword">if</span> [ $[<span class="variable">$i</span>%2] <span class="_">-eq</span> 1 ];<span class="keyword">then</span></div><div class="line">  8          <span class="built_in">continue</span></div><div class="line">  9       <span class="keyword">fi</span></div><div class="line"> 10       evensum=$[<span class="variable">$evensum</span>+<span class="variable">$i</span>]</div><div class="line"> 11 <span class="keyword">done</span></div><div class="line"> 12 <span class="built_in">echo</span> <span class="string">"sum is: <span class="variable">$evensum</span>"</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash sumeven.sh </span></div><div class="line">sum is: 2550</div></pre></td></tr></table></figure></p>
+<p>2.求100以内所有奇数之和<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim sumodd.sh </span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="comment">#</span></div><div class="line">  3 <span class="built_in">declare</span> -i i=1</div><div class="line">  4 <span class="built_in">declare</span> -i oddsum=1</div><div class="line">  5 </div><div class="line">  6 <span class="keyword">while</span> <span class="literal">true</span>;<span class="keyword">do</span></div><div class="line">  7     <span class="built_in">let</span> i+=2</div><div class="line">  8     oddsum=$[<span class="variable">$oddsum</span>+<span class="variable">$i</span>]</div><div class="line">  9     <span class="keyword">if</span> [ <span class="variable">$i</span> -ge 99 ];<span class="keyword">then</span></div><div class="line"> 10         <span class="built_in">break</span></div><div class="line"> 11     <span class="keyword">fi</span></div><div class="line"> 12 <span class="keyword">done</span></div><div class="line"> 13 <span class="built_in">echo</span> <span class="string">"sum is: <span class="variable">$oddsum</span>"</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash sumodd.sh </span></div><div class="line">sum is: 2500</div></pre></td></tr></table></figure></p>
+<h3 id="sleep-命令"><a href="#sleep-命令" class="headerlink" title="sleep 命令"></a>sleep 命令</h3><p>★ sleep<br>☉用途<br>&ensp;&ensp;&ensp;&ensp;sleep命令常用于在Linux shell脚本中延迟时间。<br>☉语法：<br>&ensp;&ensp;&ensp;&ensp;sleep NUMBER [SUFFIX]…<br>☉SUFFIX（后缀）：<br>&ensp;&ensp;&ensp;&ensp;s：秒, 默认；<br>&ensp;&ensp;&ensp;&ensp;m：分；<br>&ensp;&ensp;&ensp;&ensp;h：小时；<br>&ensp;&ensp;&ensp;&ensp;d：天</p>
+<h3 id="示例：-6"><a href="#示例：-6" class="headerlink" title="示例："></a>示例：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># date;sleep 5;date</span></div><div class="line">Fri Aug 11 13:22:50 CST 2017</div><div class="line">Fri Aug 11 13:22:55 CST 2017</div></pre></td></tr></table></figure>
+<p>每隔三秒钟到系统上获取已登录的用户信息；其中，如果centos用户登录了系统，则记录于日志中，并退出<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim login.sh</span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="comment">#</span></div><div class="line">  3 <span class="keyword">while</span> <span class="literal">true</span>;<span class="keyword">do</span></div><div class="line">  4     <span class="keyword">if</span> who|grep <span class="string">"^jack\&gt;"</span> &amp;&gt;/dev/null;<span class="keyword">then</span></div><div class="line">  5         <span class="built_in">break</span></div><div class="line">  6     <span class="keyword">fi</span></div><div class="line">  7     sleep 3</div><div class="line">  8 <span class="keyword">done</span></div><div class="line">  9 <span class="built_in">echo</span> <span class="string">"<span class="variable">$(date "+%F %T")</span> jack login"</span> &gt;&gt;/tmp/user.log</div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash login.sh </span></div><div class="line">[root@centos7 tmp]<span class="comment"># cat user.log </span></div><div class="line">2017-08-11 13:31:52 jack login</div><div class="line"></div><div class="line">[root@centos7 lab]<span class="comment"># vim login1.sh</span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="comment">#</span></div><div class="line">  3 until who|grep <span class="string">"^jack\&gt;"</span> &amp;&gt;/dev/null;<span class="keyword">do</span></div><div class="line">  4       sleep 3</div><div class="line">  5 <span class="keyword">done</span></div><div class="line">  6 <span class="built_in">echo</span> <span class="string">"<span class="variable">$(date "+%F %T")</span> jack login"</span> &gt;&gt;/tmp/user.log</div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash login1.sh </span></div><div class="line">[root@centos7 tmp]<span class="comment"># cat user.log </span></div><div class="line">2017-08-11 13:37:46 jack login</div></pre></td></tr></table></figure></p>
+<h3 id="循环语句的特殊用法"><a href="#循环语句的特殊用法" class="headerlink" title="循环语句的特殊用法"></a>循环语句的特殊用法</h3><h4 id="while循环的特殊用法"><a href="#while循环的特殊用法" class="headerlink" title="while循环的特殊用法"></a>while循环的特殊用法</h4><p>★ while循环的特殊用法（遍历文件的每一行）<br>☉语法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="keyword">while</span> <span class="built_in">read</span> VARIABLE; <span class="keyword">do</span></div><div class="line">   循环体</div><div class="line"><span class="keyword">done</span> &lt; /PATH/FROM/SOMEFILE</div></pre></td></tr></table></figure></p>
+<p>☉意义：<br>&ensp;&ensp;&ensp;&ensp;依次读取/PATH/FROM/SOMEFILE文件中的每一行，且将行赋值给变量VARIABLE（一般变量可设置为 line）</p>
+<h4 id="示例：-7"><a href="#示例：-7" class="headerlink" title="示例："></a>示例：</h4><p>1.找出ID号为偶数的用户，显示其用户名，ID，及默认的shell<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim user.sh</span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="comment">#</span></div><div class="line">  3 <span class="keyword">while</span> <span class="built_in">read</span> line;<span class="keyword">do</span></div><div class="line">  4    username=$(<span class="built_in">echo</span> <span class="variable">$line</span>|cut <span class="_">-d</span>: <span class="_">-f</span>1)</div><div class="line">  5    userid=$(<span class="built_in">echo</span> <span class="variable">$line</span>|cut <span class="_">-d</span>: <span class="_">-f</span>3)</div><div class="line">  6    usershell=$(<span class="built_in">echo</span> <span class="variable">$line</span>|cut <span class="_">-d</span>: <span class="_">-f</span>7)</div><div class="line">  7    <span class="keyword">if</span> [ $[<span class="variable">$userid</span>%2] <span class="_">-eq</span> 0 ];<span class="keyword">then</span></div><div class="line">  8       <span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;username&#125;</span>'s id:<span class="variable">$userid</span>,shell:<span class="variable">$usershell</span>"</span></div><div class="line">  9    <span class="keyword">fi</span></div><div class="line"> 10 <span class="keyword">done</span> &lt; /etc/passwd</div><div class="line"></div><div class="line"> 运行结果：</div><div class="line"> [root@centos7 lab]<span class="comment"># bash user.sh</span></div><div class="line">root<span class="string">'s id:0,shell:/bin/bash</span></div><div class="line">daemon's id:2,shell:/sbin/nologin</div><div class="line">lp<span class="string">'s id:4,shell:/sbin/nologin</span></div><div class="line">shutdown's id:6,shell:/sbin/shutdown</div><div class="line">mail<span class="string">'s id:8,shell:/sbin/nologin</span></div><div class="line">games's id:12,shell:/sbin/nologin</div></pre></td></tr></table></figure></p>
+<p>2.检查文件系统是否大于90%<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim fs.sh</span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="comment">#</span></div><div class="line">  3 df|grep -E <span class="string">"[0-9]+%"</span>|<span class="keyword">while</span> <span class="built_in">read</span> line</div><div class="line">  4 <span class="keyword">do</span></div><div class="line">  5         use=$(<span class="built_in">echo</span> <span class="variable">$line</span>|awk <span class="string">'&#123;print $5&#125;'</span>|tr <span class="_">-d</span> <span class="string">'%'</span>)</div><div class="line">  6         mountpoint=$(<span class="built_in">echo</span> <span class="variable">$line</span>|awk <span class="string">'&#123;print $6&#125;'</span>)</div><div class="line">  7         [ <span class="variable">$use</span> <span class="_">-gt</span> 90  ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"<span class="variable">$mountpoint</span> is over 90% untilized."</span></div><div class="line">  8 <span class="keyword">done</span></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash fs.sh </span></div><div class="line">/var is over 90% untilized.</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># df|grep -E "[0-9]+%"|while read fs blocks used available use mountpoint;do use=$(echo $use|tr -d '%'); [ $use -gt 90 ] &amp;&amp; echo "$mountpoint is over 90% utilized."; done</span></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># /var is over 90% utilized.</span></div></pre></td></tr></table></figure></p>
+<h4 id="for循环的特殊用法"><a href="#for循环的特殊用法" class="headerlink" title="for循环的特殊用法"></a>for循环的特殊用法</h4><p>★ for循环的特殊用法<br>&ensp;&ensp;&ensp;&ensp;双小括号方法，即((…))格式，也可以用于算术运算；<br>&ensp;&ensp;&ensp;&ensp;双小括号方法也可以使bash Shell实现C语言风格的变量操作；<br>☉语法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> ((控制变量初始化;条件判断表达式;控制变量的修正表达式))</div><div class="line">        循环体</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p>◆控制变量初始化：<br>&ensp;&ensp;&ensp;&ensp;仅在运行到循环代码段时执行一次；<br>◆控制变量的修正表达式：<br>&ensp;&ensp;&ensp;&ensp;每轮循环结束会先进行控制变量修正运算，而后再做条件判断；<br>☉意义：<br>&ensp;&ensp;&ensp;&ensp;第一个分号之前相当于变量的一个初始值，只执行一次，然后进行条件判断，满足条件进入循环体，每轮循环结束后会执行修正表达式，然后再做判断，条件满足进入循环体，结束后再做修正，在判断，如此而已…直到条件判断不满足时，就退出循环。实际上，二三分号，是while循环的意思。</p>
+<h4 id="示例：-8"><a href="#示例：-8" class="headerlink" title="示例："></a>示例：</h4><p>1.给定一个正整数，求之内的所有正整数之和；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line">  2 [ <span class="variable">$#</span> <span class="_">-lt</span> 1 ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"Please enter a num"</span> &amp;&amp; <span class="built_in">exit</span> 1</div><div class="line">  3 <span class="keyword">for</span>((i=0;i&lt;=<span class="variable">$1</span>;i++));<span class="keyword">do</span></div><div class="line">  4     sum=$[<span class="variable">$sum</span>+<span class="variable">$i</span>]</div><div class="line">  5 <span class="keyword">done</span></div><div class="line">  6 <span class="built_in">echo</span> <span class="string">"sum is:<span class="variable">$sum</span>"</span></div><div class="line"></div><div class="line"> 运行结果：</div><div class="line"> [root@centos7 lab]<span class="comment"># bash sum.sh 5</span></div><div class="line">sum is:15</div><div class="line"></div><div class="line">[root@centos7 lab]<span class="comment"># vim sum.sh</span></div><div class="line"></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="built_in">read</span> -p <span class="string">"Please enter a num:"</span> number</div><div class="line">  3 [ -z <span class="variable">$number</span> ] &amp;&amp; <span class="built_in">echo</span> <span class="string">"You must enter a num"</span> &amp;&amp; <span class="built_in">exit</span> 1</div><div class="line">  4 <span class="keyword">for</span>((i=0;i&lt;=<span class="variable">$number</span>;i++));<span class="keyword">do</span></div><div class="line">  5     sum=$[<span class="variable">$sum</span>+<span class="variable">$i</span>]</div><div class="line">  6 <span class="keyword">done</span></div><div class="line">  7 <span class="built_in">echo</span> <span class="string">"sum is:<span class="variable">$sum</span>"</span></div><div class="line"></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash sum.sh</span></div><div class="line">Please enter a num:5</div><div class="line">sum is:15</div></pre></td></tr></table></figure></p>
+<p>2.打印九九乘法口诀表<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@centos7 lab]<span class="comment"># vim 99.sh</span></div><div class="line">  1 <span class="comment">#!/bin/bash</span></div><div class="line">  2 <span class="built_in">declare</span> -i i=1</div><div class="line">  3 <span class="built_in">declare</span> -i j=1</div><div class="line">  4 <span class="keyword">for</span>((i=1;<span class="variable">$i</span>&lt;=9;i++));<span class="keyword">do</span></div><div class="line">  5    <span class="keyword">for</span>((j=1;<span class="variable">$j</span>&lt;=<span class="variable">$i</span>;j++));<span class="keyword">do</span></div><div class="line">  6       <span class="built_in">echo</span> <span class="_">-e</span> -n <span class="string">"<span class="variable">$&#123;i&#125;</span>X<span class="variable">$&#123;j&#125;</span>=$[<span class="variable">$&#123;i&#125;</span>*<span class="variable">$&#123;j&#125;</span>]\t"</span></div><div class="line">  7    <span class="keyword">done</span></div><div class="line">  8    <span class="built_in">echo</span></div><div class="line">  9 <span class="keyword">done</span></div><div class="line">运行结果：</div><div class="line">[root@centos7 lab]<span class="comment"># bash 99.sh </span></div><div class="line">1X1=1	</div><div class="line">2X1=2	2X2=4	</div><div class="line">3X1=3	3X2=6	3X3=9	</div><div class="line">4X1=4	4X2=8	4X3=12	4X4=16	</div><div class="line">5X1=5	5X2=10	5X3=15	5X4=20	5X5=25	</div><div class="line">6X1=6	6X2=12	6X3=18	6X4=24	6X5=30	6X6=36	</div><div class="line">7X1=7	7X2=14	7X3=21	7X4=28	7X5=35	7X6=42	7X7=49	</div><div class="line">8X1=8	8X2=16	8X3=24	8X4=32	8X5=40	8X6=48	8X7=56	8X8=64	</div><div class="line">9X1=9	9X2=18	9X3=27	9X4=36	9X5=45	9X6=54	9X7=63	9X8=72	9X9=81</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">shell脚本编程</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/07/01/linux之shell脚本编程之语句控制/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/06/25/linux之shell脚本编程-基础篇(二)/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          linux之shell脚本编程-基础篇(二)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/05/linux之shell脚本编程之函数/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">linux之shell脚本编程之函数</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

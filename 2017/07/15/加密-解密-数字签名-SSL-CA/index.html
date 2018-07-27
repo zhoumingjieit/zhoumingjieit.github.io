@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>加密解密、数字签名、SSL、CA技术 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="内容介绍：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 安全机制&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 对称加密&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 不对称加密&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 散列算法&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ PKI和CA 相关知识介绍：★ 传输层协议：◆ TCP（面向连接）,UDP（面向无连接）,SCT">
+<meta name="keywords" content="加密解密、数字签名、SSL、CA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="加密解密、数字签名、SSL、CA技术">
+<meta property="og:url" content="http://yoursite.com/2017/07/15/加密-解密-数字签名-SSL-CA/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="内容介绍：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 安全机制&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 对称加密&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 不对称加密&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 散列算法&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ PKI和CA 相关知识介绍：★ 传输层协议：◆ TCP（面向连接）,UDP（面向无连接）,SCT">
+<meta property="og:image" content="http://yoursite.com/images/DH加密算法.png">
+<meta property="og:image" content="http://yoursite.com/images/SSL-TLS%20Protocol.png">
+<meta property="og:image" content="http://yoursite.com/images/ssl会话.png">
+<meta property="og:image" content="http://yoursite.com/images/CA.png">
+<meta property="og:updated_time" content="2017-08-26T12:53:03.283Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="加密解密、数字签名、SSL、CA技术">
+<meta name="twitter:description" content="内容介绍：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 安全机制&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 对称加密&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 不对称加密&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ 散列算法&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;◆ PKI和CA 相关知识介绍：★ 传输层协议：◆ TCP（面向连接）,UDP（面向无连接）,SCT">
+<meta name="twitter:image" content="http://yoursite.com/images/DH加密算法.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-加密-解密-数字签名-SSL-CA" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      加密解密、数字签名、SSL、CA技术
+    </h1>
+  
+
+        
+        <a href="/2017/07/15/加密-解密-数字签名-SSL-CA/" class="archive-article-date">
+  	<time datetime="2017-07-15T13:30:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="内容介绍："><a href="#内容介绍：" class="headerlink" title="内容介绍："></a>内容介绍：</h3><p>&ensp;&ensp;&ensp;&ensp;◆ 安全机制<br>&ensp;&ensp;&ensp;&ensp;◆ 对称加密<br>&ensp;&ensp;&ensp;&ensp;◆ 不对称加密<br>&ensp;&ensp;&ensp;&ensp;◆ 散列算法<br>&ensp;&ensp;&ensp;&ensp;◆ PKI和CA</p>
+<h3 id="相关知识介绍："><a href="#相关知识介绍：" class="headerlink" title="相关知识介绍："></a>相关知识介绍：</h3><p>★ 传输层协议：<br>◆ TCP（面向连接）,UDP（面向无连接）,SCTP（流控协议）<br>◆ port（端口）：传输层协议都会提供端口，<br>&ensp;&ensp;&ensp;&ensp;端口（port）是标记进程的地址,进程向内核注册才能使用某端口（独占）<br>&ensp;&ensp;&ensp;&ensp;任何一个进程占领某个端口之后，其他进程进不能使用了；<br>◆ 同一主机上的进程间通信：<br>&ensp;&ensp;&ensp;&ensp;IPC<br>&ensp;&ensp;&ensp;&ensp;message queue（消息队列）<br>&ensp;&ensp;&ensp;&ensp;shm（共享内存）<br>&ensp;&ensp;&ensp;&ensp;semerphor<br>◆ 不同主机间的进程通信：<br>&ensp;&ensp;&ensp;&ensp;通过套接字方式来实现（socket）<br>&ensp;&ensp;&ensp;&ensp;cip:port&lt;– –&gt;sip:port (客户端ip和端口到服务端ip和端口)<br>◆ 监听模式：LINTEN（ip：port），<br>&ensp;&ensp;&ensp;&ensp;无论有没有人访问，它都要打开自己的进程，并监听在某个ip:port上，随时等待客户端请求；<br>&ensp;&ensp;&ensp;&ensp;为某些众所周知的应用，事先分配好一个固定的端口（比如http的80端口）<br>◆ SSL ：Secure Socket Layer<br>&ensp;&ensp;&ensp;&ensp;http–&gt;ssl–&gt;https<br>&ensp;&ensp;&ensp;&ensp;http协议一但调用了ssl就变成了https，从而能够完成安全通信</p>
+<h3 id="SSL介绍"><a href="#SSL介绍" class="headerlink" title="SSL介绍"></a>SSL介绍</h3><p>★ SSL简介：<br>&ensp;&ensp;&ensp;&ensp;SSL也就是Secure Socket Layer 叫做安全套接字协议，是一种应用层协议，主要用于数据传输的加密。OpeenSSL是SSL协议开源形式，是广泛使用的商业及SSL工具，同时OpeenSSL也是一种命令行工具；<br>★ 跨主机间的通信过程<br>&ensp;&ensp;&ensp;&ensp;在计算机网络中，我们知道跨主机之间的进程通信是通过套接字方式实现的，服务器监听在某个TCP Socket之上（IP:Port），客户端在本地打开一个随机的Socket，然后通过TCP/IP协议，将请求通过交换机、路由器层层转发到目标服务器上，然后服务器可以判断出客户端请求的资源，进而转交到应用层相关服务上，服务端应用进程从磁盘上获得相应的资源信息，然后封装成相应的网络数据包格式以同样的方式层层传输给客户端对应的端口上。<br>&ensp;&ensp;&ensp;&ensp;无论数据从应用层向下传输还是从下层到应用层传输，每个层次中的协议都仅仅是对数据进行封装解封装，而里面的数据本身并没有发生变化，所以，数据在发送过程当中是什么还是什么，也就是明文发送的，没有加密，任何人只要获取到了相关的数据包就能通过其他方法获知其中的铭文内容；因此就需要有一种加密机制能够保护互联网数据在传输过程中的隐秘性了<br>★ NIST(美国国家标准与技术研究院)定义的安全属性:<br>&ensp;&ensp;&ensp;&ensp;保密性：数据保密性，隐私性<br>&ensp;&ensp;&ensp;&ensp;完整性（不可篡改）：数据完整性，系统完整性<br>&ensp;&ensp;&ensp;&ensp;可用性<br>★ 攻击类型：<br>&ensp;&ensp;&ensp;&ensp;威胁保密性的攻击：窃听、通信量分析 ；<br>&ensp;&ensp;&ensp;&ensp;威胁完整性攻击：篡改，伪装，重放，否认；<br>&ensp;&ensp;&ensp;&ensp;威胁可用性的攻击：拒绝服务（Dos）<br>★ 解决方案：<br>☉安全机制：<br>&ensp;&ensp;&ensp;&ensp;加密解密；<br>&ensp;&ensp;&ensp;&ensp;数字签名；<br>&ensp;&ensp;&ensp;&ensp;访问控制；<br>&ensp;&ensp;&ensp;&ensp;数据完整性；<br>&ensp;&ensp;&ensp;&ensp;认证交换；<br>&ensp;&ensp;&ensp;&ensp;流量填充；<br>&ensp;&ensp;&ensp;&ensp;路由控制；<br>&ensp;&ensp;&ensp;&ensp;公证<br>☉安全服务：用于抵御攻击的服务<br>&ensp;&ensp;&ensp;&ensp;认证服务；<br>&ensp;&ensp;&ensp;&ensp;访问控制服务；<br>&ensp;&ensp;&ensp;&ensp;数据保密性服务：连接保密性、无连接保密性、选择域保密性、流量保密性<br>&ensp;&ensp;&ensp;&ensp;数据完整性服务；<br>&ensp;&ensp;&ensp;&ensp;不可否认性服务；<br>★ 设计原则：<br>&ensp;&ensp;&ensp;&ensp;使用成熟的安全系统；<br>&ensp;&ensp;&ensp;&ensp;以小人之心度输入数据；<br>&ensp;&ensp;&ensp;&ensp;外部系统是不安全的；<br>&ensp;&ensp;&ensp;&ensp;最小授权；<br>&ensp;&ensp;&ensp;&ensp;减少外部接口；<br>&ensp;&ensp;&ensp;&ensp;缺省使用安全模式；<br>&ensp;&ensp;&ensp;&ensp;安全不是似是而非；<br>&ensp;&ensp;&ensp;&ensp;从STRIDE思考；<br>&ensp;&ensp;&ensp;&ensp;在入口处检查；<br>&ensp;&ensp;&ensp;&ensp;从管理上保护好你的系统；<br>★ 安全算法<br>☉常用安全技术<br>&ensp;&ensp;&ensp;&ensp;认证<br>&ensp;&ensp;&ensp;&ensp;授权<br>&ensp;&ensp;&ensp;&ensp;安全通信<br>&ensp;&ensp;&ensp;&ensp;审计<br>☉密码算法和协议：<br>&ensp;&ensp;&ensp;&ensp;对称加密：数据加密（保密性）（算法：3DES，AES）<br>&ensp;&ensp;&ensp;&ensp;公钥加密：身份认证，密钥交换，数据加密 （RSA,DSA）<br>&ensp;&ensp;&ensp;&ensp;单向加密：数据完整性（MD5，SHA1…）<br>&ensp;&ensp;&ensp;&ensp;密钥交换：RSA、DH、ECDH(椭圆曲线DH)，ECDHE（临时椭圆曲线DH）<br>&ensp;&ensp;&ensp;&ensp;认证协议<br>★ Linux系统：<br>&ensp;&ensp;&ensp;&ensp;OpenSSL，gpg(pgp协议的实现)</p>
+<h3 id="常见的加密算法和协议"><a href="#常见的加密算法和协议" class="headerlink" title="常见的加密算法和协议"></a>常见的加密算法和协议</h3><h4 id="★-对称加密"><a href="#★-对称加密" class="headerlink" title="★ 对称加密"></a>★ 对称加密</h4><p>◆ 对称加密：加密和解密使用同一个密钥<br>&ensp;&ensp;&ensp;&ensp;DES：Data Encryption Standard，56bits<br>&ensp;&ensp;&ensp;&ensp;3DES：<br>&ensp;&ensp;&ensp;&ensp;AES：Advanced (128, 192, 256bits)<br>&ensp;&ensp;&ensp;&ensp;Blowfish，Twofish<br>&ensp;&ensp;&ensp;&ensp;IDEA，RC6，CAST5<br>◆ 特性：<br>&ensp;&ensp;&ensp;&ensp;加密、解密使用同一个密钥，效率高；<br>&ensp;&ensp;&ensp;&ensp;将原始数据分割成固定大小的块，逐个进行加密；<br>◆ 缺陷：<br>&ensp;&ensp;&ensp;&ensp;密钥过多；<br>&ensp;&ensp;&ensp;&ensp;密钥分发；<br>&ensp;&ensp;&ensp;&ensp;数据来源无法确认</p>
+<h4 id="★-非对称加密（公钥加密）"><a href="#★-非对称加密（公钥加密）" class="headerlink" title="★ 非对称加密（公钥加密）"></a>★ 非对称加密（公钥加密）</h4><p>◆ 非对称加密<br>&ensp;&ensp;&ensp;&ensp;采用公钥加密，同时还需要另一个秘钥来解密，也就是私钥；两者统称为密钥对。<br>&ensp;&ensp;&ensp;&ensp;公钥：从私钥中提取产生，公开给所有人；public key<br>&ensp;&ensp;&ensp;&ensp;私钥：通过工具创建，使用者自己留存，必须保证其私密性；secret key<br>&ensp;&ensp;&ensp;&ensp;一般拿对方公钥加密来保证数据安全性，拿自己的私钥加密来证明数据来源的身份<br>◆ 特点：<br>&ensp;&ensp;&ensp;&ensp;用公钥加密数据，只能使用与之配对的私钥解密；反之亦然<br>◆ 功能：<br>☉身份认证：<br>&ensp;&ensp;&ensp;&ensp;私钥拥有者用自己的私钥加密的数据，只要用其公钥能解密，即可认证其身份；私钥加密的这个过程为数字签名。<br>☉密钥交换：<br>&ensp;&ensp;&ensp;&ensp;与被通信方之前，首先获取到对方的公钥，自己生成一个加密密码，用对方的公钥加密，并发送给对方；<br>☉数据加密：<br>&ensp;&ensp;&ensp;&ensp;适合加密较小数据（不常用，比对称加密要慢3个数量级）<br>◆ 缺点：<br>&ensp;&ensp;&ensp;&ensp;密钥长，加密解密效率低下<br>◆ 算法：<br>&ensp;&ensp;&ensp;&ensp;RSA（加密，数字签名）,<br>&ensp;&ensp;&ensp;&ensp;DSA（数字签名）,<br>&ensp;&ensp;&ensp;&ensp;ELGamal<br>◆ 基于一对公钥/私钥对<br>&ensp;&ensp;&ensp;&ensp;用密钥对中的一个加密，另一个解密<br>◆ 实现加密过程：<br>☉接收者<br>&ensp;&ensp;&ensp;&ensp;生成公钥P和私钥S<br>&ensp;&ensp;&ensp;&ensp;公开公钥P，保密私钥S<br>☉发送者<br>&ensp;&ensp;&ensp;&ensp;使用接收者的公钥P来加密消息M<br>&ensp;&ensp;&ensp;&ensp;将P(M)发送给接收者<br>☉接收者<br>&ensp;&ensp;&ensp;&ensp;使用私钥S来解密：M=S(P(M))<br>◆ 实现数字签名：<br>☉发送者<br>&ensp;&ensp;&ensp;&ensp;生成公钥/私钥对：P和S<br>&ensp;&ensp;&ensp;&ensp;公开公钥P，保密密钥S<br>&ensp;&ensp;&ensp;&ensp;使用私钥S来加密消息M<br>&ensp;&ensp;&ensp;&ensp;发送给接收者S(M)<br>☉接收者<br>&ensp;&ensp;&ensp;&ensp;使用发送者的公钥来解密M=P(S(M))<br>&ensp;&ensp;&ensp;&ensp;结合签名和加密<br>&ensp;&ensp;&ensp;&ensp;分离签名   </p>
+<h4 id="★-单向加密"><a href="#★-单向加密" class="headerlink" title="★ 单向加密"></a>★ 单向加密</h4><p>◆ 单向加密<br>&ensp;&ensp;&ensp;&ensp;只能加密，不能解密，因为解密过程是一个二次加密的过程；主要是提取数据的特征码来保证数据的完整性和一致性，即“数据指纹”，具有雪崩效应，任何一点数据的改变，生成的校验码值变化非常大<br>◆ 特性：<br>&ensp;&ensp;&ensp;&ensp;任意长度输入<br>&ensp;&ensp;&ensp;&ensp;固定长度输出<br>&ensp;&ensp;&ensp;&ensp;若修改数据，指纹也会改变（“不会产生冲突”）<br>&ensp;&ensp;&ensp;&ensp;无法从指纹中重新生成数据（“单向”）<br>◆ 功能：<br>&ensp;&ensp;&ensp;&ensp;数据完整性（完整性校验）<br>&ensp;&ensp;&ensp;&ensp;系统账号密码校验<br>◆ 算法：<br>&ensp;&ensp;&ensp;&ensp;md5：Message Digest 5（消息摘要）,128bits；<br>&ensp;&ensp;&ensp;&ensp;sha1：Secure Hash Algorithm 1(安全哈希算法) ,160bits<br>&ensp;&ensp;&ensp;&ensp;sha224,sha256,sha384,sha512</p>
+<h4 id="★-密钥交换"><a href="#★-密钥交换" class="headerlink" title="★ 密钥交换"></a>★ 密钥交换</h4><p>★ 密钥交换（IKE）：<br>&ensp;&ensp;&ensp;&ensp;双方通过交换密钥来实现数据加密解密；密钥交换有两种<br>◆ 公钥交换：<br>&ensp;&ensp;&ensp;&ensp;将公钥加密后通过网络传输到对方进行解密，这种方式很有可能别截获破解，不常用；<br>◆ DH：<br>&ensp;&ensp;&ensp;&ensp;双方共有一些参数，共同协商加密算法，除此之外双方还有属于自己的私有参数，通过共有参数、私有参数和算法信息来进行加密，然后双方将计算后的结果进行交换，交换完成后再和属于自己私有的参数进行特殊算法，经过双反计算后的结果是相同的，而这个结果就是密钥。<br>◆ 举例：<br><img src="\images\DH加密算法.png" alt="DH加密算法"><br>◆ 注意：<br>&ensp;&ensp;&ensp;&ensp;整个过程中对于第三方人员来说只能获取p，g两个值，AB双方交换的是经过计算后的值，因此这种加密算法是很安全的。</p>
+<h4 id="★-一次加密通信过程："><a href="#★-一次加密通信过程：" class="headerlink" title="★ 一次加密通信过程："></a>★ 一次加密通信过程：</h4><p>★ 发送者：<br>&ensp;&ensp;&ensp;&ensp;1.使用单向加密算法提取生成数据的特征码；  （单向加密技术）<br>&ensp;&ensp;&ensp;&ensp;2.使用自己的私钥加密特征码附在数据的后面；（公钥加密技术）<br>&ensp;&ensp;&ensp;&ensp;3.生成用于对称加密的临时密钥；<br>&ensp;&ensp;&ensp;&ensp;4.用此临时密钥加密数据和已经使用私钥加密后的特征码；（对称加密技术）<br>&ensp;&ensp;&ensp;&ensp;5.使用接收方的公钥加密此临时密钥，附在对称加密后的数据的后方；（密钥交换技术）<br>★ 接收者：<br>&ensp;&ensp;&ensp;&ensp;1.使用自己的私钥解密加密的临时密钥，从而获取对称密钥；<br>&ensp;&ensp;&ensp;&ensp;2.使用对称密钥解密对称加密的数据和私钥加密的特征码密文； 从而获取数据和特征码密文；<br>&ensp;&ensp;&ensp;&ensp;3.使用发送方的公钥解密特征码密文，从而获取计算生成的特征码；<br>&ensp;&ensp;&ensp;&ensp;4.使用与对方同样的单向加密算法计算数据的特征码，并与解密而来的特征码进行比较。</p>
+<h4 id="★-CA和证书"><a href="#★-CA和证书" class="headerlink" title="★ CA和证书"></a>★ CA和证书</h4><p>★ 为什么需要CA<br>&ensp;&ensp;&ensp;&ensp;在双方通信过程中，数据的加密解密依赖于对方的公钥，因此就需要一种可靠的机制能够保证公钥数据的安全性，这种机制就是CA，CA是一个证书颁发机构，这个机构负责证书的颁发，谁需要就去CA购买，买完之后去验证CA就可以了。<br>★ PKI: Public Key Infrastructure<br>CA只是PKI的一个组成部分，PKI（公钥基础设施：）包括<br>&ensp;&ensp;&ensp;&ensp;签证机构：CA（Certificate Authority）<br>&ensp;&ensp;&ensp;&ensp;注册机构：RA<br>&ensp;&ensp;&ensp;&ensp;证书吊销列表：CRL<br>&ensp;&ensp;&ensp;&ensp;证书存取库：<br>★ X.509：定义了证书的结构以及认证协议标准<br>&ensp;&ensp;&ensp;&ensp;版本号：version<br>&ensp;&ensp;&ensp;&ensp;序列号：serial number CA用于唯一标识此证书；<br>&ensp;&ensp;&ensp;&ensp;签名算法标志：<br>&ensp;&ensp;&ensp;&ensp;颁发者：即CA自己的名称；<br>&ensp;&ensp;&ensp;&ensp;有效期限：两个日期，起始日期和终止日期<br>&ensp;&ensp;&ensp;&ensp;主体名称：证书拥有者自己的名字<br>&ensp;&ensp;&ensp;&ensp;主体公钥：证书拥有者自己的公钥信息<br>&ensp;&ensp;&ensp;&ensp;发行者的唯一标识：<br>&ensp;&ensp;&ensp;&ensp;证书主体的唯一标识<br>&ensp;&ensp;&ensp;&ensp;CRL分发点：<br>&ensp;&ensp;&ensp;&ensp;扩展信息<br>&ensp;&ensp;&ensp;&ensp;发行者签名：CA对此证书的数字签名<br>★ 验证证书过程：<br>&ensp;&ensp;&ensp;&ensp;用CA的公钥去解密CA的全名，能解密说明证书来源可靠；<br>&ensp;&ensp;&ensp;&ensp;用同样的加密算法去加密证书取得特征码，与解密出的特征码相比较，如果二者相同，说明证书完整性可靠；<br>&ensp;&ensp;&ensp;&ensp;检查证书的有效期限在不在当前合理的有效范围内;<br>&ensp;&ensp;&ensp;&ensp;验证主体名称和期望通信的对方是否一致;<br>&ensp;&ensp;&ensp;&ensp;检查证书是否被吊销。<br>★ 证书类型：<br>&ensp;&ensp;&ensp;&ensp;证书授权机构的证书<br>&ensp;&ensp;&ensp;&ensp;服务器<br>&ensp;&ensp;&ensp;&ensp;用户证书<br>★ 获取证书两种方法：<br>☉使用证书授权机构；<br>&ensp;&ensp;&ensp;&ensp;生成签名请求（csr）<br>&ensp;&ensp;&ensp;&ensp;将csr发送给CA<br>&ensp;&ensp;&ensp;&ensp;从CA处接收签名<br>☉自签名的证书；<br>&ensp;&ensp;&ensp;&ensp;自已签发自己的公钥</p>
+<h3 id="SSL-TSL"><a href="#SSL-TSL" class="headerlink" title="SSL/TSL"></a>SSL/TSL</h3><h4 id="★-介绍"><a href="#★-介绍" class="headerlink" title="★ 介绍"></a>★ 介绍</h4><p>★ SSL: Secure Socket Layer<br>&ensp;&ensp;&ensp;&ensp;安全套接层，是为网络通信提供安全及数据完整性的一种安全协议；<br>&ensp;&ensp;&ensp;&ensp;SSL为Netscape在1994年所研发，用以保障在Internet上数据传输之安全，利用数据加密（Encryption）技术，可确保数据在网络之上传输过程中不会被截取及窃听；<br>★ TLS（传输层安全）:<br>&ensp;&ensp;&ensp;&ensp;Transport Layer Security（SSL的继承版本）与SSL在传输层对网络连接进行加密；<br>☉发展历程：<br>&ensp;&ensp;&ensp;&ensp;1995：SSL 2.0 Netscape研发<br>&ensp;&ensp;&ensp;&ensp;1996: SSL 3.0<br>&ensp;&ensp;&ensp;&ensp;1999: TLS 1.0 IETE研发<br>&ensp;&ensp;&ensp;&ensp;2006: TLS 1.1 RFC（Request For Comments ）4346<br>&ensp;&ensp;&ensp;&ensp;2008：TLS 1.2 当前使用<br>&ensp;&ensp;&ensp;&ensp;2015: TLS 1.3<br>★ 功能：<br>&ensp;&ensp;&ensp;&ensp;机密性，认证，完整性，重放保护；<br>★ 分层设计：<br>&ensp;&ensp;&ensp;&ensp;最底层：基础算法原理的实现；<br>&ensp;&ensp;&ensp;&ensp;向上一层：各种算法的实现；<br>&ensp;&ensp;&ensp;&ensp;再向上一层：组合算法实现的半成品；<br>&ensp;&ensp;&ensp;&ensp;用各种组件拼装而成的各种成品密码及协议软件<br>★ 两阶段协议，分为握手阶段和应用阶段<br>☉握手阶段(协商阶段):<br>&ensp;&ensp;&ensp;&ensp;客户端和服务器端认证对方身份（依赖于PKI体系，利用数字证书进行身份认证），并协商通信中使用的安全参数、密码套件以及主密钥。后续通信使用的所有密钥都是通过MasterSecret生成。<br>☉应用阶段:<br>&ensp;&ensp;&ensp;&ensp;在握手阶段完成后进入，在应用阶段通信双方使用握手阶段协商好的密钥进行安全通信。<br>如图：<br><img src="\images\SSL-TLS Protocol.png" alt="SSL-TLS"></p>
+<h4 id="★-相关协议"><a href="#★-相关协议" class="headerlink" title="★ 相关协议"></a>★ 相关协议</h4><p>★ 相关协议<br>☉Handshake协议：<br>&ensp;&ensp;&ensp;&ensp;包括协商安全参数和密码套件、服务器身份认证（客户端身份认证可选）、密钥交换<br>☉ChangeCipherSpec 协议：<br>&ensp;&ensp;&ensp;&ensp;一条消息表明握手协议已经完成<br>☉Alert 协议：<br>&ensp;&ensp;&ensp;&ensp;对握手协议中一些异常的错误提醒，分为fatal和warning两个级别，fatal类型错误会直接中断SSL链接，而warning级别的错误SSL链接仍可继续，只是会给出错误警告<br>☉Record 协议：<br>&ensp;&ensp;&ensp;&ensp;包括对消息的分段、压缩、消息认证和完整性保护、加密等<br>☉HTTPS 协议：<br>&ensp;&ensp;&ensp;&ensp;就是“HTTP 协议”和“SSL/TLS 协议”的组合。HTTP over SSL”或“HTTP over TLS”，对http协议的文本数据进行加密处理后，成为二进制形式传输</p>
+<h4 id="★-SSL会话主要三步"><a href="#★-SSL会话主要三步" class="headerlink" title="★ SSL会话主要三步"></a>★ SSL会话主要三步</h4><p>★ SSL会话主要三步<br>&ensp;&ensp;&ensp;&ensp;客户端向服务器端索要并验证证书；<br>&ensp;&ensp;&ensp;&ensp;双方协商生成“会话密钥”<br>&ensp;&ensp;&ensp;&ensp;双方采用“会话密钥”进行加密通信<br>※ 详细过程如下：<br>☉第一阶段：ClintHello（客户端发送加密通信请求）<br>&ensp;&ensp;&ensp;&ensp;支持的协议版本，比如tls1.2<br>&ensp;&ensp;&ensp;&ensp;客户端生成一个随机数，稍后用户生成“会话密钥”<br>&ensp;&ensp;&ensp;&ensp;支持的加密算法：比如AES、RSA<br>&ensp;&ensp;&ensp;&ensp;支持的压缩算法<br>☉第二阶段：ServerHello（服务器端回应）<br>&ensp;&ensp;&ensp;&ensp;确认使用的加密通信版本，比如tls1.2；<br>&ensp;&ensp;&ensp;&ensp;服务器端生成一个随机数，稍后用于生成“会话密钥”；<br>&ensp;&ensp;&ensp;&ensp;确认使用的加密算法；<br>&ensp;&ensp;&ensp;&ensp;发送服务器证书；<br>☉第三阶段：<br>&ensp;&ensp;&ensp;&ensp;验证服务器证书，在确认无误后取其公钥；（发证机构、证书完整性、证书的持有者、证书有效期、吊销列表）；<br>&ensp;&ensp;&ensp;&ensp;发送以下信息给服务器：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;一个随机数；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;编码变更通知，表示随后的信息都将用双方商定的加密方法和；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;客户端握手结束通知；<br>☉第四阶段：<br>&ensp;&ensp;&ensp;&ensp;收到客户端发来的第三个随机数pre-master-key后，计算生成本次会话所用到的“会话密钥”<br>★ 工作原理图：<br><img src="\images\ssl会话.png" alt="SSL会话"></p>
+<h3 id="Openssl"><a href="#Openssl" class="headerlink" title="Openssl"></a>Openssl</h3><h4 id="★-介绍-1"><a href="#★-介绍-1" class="headerlink" title="★ 介绍"></a>★ 介绍</h4><p>★ OpenSSL：是ssl的开源项目，有三部分组成：<br>&ensp;&ensp;&ensp;&ensp;openssl: 多用途的命令行工具，每种功能都使专用的子命令来实现；<br>&ensp;&ensp;&ensp;&ensp;libcrypto: 加密，解密库文件；<br>&ensp;&ensp;&ensp;&ensp;libssl：加密模块应用库，实现了ssl及tls；<br>★ Openssl命令：<br>☉两种运行模式：<br>&ensp;&ensp;&ensp;&ensp;交互模式；<br>&ensp;&ensp;&ensp;&ensp;批处理模式；<br>☉opensslversion：程序版本号<br>☉子命令分类：<br>&ensp;&ensp;&ensp;&ensp;标准命令：enc, ca, req, …<br>&ensp;&ensp;&ensp;&ensp;消息摘要命令（dgst命令）<br>&ensp;&ensp;&ensp;&ensp;加密命令（enc子命令）<br>★ 演示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#获取openssl 版本号</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl version</span></div><div class="line">OpenSSL 1.0.1e-fips 11 Feb 2013</div><div class="line">[root@centos7 ~]<span class="comment"># openssl d</span></div><div class="line">openssl:Error: <span class="string">'d'</span> is an invalid command.</div><div class="line"></div><div class="line">Standard commands            <span class="comment">#标准命令</span></div><div class="line">asn1parse         ca                ciphers           cms               </div><div class="line">crl               crl2pkcs7         dgst              dh                </div><div class="line">dhparam           dsa               dsaparam          ec                </div><div class="line">ecparam           enc               engine            errstr            </div><div class="line">gendh             gendsa            genpkey           genrsa            </div><div class="line">nseq              ocsp              passwd            pkcs12            </div><div class="line">pkcs7             pkcs8             pkey              pkeyparam         </div><div class="line">pkeyutl           prime             rand              req               </div><div class="line">rsa               rsautl            s_client          s_server          </div><div class="line">s_time            sess_id           smime             speed             </div><div class="line">spkac             ts                verify            version           </div><div class="line">x509              </div><div class="line"></div><div class="line">Message Digest commands (see the `dgst<span class="string">' command for more details)   #信息摘要命令</span></div><div class="line">md2               md4               md5               rmd160            </div><div class="line">sha               sha1              </div><div class="line"></div><div class="line">Cipher commands (see the `enc' <span class="built_in">command</span> <span class="keyword">for</span> more details)      <span class="comment">#加密解密相关命令</span></div><div class="line">aes-128-cbc       aes-128-ecb       aes-192-cbc       aes-192-ecb       </div><div class="line">aes-256-cbc       aes-256-ecb       base64            bf                </div><div class="line">bf-cbc            bf-cfb            bf-ecb            bf-ofb            </div><div class="line">camellia-128-cbc  camellia-128-ecb  camellia-192-cbc  camellia-192-ecb  </div><div class="line">camellia-256-cbc  camellia-256-ecb  cast              cast-cbc          </div><div class="line">cast5-cbc         cast5-cfb         cast5-ecb         cast5-ofb         </div><div class="line">des               des-cbc           des-cfb           des-ecb           </div><div class="line">des-ede           des-ede-cbc       des-ede-cfb       des-ede-ofb       </div><div class="line">des-ede3          des-ede3-cbc      des-ede3-cfb      des-ede3-ofb      </div><div class="line">des-ofb           des3              desx              idea              </div><div class="line">idea-cbc          idea-cfb          idea-ecb          idea-ofb          </div><div class="line">rc2               rc2-40-cbc        rc2-64-cbc        rc2-cbc           </div><div class="line">rc2-cfb           rc2-ecb           rc2-ofb           rc4               </div><div class="line">rc4-40            seed              seed-cbc          seed-cfb          </div><div class="line">seed-ecb          seed-ofb          zlib</div></pre></td></tr></table></figure></p>
+<h4 id="★-Openssl命令"><a href="#★-Openssl命令" class="headerlink" title="★ Openssl命令"></a>★ Openssl命令</h4><h5 id="★-对称加密："><a href="#★-对称加密：" class="headerlink" title="★ 对称加密："></a>★ 对称加密：</h5><p>◆ 工具：<br>&ensp;&ensp;&ensp;&ensp;openssl enc;<br>&ensp;&ensp;&ensp;&ensp;gpg<br>◆ 算法：<br>&ensp;&ensp;&ensp;&ensp;3des;<br>&ensp;&ensp;&ensp;&ensp;aes;<br>&ensp;&ensp;&ensp;&ensp;blowfish;<br>&ensp;&ensp;&ensp;&ensp;twofish;<br>◆ enc命令：man enc<br>☉加密：<br>&ensp;&ensp;&ensp;&ensp;openssl enc -e -des3 -a -salt -in testfile -out testfile.cipher<br>☉解密：<br>&ensp;&ensp;&ensp;&ensp;openssl enc -d -des3 -a -salt -out testfile.cipher -in testfile<br>◆ 选项解析：<br>&ensp;&ensp;&ensp;&ensp;其中，des3 为算法，in 后面的testfile 表示要加密和解密的文件，out后面的testfile.copher表示加密和解密后输出的文件名<br>★ openssl enc命令演示:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cp /etc/fstab ./fstab</span></div><div class="line">[root@centos7 ~]<span class="comment"># ls -l fstab</span></div><div class="line">-rw-r--r-- 1 root root 483 Jul 15 23:12 fstab</div><div class="line"><span class="comment">#对文件fstab采用des3算法，加盐进行加密后生成fstab.ciphertext文件</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl enc -e -des3 -a -salt -in fstab -out fstab.ciphertext</span></div><div class="line">enter des-ede3-cbc encryption password:</div><div class="line">Verifying - enter des-ede3-cbc encryption password:</div><div class="line">[root@centos7 ~]<span class="comment"># ls -l fstab*</span></div><div class="line">-rw-r--r-- 1 root root 483 Jul 15 23:12 fstab</div><div class="line">-rw-r--r-- 1 root root 683 Jul 15 23:13 fstab.ciphertext      <span class="comment">#加密后生层的文件</span></div><div class="line">[root@centos7 ~]<span class="comment"># cat fstab.ciphertext </span></div><div class="line">U2FsdGVkX19JG//SvyTloOF8eHZdB8ojXgVkX9a38KzKlAF3/whnonC3UGEiNrHD</div><div class="line">/PZ0sXl61FdTuLD04lirPaHCOOBye4rjpc/HJGyUUzCHzG29fr4B0ZwhXoK4wZga</div><div class="line">qEeN/B29dNr8KXEnAtMlqrPbEbCZOxVc6q1x5hkk2F9SuRsvJ67VNJDKWMrglxLr</div><div class="line">n7l6/P6aGmLWy+VAAgGs3P+oejolECRhrBmz8586CgBKqTvvdupqJZg7<span class="built_in">bg</span>+dJ9nI</div><div class="line">WjNf+fu8dtSCer4yzz1nBr2/sY+upL2+YZq3lJWUoFO9ovHtKntdff64fP8+qEi2</div><div class="line">/KyZ8Kg/UWXc75xop1cOCoXLFzjksIu9OH+QDEsM/2FvXc0Wa20M2hOVFkvdU4L6</div><div class="line">GQrnUw5zbEITp6AMXNW7n//jhoy5w4XxEaW1rPdWkdPizw2g5/o8rVP3pWRVUgLV</div><div class="line">L6wqBgPjmFhuvsgwzOa+xE98Q7+Ry+lkAhCwcD0BWF8UqETCdGxMOgfmyin/fh0+</div><div class="line">t0RcHhkt45XurcvSXs2EmAKvzsCYGejhAQDxjUyCwf0II+JJ15k9ccZuer2XNwjF</div><div class="line">mD6voKel9DQb6svh6aOkJGCbH9+Ps5OPha9oI+swwXuCMaAgWHol+TjhCitrGjBL</div><div class="line">tF+s+JyWBq0+d0mRecBfPD0<span class="keyword">if</span>6R3J05z</div><div class="line"></div><div class="line"><span class="comment">#对生成的加密文件进行解密后生成fstab.plaintext文件</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl enc -d -des3 -a -salt -out fstab.plaintext -in fstab.ciphertext </span></div><div class="line">enter des-ede3-cbc decryption password:</div><div class="line">[root@centos7 ~]<span class="comment"># ls -l fstab*</span></div><div class="line">-rw-r--r-- 1 root root 483 Jul 15 23:12 fstab</div><div class="line">-rw-r--r-- 1 root root 683 Jul 15 23:13 fstab.ciphertext</div><div class="line">-rw-r--r-- 1 root root 483 Jul 15 23:17 fstab.plaintext</div><div class="line">[root@centos7 ~]<span class="comment"># cat fstab.plaintext </span></div><div class="line"></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># /etc/fstab</span></div><div class="line"><span class="comment"># Created by anaconda on Wed Apr 26 10:31:47 2017</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># Accessible filesystems, by reference, are maintained under '/dev/disk'</span></div><div class="line"><span class="comment"># See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info</span></div><div class="line"><span class="comment">#</span></div><div class="line">/dev/mapper/vgos-root   /                       xfs     defaults        0 0</div><div class="line">UUID=224a4923<span class="_">-a</span>78d-4bde-b962-aa921a15db50 /boot                   xfs     defaults        0 0</div><div class="line">UUID=3f6338ab-2c10-422c-9a5c-6a783c5795e8 swap                    swap    defaults        0 0</div></pre></td></tr></table></figure></p>
+<h5 id="★-单向加密："><a href="#★-单向加密：" class="headerlink" title="★ 单向加密："></a>★ 单向加密：</h5><p>◆ 工具：<br>&ensp;&ensp;&ensp;&ensp;openssl dgst;<br>&ensp;&ensp;&ensp;&ensp;md5sum;<br>&ensp;&ensp;&ensp;&ensp;sha1sum;<br>&ensp;&ensp;&ensp;&ensp;sha224sum;<br>&ensp;&ensp;&ensp;&ensp;sha256sum…<br>◆ dgst命令：man dgst<br>&ensp;&ensp;&ensp;&ensp;openssl dgst -md5 [-hex默认] /PATH/SOMEFILE<br>&ensp;&ensp;&ensp;&ensp;md5sum /PATH/TO/SOMEFILE<br>◆ 生成用户密码（passwd、openssl passwd）<br>&ensp;&ensp;&ensp;&ensp;passwd命令：man sslpasswd<br>&ensp;&ensp;&ensp;&ensp;openssl passwd -1 -salt SALT(最多8位) （-1表示md5加密算法）<br>◆ MAC: Message Authentication Code，<br>单向加密的一种延伸应用，用于实现网络通信中保证所传输数据的完整性机制<br>&ensp;&ensp;&ensp;&ensp;CBC-MAC<br>&ensp;&ensp;&ensp;&ensp;HMAC：使用md5或sha1算法<br>◆ 生成随机数：man sslrand<br>&ensp;&ensp;&ensp;&ensp;openssl rand -base64|-hex NUM<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;NUM: 表示字节数；-hex时，每个字符4位，出现的字符数为NUM*<br>★ 命令演示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># md5sum fstab       #用md5sum工具单向加密</span></div><div class="line">2732e3332ec1646c97257b9da04d61e7  fstab</div><div class="line">[root@centos7 ~]<span class="comment"># openssl dgst -md5 fstab    #用openssl dgst工具加密，指明算法</span></div><div class="line">MD5(fstab)= 2732e3332ec1646c97257b9da04d61e7</div><div class="line"><span class="comment"># 可以看到虽然两种加密的工具不一样，但算法相同，所以生成的特征码也相同</span></div><div class="line"></div><div class="line">生成用户密码命令：（说明：生成用户密码，salt最好用随机数）</div><div class="line">[root@centos7 ~]<span class="comment"># openssl passwd -1 -salt 123</span></div><div class="line">Password: </div><div class="line"><span class="variable">$1</span><span class="variable">$123</span><span class="variable">$yFsA3JppCdCGU4efNyHmT0</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl passwd -1 -salt 1234</span></div><div class="line">Password: </div><div class="line"><span class="variable">$1</span><span class="variable">$1234</span><span class="variable">$PQv8OEhWWJlOQxOewo1Gi</span>/</div><div class="line"><span class="comment"># 可以看出密码相同但-salt指定的不同，生成的加密密码有很大的不同</span></div><div class="line"></div><div class="line">生成随机数命令演示：</div><div class="line">[root@centos7 ~]<span class="comment"># openssl rand -base64 10</span></div><div class="line">RKRW3RJndEMKcg==</div><div class="line">[root@centos7 ~]<span class="comment"># openssl rand -base64 10</span></div><div class="line">BwJ+Qy6yCVvEUA==</div><div class="line">[root@centos7 ~]<span class="comment"># openssl rand -hex 10</span></div><div class="line">096a4a6809e927c7a37f</div><div class="line">[root@centos7 ~]<span class="comment"># openssl rand -hex 10</span></div><div class="line">70a779a130f13cdacaa3</div><div class="line"><span class="comment"># 命令替换生成随机数</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl passwd -1 -salt `openssl rand -hex 4`</span></div><div class="line">Password: </div><div class="line"><span class="variable">$1</span><span class="variable">$4a20d9d1</span><span class="variable">$twFgRJPyQUr1sSl</span>/U6s1W1</div><div class="line">[root@centos7 ~]<span class="comment"># openssl passwd -1 -salt $(openssl rand -hex 4)</span></div><div class="line">Password: </div><div class="line"><span class="variable">$1</span><span class="variable">$75ccd786</span><span class="variable">$QuRyYHorNN6aJLmeGvBf6</span>.</div><div class="line"><span class="comment"># 只要随机数不变，则生成的密码就不变</span></div></pre></td></tr></table></figure></p>
+<h5 id="★-公钥加密："><a href="#★-公钥加密：" class="headerlink" title="★ 公钥加密："></a>★ 公钥加密：</h5><p>◆ 加密解密<br>&ensp;&ensp;&ensp;&ensp;算法：RSA, ELGamal<br>&ensp;&ensp;&ensp;&ensp;工具：gpg, openssl rsautl（man rsautl）<br>◆ 数字签名<br>&ensp;&ensp;&ensp;&ensp;算法：RSA, DSA, ELGamal<br>&ensp;&ensp;&ensp;&ensp;工具同上<br>◆ 密钥交换<br>&ensp;&ensp;&ensp;&ensp;算法：DH<br>&ensp;&ensp;&ensp;&ensp;DSA: Digital Signature Algorithm<br>&ensp;&ensp;&ensp;&ensp;DSS：Digital Signature Standard<br>&ensp;&ensp;&ensp;&ensp;RSA<br>◆ 生成密钥对（man genrsa）<br>☉生成私钥：<br>&ensp;&ensp;&ensp;&ensp;openssl genrsa -out /PATH/TO/PRIVATEKEY.FILE NUM_BITS 生成的的私钥不安全<br>&ensp;&ensp;&ensp;&ensp;(umask 077; openssl genrsa -out key.pri–des 2048)<br>&ensp;&ensp;&ensp;&ensp;私钥仅自己能读能写，使用括号是启用了一个子shell，仅对子shell有效，对父shell不受影响；<br>☉从私钥中提取公钥：<br>&ensp;&ensp;&ensp;&ensp;openssl rsa -in /PATH/TO/SOMEFILE –pubout<br>◆ 随机数生成器（伪随机数字）<br>☉熵池：<br>&ensp;&ensp;&ensp;&ensp;在操作系统上有一个叫做熵池的地方，他是用来保存硬件中断产生的随机数（每一次硬件中断都会产生一个随机数）<br>☉/dev/random:<br>&ensp;&ensp;&ensp;&ensp;仅从熵池中返回随机数，随机数耗尽时，取随机数的进程将会被阻塞；<br>☉/dev/unrandom：<br>&ensp;&ensp;&ensp;&ensp;仅从熵池中取随机数，随机数耗尽时，就通过伪随机数生成器生成伪随机数；（伪随机数不安全）<br>☉熵池中随机数的来源<br>&ensp;&ensp;&ensp;&ensp;硬盘IO中断时间间隔<br>&ensp;&ensp;&ensp;&ensp;键盘IO中断时间间隔<br>★ 演示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">生成私钥：</div><div class="line">[root@centos7 ~]<span class="comment"># openssl genrsa 1024</span></div><div class="line">Generating RSA private key, 1024 bit long modulus</div><div class="line">...............................................................................++++++</div><div class="line">..............++++++</div><div class="line">e is 65537 (0x10001)</div><div class="line">-----BEGIN RSA PRIVATE KEY-----</div><div class="line">MIICXgIBAAKBgQC0TUoj6Xq5rB2+wnk0XaWc962/CFNO4oKj2RxYeATXfQbT2Dzv</div><div class="line">Bd/aJ7ZHzUkHzbV7mlOC5bQONcUMc3bm1vJye4+ui+EEwBzlMr+kTCe32wKLd7Jv</div><div class="line">pr7aqPPu4av0pcoc97B+gkLxG7F/bKmHy1mYI7QNVw6lKP4sErv+gvKAmQIDAQAB</div><div class="line">AoGAO//waSz8Qydsqptq3CtBvo+JiSXLG1gzYzUPwr0F13PqvrqZ5GzPBnjqptBA</div><div class="line">ulERULWVjtzD42qvTSprafwjp7eGgEEgq6bt3KJq12ao98NBtadSZ0cMF31cTsr7</div><div class="line">Ibttn8IUsKEEDlOZQjLlIrCA1zI0kmodL6Agy6+7o9muFvUCQQDuTCbywh1u6zQ3</div><div class="line">tFlV9Rl0JOu+un8Tw3ltiMLroqWkRXFrCfAhhdNbEjaPnJF/3bJRbh4AhAdVja/s</div><div class="line">p7As4VZnAkEAwbIzYWBk3NmcyZvRCshG2uqehl045mzM6ekTG5aF/kA112sL6RIb</div><div class="line">6eAYEM//lYXU8/P4lGspNtiMAz9++dEQ/wJBAOPBqSAw48zVxMzQ9OmxHyjg+OkM</div><div class="line">etS66d4E7rgkdkixjpuNnhOMQtwyZi+Qp4gcroghxU8c4Z2llFWOWFYs8VUCQQCs</div><div class="line">vQ1RVDPfOTq4GXuN0BpQdVg2n8B0zqbYHAHsYorQudbKbC7NBldadX1A0R4v7JCD</div><div class="line">lxoi0oaI4QnMg73rcGVlAkEAnjLJ8DMHmwtw+Fg9QheJpO1oWpzC3Gl3w+tfDFM7</div><div class="line">W5tAurvZ/Bn2pV0/yF2zSmvSb9zPXSyhC4rKJvNl8/T9TA==</div><div class="line">-----END RSA PRIVATE KEY-----</div><div class="line"><span class="comment">#可以使用重定向到指定文件当中</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl genrsa 1024 &gt;/tmp/mykey.private</span></div><div class="line">Generating RSA private key, 1024 bit long modulus</div><div class="line">.................++++++</div><div class="line">.........++++++</div><div class="line">e is 65537 (0x10001)</div><div class="line"><span class="comment"># out指定输出的文件，和重定向作用相同</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl genrsa -out /tmp/mykey1.private 1024</span></div><div class="line">Generating RSA private key, 1024 bit long modulus</div><div class="line">.......++++++</div><div class="line">...++++++</div><div class="line">e is 65537 (0x10001)</div><div class="line"><span class="comment">#但是生成的私钥放在文件当中是不安全的，因此要设置权限尽量自己可以看</span></div><div class="line">[root@centos7 ~]<span class="comment"># (umask 077;openssl genrsa -out /tmp/mykey2.private 2048)</span></div><div class="line">Generating RSA private key, 2048 bit long modulus</div><div class="line">....+++</div><div class="line">...............................................+++</div><div class="line">e is 65537 (0x10001)</div><div class="line">[root@centos7 ~]<span class="comment"># ls -l /tmp/mykey*</span></div><div class="line">-rw-r--r-- 1 root root  887 Jul 15 23:46 /tmp/mykey1.private    <span class="comment"># 属组和其他用户也有读权限，不安全</span></div><div class="line">-rw------- 1 root root 1679 Jul 15 23:47 /tmp/mykey2.private    <span class="comment"># 属主有读写权限</span></div><div class="line">-rw-r--r-- 1 root root  891 Jul 15 23:46 /tmp/mykey.private     <span class="comment"># 属组和其他用户也有读权限，不安全</span></div><div class="line"></div><div class="line">从私钥中提取公钥命令：</div><div class="line">[root@centos7 ~]<span class="comment"># openssl rsa -in /tmp/mykey2.private -pubout   </span></div><div class="line">writing RSA key</div><div class="line">-----BEGIN PUBLIC KEY-----</div><div class="line">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApmNrzbB1WNNINYL5OD3Z</div><div class="line">3M9Hmowf1ODIbaYC86dyxZE9XcUc8haPf0WU3yHX+o9oPhzDMiYXoTtYcqpJG4ez</div><div class="line">yCw45+euzH+N9OCOmHUSW5kSGKgj9K3r+SD90WDpKeV3dpuRjgIf7mIPJp0GaBm4</div><div class="line">NIECUkcB8vm6P4GQ1xsppeaVvz9ns5jL5f+w/Gn8VqHYwKwMb0tQGXXutCAq5fnR</div><div class="line">lgaXC6H0MOpmwVf/wuuE8vJpG/Qm6cIv+HGjPoDDZzp1GdDF8O/24fnlYHAZu6J+</div><div class="line">0HwPGqqXvMY+bXrI0PgsTRU34c/tKOmTvDDrUsifW+0f/2pbzvFulaAIZKVRIe1I</div><div class="line">0QIDAQAB</div><div class="line">-----END PUBLIC KEY-----</div></pre></td></tr></table></figure></p>
+<h3 id="Openssl-创建CA和申请证书"><a href="#Openssl-创建CA和申请证书" class="headerlink" title="Openssl 创建CA和申请证书"></a>Openssl 创建CA和申请证书</h3><h4 id="★-创建CA"><a href="#★-创建CA" class="headerlink" title="★ 创建CA"></a>★ 创建CA</h4><p>◆ 数字证书的获取有两种方法：<br>☉向RA注册申请即公共信任的CA；<br>☉自己创建私有CA<br>&ensp;&ensp;&ensp;&ensp;openssl<br>&ensp;&ensp;&ensp;&ensp;OpenCA<br>◆ 使用OpenSSL创建私有CA的步骤：<br> 在确定配置为CA的服务上生成一个自签证书，并为CA提供所需要的目录及文件即可；<br> ①生成私钥；<br>&ensp;&ensp;&ensp;&ensp;私钥用于签发证书时，向证书添加数字签名使用；<br> ②生成自签署证书；<br>&ensp;&ensp;&ensp;&ensp;证书：每个通信方都导入此证书至“受信任的证书颁发机构”<br>◆ openssl配置文件：<br>&ensp;&ensp;&ensp;&ensp;/etc/pki/tls/openssl.cnf<br>☉工作目录：<br>&ensp;&ensp;&ensp;&ensp;/etc/pki/CA<br>◆ 具体步骤：<br>☉生成私钥文件/etc/pki/CA/private/cakey.pem<br>&ensp;&ensp;&ensp;&ensp;(umask 077;openssl genrsa -out /etc/pki/CA/private/cakey.pem 4096)<br>☉生成自签证书；<br>&ensp;&ensp;&ensp;&ensp;openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/cacert.pem -days 3650<br>其中：<br>&ensp;&ensp;&ensp;&ensp;-new：生成新证书签署请求；<br>&ensp;&ensp;&ensp;&ensp;-x509：生成自签格式证书，专用于创建私有CA时；<br>&ensp;&ensp;&ensp;&ensp;-key：生成请求时用到的私有文件路径；<br>&ensp;&ensp;&ensp;&ensp;-days n：证书的有效时间，单位是day；<br>&ensp;&ensp;&ensp;&ensp;-out /PATH/TO/SOMECERTFILE：生成的请求证书路径；如果自签操作将直接生成签署过得证书<br>☉为CA提供所需的目录及文件<br>&ensp;&ensp;&ensp;&ensp;mkdir /etc/pki/CA/{certs,crl,newcerts} (存在的话就不用创建了)<br>&ensp;&ensp;&ensp;&ensp;touch /etc/pkl/CA/index.txt （数据库文件）<br>&ensp;&ensp;&ensp;&ensp;echo 01 &gt; /etc/pki/CA/serial （序列号文件并给明第一个证书的序列号码）</p>
+<h4 id="★-给节点颁发证书"><a href="#★-给节点颁发证书" class="headerlink" title="★ 给节点颁发证书"></a>★ 给节点颁发证书</h4><p>◆ 给节点颁发证书<br>☉要用到证书进行安全通信的服务器，需要向CA请求签署证书；<br>☉在证书申请的主机上进行如下步骤：<br>&ensp;&ensp;&ensp;&ensp;生成私钥；<br>&ensp;&ensp;&ensp;&ensp;生成证书签署请求； （注意：默认国家，省，公司名称必须和CA一致）<br>&ensp;&ensp;&ensp;&ensp;将请求通过可靠方式发送给CA主机<br>☉在CA主机上签发证书<br>&ensp;&ensp;&ensp;&ensp;验证请求者信息；<br>&ensp;&ensp;&ensp;&ensp;签署证书;<br>&ensp;&ensp;&ensp;&ensp;把签署好的证书发还给请求者</p>
+<h4 id="★-吊销证书"><a href="#★-吊销证书" class="headerlink" title="★ 吊销证书"></a>★ 吊销证书</h4><p>◆ 吊销证书<br>☉在客户端获取要吊销的证书的序列号serial；<br>&ensp;&ensp;&ensp;&ensp;openssl x509 -in httpd.crt -noout -serial -subject<br>☉在CA上，根据客户提交的serial与subject信息，对比检验是否与index.txt文件中的信息一致；<br>☉吊销证书；<br>&ensp;&ensp;&ensp;&ensp;openssl ca -revoke /etc/pki/CA/newcerts/SERIAL.pem<br>其中SERIAL要替换成证书真正的序列号<br>☉生成吊销证书的编号(第一次吊销证书时才需要执行)；<br>&ensp;&ensp;&ensp;&ensp;echo 01 &gt; /etc/pki/CA/crlnumber<br>☉更新证书吊销列表<br>&ensp;&ensp;&ensp;&ensp;openssl crl -gencrl -out THISCA.crl</p>
+<h3 id="实验：创建私有CA并给节点颁发证书"><a href="#实验：创建私有CA并给节点颁发证书" class="headerlink" title="实验：创建私有CA并给节点颁发证书"></a>实验：创建私有CA并给节点颁发证书</h3><p>★ 创建私有CA步骤演示：<br>◆ 生成私钥文件/etc/pki/CA/private/cakey.pem<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># ls /etc/pki/CA/private/ -l</span></div><div class="line">total 0</div><div class="line">[root@centos7 ~]<span class="comment"># (umask 077;openssl genrsa -out /etc/pki/CA/private/cakey.pem 4096)    #生成私钥文件</span></div><div class="line">Generating RSA private key, 4096 bit long modulus</div><div class="line">............................................................................................................................................................................++</div><div class="line">.............++</div><div class="line">e is 65537 (0x10001)</div><div class="line">[root@centos7 ~]<span class="comment"># ls /etc/pki/CA/private/ -l</span></div><div class="line">total 4</div><div class="line">-rw------- 1 root root 3243 Jul 16 12:55 cakey.pem</div></pre></td></tr></table></figure></p>
+<p>◆ 生成自签证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 生成自签证书指明私钥文件，证书保存路径，有效期限等</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/cacert.pem -days 3650</span></div><div class="line">You are about to be asked to enter information that will be incorporated</div><div class="line">into your certificate request.</div><div class="line">What you are about to enter is what is called a Distinguished Name or a DN.</div><div class="line">There are quite a few fields but you can leave some blank</div><div class="line">For some fields there will be a default value,</div><div class="line">If you enter <span class="string">'.'</span>, the field will be left blank.</div><div class="line">-----</div><div class="line">Country Name (2 letter code) [XX]:CN     <span class="comment"># 所在国家</span></div><div class="line">State or Province Name (full name) []:Beijing     <span class="comment"># 所在省</span></div><div class="line">Locality Name (eg, city) [Default City]:Beijing   <span class="comment"># 所在城市</span></div><div class="line">Organization Name (eg, company) [Default Company Ltd]:Magedu    <span class="comment"># 组织（公司）名称</span></div><div class="line">Organizational Unit Name (eg, section) []:Ops    <span class="comment"># 所在岗位</span></div><div class="line">Common Name (eg, your name or your server<span class="string">'s hostname) []:ca.magedu.com     # 证书持有者姓名或请求证书服务器的主机名</span></div><div class="line">Email Address []:caadmin@magedu.com   # 邮件地址</div><div class="line"></div><div class="line">[root@centos7 ~]# ls /etc/pki/CA/ -l</div><div class="line">total 4</div><div class="line">-rw-rw----  1 root root 2114 Jul 16 13:01 cacert.pem         # 生成的自签证书</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 certs</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 crl</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 newcerts</div><div class="line">drwx------. 2 root root   22 Jul 16 12:55 private</div></pre></td></tr></table></figure></p>
+<p>◆ 为CA提供所需的目录和文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 创建数据库文件</span></div><div class="line">[root@centos7 ~]<span class="comment"># touch /etc/pki/CA/index.txt</span></div><div class="line"><span class="comment"># 创建序列号文件并给明第一个证书的序列号码</span></div><div class="line">[root@centos7 ~]<span class="comment"># echo 01 &gt;/etc/pki/CA/serial</span></div><div class="line">[root@centos7 ~]<span class="comment"># ls /etc/pki/CA/</span></div><div class="line">cacert.pem  certs  crl  index.txt  newcerts  private  serial</div></pre></td></tr></table></figure></p>
+<p>★ 给节点颁发证书步骤演示<br>假设CentOS 6为一个web服务器，要向客户端提供https服务就需要证书文件，并把请求发送给CA进行签署<br>◆ 在证书申请的主机上生成私钥<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">[root@centos6-lab ~]<span class="comment"># rpm -q httpd    # 这里以http服务为例</span></div><div class="line">httpd-2.2.15-39.el6.centos.x86_64</div><div class="line">[root@centos6-lab ~]<span class="comment"># cd /etc/httpd</span></div><div class="line">[root@centos6-lab httpd]<span class="comment"># ls</span></div><div class="line">conf  conf.d  logs  modules  run</div><div class="line">[root@centos6-lab httpd]<span class="comment"># mkdir ssl    # 在文件中创建ssl目录</span></div><div class="line">[root@centos6-lab httpd]<span class="comment"># cd ssl       # 在此目录中生成私钥</span></div><div class="line"><span class="comment"># 注意这里不是在 /etc/pki/CA下创建，只有作为CA时才在其下进行创建</span></div><div class="line">[root@centos6-lab ssl]<span class="comment"># (umask 077;openssl genrsa -out httpd.key 2048) </span></div><div class="line">Generating RSA private key, 2048 bit long modulus</div><div class="line">............+++</div><div class="line">...................................................+++</div><div class="line">e is 65537 (0x10001)</div><div class="line">[root@centos6-lab ssl]<span class="comment"># ll</span></div><div class="line">total 4</div><div class="line">-rw-------. 1 root root 1679 Jul 15 21:47 httpd.key      <span class="comment"># 生成的私钥文件</span></div></pre></td></tr></table></figure></p>
+<p>◆ 生成证书签署请求<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[root@centos6-lab ssl]<span class="comment"># openssl req -new -key httpd.key -out httpd.csr -days 365</span></div><div class="line">You are about to be asked to enter information that will be incorporated</div><div class="line">into your certificate request.</div><div class="line">What you are about to enter is what is called a Distinguished Name or a DN.</div><div class="line">There are quite a few fields but you can leave some blank</div><div class="line">For some fields there will be a default value,</div><div class="line">If you enter <span class="string">'.'</span>, the field will be left blank.</div><div class="line">-----</div><div class="line">Country Name (2 letter code) [XX]:CN</div><div class="line">State or Province Name (full name) []:Beijing</div><div class="line">Locality Name (eg, city) [Default City]:Beijing</div><div class="line">Organization Name (eg, company) [Default Company Ltd]:Magedu</div><div class="line">Organizational Unit Name (eg, section) []:Ops</div><div class="line">Common Name (eg, your name or your server<span class="string">'s hostname) []:CentOS.magedu.com</span></div><div class="line">Email Address []:webmaster@magedu.com</div><div class="line"></div><div class="line">Please enter the following 'extra<span class="string">' attributes</span></div><div class="line">to be sent with your certificate request</div><div class="line">A challenge password []:jack</div><div class="line">An optional company name []:jack</div></pre></td></tr></table></figure></p>
+<p>◆ 把请求发送给CA<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 这里使用scp 远程复制命令</span></div><div class="line">[root@centos6-lab ssl]<span class="comment"># scp httpd.csr root@192.168.2.140:/tmp</span></div><div class="line">The authenticity of host <span class="string">'192.168.2.140 (192.168.2.140)'</span> can<span class="string">'t be established.</span></div><div class="line">RSA key fingerprint is 2c:c7:3a:51:f6:2f:f4:57:c3:a2:14:ad:0f:34:e3:01.</div><div class="line">Are you sure you want to continue connecting (yes/no)? yes</div><div class="line">Warning: Permanently added '192.168.2.140<span class="string">' (RSA) to the list of known hosts.</span></div><div class="line">root@192.168.2.140's password: </div><div class="line">httpd.csr                                                         100% 1119     1.1KB/s   00:00</div><div class="line">[root@centos7 ~]<span class="comment"># ls /tmp -l</span></div><div class="line">total 2044</div><div class="line">-rw-r--r--  1 root root     188 Jul  9 23:17 fstab.new</div><div class="line">-rw-r--r--  1 root root    1119 Jul 16 13:17 httpd.csr           <span class="comment"># 申请主机发送过来的文件</span></div><div class="line">-rw-r--r--. 1 root root 2068080 Jul 16 12:59 meminfo.txt</div><div class="line">-rw-r--r--  1 root root     887 Jul 15 23:46 mykey1.private</div><div class="line">-rw-------  1 root root    1679 Jul 15 23:47 mykey2.private</div><div class="line">-rw-r--r--  1 root root     891 Jul 15 23:46 mykey.private</div></pre></td></tr></table></figure></p>
+<p>◆ CA签发证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 签发证书，-in指明要签的证书文件位置，-out指明签好后输出的文件位置，必须放在certs下，指明期限</span></div><div class="line">[root@centos7 ~]<span class="comment"># openssl ca -in /tmp/httpd.csr -out /etc/pki/CA/certs/http.crt -days 365</span></div><div class="line">Using configuration from /etc/pki/tls/openssl.cnf</div><div class="line">Check that the request matches the signature</div><div class="line">Signature ok</div><div class="line">Certificate Details:</div><div class="line">        Serial Number: 1 (0x1)</div><div class="line">        Validity</div><div class="line">            Not Before: Jul 16 05:21:20 2017 GMT</div><div class="line">            Not After : Jul 16 05:21:20 2018 GMT</div><div class="line">        Subject:</div><div class="line">            countryName               = CN</div><div class="line">            stateOrProvinceName       = Beijing</div><div class="line">            organizationName          = Magedu</div><div class="line">            organizationalUnitName    = Ops</div><div class="line">            commonName                = CentOS.magedu.com</div><div class="line">            emailAddress              = webmaster@magedu.com</div><div class="line">        X509v3 extensions:</div><div class="line">            X509v3 Basic Constraints: </div><div class="line">                CA:FALSE</div><div class="line">            Netscape Comment: </div><div class="line">                OpenSSL Generated Certificate</div><div class="line">            X509v3 Subject Key Identifier: </div><div class="line">                E7:A3:63:D3:3B:6F:C5:5D:82:EC:19:56:DC:75:7E:34:CC:D9:74:E3</div><div class="line">            X509v3 Authority Key Identifier: </div><div class="line">                keyid:5D:DC:87:F9:83:8A:34:66:56:64:69:D1:9E:74:FB:27:33:63:B4:35</div><div class="line"></div><div class="line">Certificate is to be certified until Jul 16 05:21:20 2018 GMT (365 days)</div><div class="line">Sign the certificate? [y/n]:y</div><div class="line"></div><div class="line"></div><div class="line">1 out of 1 certificate requests certified, commit? [y/n]y</div><div class="line">Write out database with 1 new entries</div><div class="line">Data Base Updated</div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># cd /etc/pki/CA/</span></div><div class="line">[root@centos7 CA]<span class="comment"># ls</span></div><div class="line">cacert.pem  crl        index.txt.attr  newcerts  serial</div><div class="line">certs       index.txt  index.txt.old   private   serial.old</div><div class="line">[root@centos7 CA]<span class="comment"># cat index.txt  # 可以看到第一个签署的证书编号为01</span></div><div class="line">V	180716052120Z		01	unknown	/C=CN/ST=Beijing/O=Magedu/OU=Ops/CN=CentOS.magedu.com/emailAddress=webmaster@magedu.com</div></pre></td></tr></table></figure></p>
+<p>◆ 把签署好的证书发还给请求者<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@centos7 CA]<span class="comment"># scp certs/http.crt root@192.168.2.142:/etc/httpd/ssl</span></div><div class="line">The authenticity of host <span class="string">'192.168.2.142 (192.168.2.142)'</span> can<span class="string">'t be established.</span></div><div class="line">RSA key fingerprint is 29:55:bf:ba:36:a6:89:2e:47:45:5e:3c:32:30:43:4d.</div><div class="line">Are you sure you want to continue connecting (yes/no)? yes</div><div class="line">Warning: Permanently added '192.168.2.142<span class="string">' (RSA) to the list of known hosts.</span></div><div class="line">root@192.168.2.142's password: </div><div class="line">http.crt                                                          100% 5886     5.8KB/s   00:00</div></pre></td></tr></table></figure></p>
+<p>◆ 请求者查看证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 请求者收到后查看</span></div><div class="line">[root@centos6-lab ssl]<span class="comment"># ls -l</span></div><div class="line">total 16</div><div class="line">-rw-r-----. 1 root root 5886 Jul 15 22:02 http.crt</div><div class="line">-rw-r--r--. 1 root root 1119 Jul 15 21:51 httpd.csr</div><div class="line">-rw-------. 1 root root 1679 Jul 15 21:47 httpd.key</div><div class="line">[root@centos6-lab ssl]<span class="comment"># rm -rf httpd.csr    # 没用的文件就可以删除了</span></div><div class="line">[root@centos6-lab ssl]<span class="comment"># openssl x509 -in http.crt -noout -serial -subject    # 查看序列号和主题</span></div><div class="line">serial=01</div><div class="line">subject= /C=CN/ST=Beijing/O=Magedu/OU=Ops/CN=CentOS.magedu.com/emailAddress=webmaster@magedu.com</div></pre></td></tr></table></figure></p>
+<h3 id="CA总结："><a href="#CA总结：" class="headerlink" title="CA总结："></a>CA总结：</h3><p><img src="\images\CA.png" alt="CA"></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">加密解密、数字签名、SSL、CA</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/07/15/加密-解密-数字签名-SSL-CA/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/07/10/linux文本处理工具三剑客之awk/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Linux三剑客之gawk
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/21/dns原理详解/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">DNS原理详解</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

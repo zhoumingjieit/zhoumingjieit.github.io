@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>Docker基础 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Docker安装★ 在CentOS上安装Docker以下版本的CentOS 支持 Docker ：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;CentOS 7 (64-bit)       # CentOS 从 7 开始，和 RHEL 7 一样都只支持 64 位架构。&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;CentOS 6.5 (64-bit) or later注意：由于 Docker">
+<meta name="keywords" content="Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker基础">
+<meta property="og:url" content="http://yoursite.com/2017/12/03/Docker基础/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Docker安装★ 在CentOS上安装Docker以下版本的CentOS 支持 Docker ：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;CentOS 7 (64-bit)       # CentOS 从 7 开始，和 RHEL 7 一样都只支持 64 位架构。&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;CentOS 6.5 (64-bit) or later注意：由于 Docker">
+<meta property="og:updated_time" content="2017-12-07T03:34:06.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker基础">
+<meta name="twitter:description" content="Docker安装★ 在CentOS上安装Docker以下版本的CentOS 支持 Docker ：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;CentOS 7 (64-bit)       # CentOS 从 7 开始，和 RHEL 7 一样都只支持 64 位架构。&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;CentOS 6.5 (64-bit) or later注意：由于 Docker">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-Docker基础" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker基础
+    </h1>
+  
+
+        
+        <a href="/2017/12/03/Docker基础/" class="archive-article-date">
+  	<time datetime="2017-12-03T11:50:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Docker安装"><a href="#Docker安装" class="headerlink" title="Docker安装"></a>Docker安装</h3><p>★ 在CentOS上安装Docker<br>以下版本的CentOS 支持 Docker ：<br>&ensp;&ensp;&ensp;&ensp;CentOS 7 (64-bit)       # CentOS 从 7 开始，和 RHEL 7 一样都只支持 64 位架构。<br>&ensp;&ensp;&ensp;&ensp;CentOS 6.5 (64-bit) or later<br>注意：由于 Docker 的局限性，Docker 只能运行在64位的系统中。</p>
+<h4 id="内核支持"><a href="#内核支持" class="headerlink" title="内核支持"></a>内核支持</h4><p>&ensp;&ensp;&ensp;&ensp;Docker 运行在 CentOS-6.5 或更高的版本的 CentOS 上，需要内核版本是 2.6.32-431 或者更高版本 ，因为这是允许它运行的指定内核补丁版本。</p>
+<h4 id="安装CentOS7"><a href="#安装CentOS7" class="headerlink" title="安装CentOS7"></a>安装CentOS7</h4><p>Docker 软件包已经包含在默认的 CentOS-Extras 软件源里，安装命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 安装docker</span></div><div class="line">[root@localhost ~]<span class="comment"># yum install docker -y</span></div><div class="line"></div><div class="line"><span class="comment"># 查看docker是否安装和安装路径及相关文件</span></div><div class="line">[root@localhost ~]<span class="comment"># rpm -qa docker</span></div><div class="line">docker-1.12.6-61.git85d7426.el7.centos.x86_64</div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># rpm -ql docker</span></div><div class="line">/etc/docker</div><div class="line">/etc/docker/certs.d</div><div class="line">/etc/docker/certs.d/redhat.com</div><div class="line">/etc/docker/certs.d/redhat.com/redhat-ca.crt</div><div class="line">/etc/docker/certs.d/redhat.io</div><div class="line">/etc/docker/certs.d/redhat.io/redhat-ca.crt</div><div class="line">/etc/docker/certs.d/registry.access.redhat.com</div><div class="line">/etc/docker/certs.d/registry.access.redhat.com/redhat-ca.crt</div><div class="line">/etc/docker/daemon.json</div><div class="line">/etc/sysconfig/docker-network</div><div class="line">/etc/sysconfig/docker-storage</div><div class="line">/usr/lib/udev/rules.d/80-docker.rules</div><div class="line">/usr/libexec/docker</div><div class="line">/usr/libexec/docker/docker-proxy-current</div><div class="line">/usr/libexec/docker/docker-runc-current</div><div class="line">/usr/share/bash-completion/completions/docker</div><div class="line">/usr/share/doc/docker-1.12.6</div><div class="line">/usr/share/licenses/docker-1.12.6/LICENSE</div><div class="line">/usr/share/licenses/docker-1.12.6/LICENSE-vim-syntax</div><div class="line">..........................................</div><div class="line"></div><div class="line"><span class="comment"># 启动docker</span></div><div class="line">[root@localhost ~]<span class="comment"># systemctl start docker</span></div><div class="line"></div><div class="line"><span class="comment"># 会发现多了一个docker0的桥接网络</span></div><div class="line">[root@localhost ~]<span class="comment"># ifconfig</span></div><div class="line">docker0: flags=4099&lt;UP,BROADCAST,MULTICAST&gt;  mtu 1500</div><div class="line">        inet 172.17.0.1  netmask 255.255.0.0  broadcast 0.0.0.0</div><div class="line">        ether 02:42:a1:40:51:51  txqueuelen 0  (Ethernet)</div><div class="line">        RX packets 0  bytes 0 (0.0 B)</div><div class="line">        RX errors 0  dropped 0  overruns 0  frame 0</div><div class="line">        TX packets 0  bytes 0 (0.0 B)</div><div class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</div></pre></td></tr></table></figure></p>
+<h4 id="docker的基本用法"><a href="#docker的基本用法" class="headerlink" title="docker的基本用法"></a>docker的基本用法</h4><p>★ 镜像<br>&ensp;&ensp;&ensp;&ensp;Docker HUB : Docker镜像首页，包括官方镜像和其它公开镜像<br>&ensp;&ensp;&ensp;&ensp;因为国情的原因，国内下载 Docker HUB 官方的相关镜像比较慢，可以使用 Daocloud 镜像加速。<br>☉ Search images<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker search centos</span></div></pre></td></tr></table></figure></p>
+<p>☉ Pull images<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker pull centos:7   # 获取 centos 官方镜像</span></div><div class="line">[root@localhost ~]<span class="comment"># docker images   # 查看当前的镜像列表</span></div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">docker.io/centos    7                   3fa822599e10        4 days ago          203.5 MB</div><div class="line">docker.io/busybox   latest              6ad733544a63        4 weeks ago         1.129 MB</div></pre></td></tr></table></figure></p>
+<p>☉ Running an interactive shell<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker run -it --rm centos:7 /bin/bash</span></div></pre></td></tr></table></figure></p>
+<p>说明：<br>&ensp;&ensp;&ensp;&ensp;docker run - 运行一个容器<br>&ensp;&ensp;&ensp;&ensp;-t - 分配一个（伪）tty (link is external)<br>&ensp;&ensp;&ensp;&ensp;-i - 交互模式 (so we can interact with it)<br>&ensp;&ensp;&ensp;&ensp;centos:7 - 使用 centos 基础镜像<br>&ensp;&ensp;&ensp;&ensp;/bin/bash - 运行命令 bash shell<br>注: centos 会有多个版本，通过指定 tag 来启动特定的版本 [image]:[tag]<br>☉ 查看当前正运行的docker容器实例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker ps</span></div><div class="line">CONTAINER ID      IMAGE         COMMAND           CREATED           STATUS           PORTS         NAMES</div><div class="line">3fd367a4a23c    centos:7      <span class="string">"/bin/bash"</span>       26 seconds ago    Up 23 seconds                   admiring_kare</div></pre></td></tr></table></figure></p>
+<p>☉ 相关快捷键<br>&ensp;&ensp;&ensp;&ensp;退出：Ctrl-D or exit<br>&ensp;&ensp;&ensp;&ensp;detach：Ctrl-P + Ctrl-Q<br>&ensp;&ensp;&ensp;&ensp;attach: docker attach CONTAINER-ID</p>
+<h4 id="Docker相关命令"><a href="#Docker相关命令" class="headerlink" title="Docker相关命令"></a>Docker相关命令</h4><p>查看docker命令帮助：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker --help</span></div><div class="line">Commands:</div><div class="line">    attach    Attach to a running container           <span class="comment"># 当前 shell 下 attach 连接指定运行镜像</span></div><div class="line">    build     Build an image from a Dockerfile        <span class="comment"># 通过 Dockerfile 定制镜像</span></div><div class="line">    commit    Create a new image from a container<span class="string">'s changes        # 提交当前容器为新的镜像</span></div><div class="line">    cp        Copy files/folders between a container and the local filesystem   # 从容器中拷贝指定文件或者目录到宿主机中  </div><div class="line">    create    Create a new container                  # 创建一个新的容器，同 run，但不启动容器</div><div class="line">    diff      Inspect changes on a container's filesystem     <span class="comment"># 查看 docker 容器变化</span></div><div class="line">    events    Get real time events from the server    <span class="comment"># 从 docker 服务获取容器实时事件</span></div><div class="line">    <span class="built_in">exec</span>      Run a <span class="built_in">command</span> <span class="keyword">in</span> a running container    <span class="comment"># 在已存在的容器上运行命令</span></div><div class="line">    <span class="built_in">export</span>    Export a container<span class="string">'s filesystem as a tar archive   # 导出容器的内容流作为一个 tar 归档文件[对应 import]</span></div><div class="line">    history   Show the history of an image            # 展示一个镜像形成历史</div><div class="line">    images    List images                             # 列出系统当前镜像</div><div class="line">    import    Import the contents from a tarball to create a filesystem image  # 从tar包中的内容创建一个新的文件系统映像[对应 export]</div><div class="line">    info      Display system-wide information         # 显示系统相关信息</div><div class="line">    inspect   Return low-level information on a container, image or task        # 查看容器详细信息</div><div class="line">    kill      Kill one or more running containers     # kill 指定 docker 容器</div><div class="line">    load      Load an image from a tar archive or STDIN       # 从一个 tar 包中加载一个镜像[对应 save]</div><div class="line">    login     Log in to a Docker registry.            # 注册或者登陆一个 docker 源服务器</div><div class="line">    logout    Log out from a Docker registry.         # 从当前 Docker registry 退出</div><div class="line">    logs      Fetch the logs of a container           # 输出当前容器日志信息</div><div class="line">    network   Manage Docker networks                  </div><div class="line">    node      Manage Docker Swarm nodes</div><div class="line">    pause     Pause all processes within one or more containers    # 暂停容器</div><div class="line">    port      List port mappings or a specific mapping for the container   # 查看映射端口对应的容器内部源端口</div><div class="line">    ps        List containers                          # 列出容器列表</div><div class="line">    pull      Pull an image or a repository from a registry  # 从docker镜像源服务器拉取指定镜像或者库镜像</div><div class="line">    push      Push an image or a repository to a registry    # 推送指定镜像或者库镜像至docker源服务器</div><div class="line">    rename    Rename a container</div><div class="line">    restart   Restart a container                      # 重启运行的容器</div><div class="line">    rm        Remove one or more containers            # 移除一个或者多个容器</div><div class="line">    rmi       Remove one or more images   # 移除一个或多个镜像[无容器使用该镜像才可删除，否则需删除相关容器才可继续或 -f 强制删除]</div><div class="line">    run       Run a command in a new container         # 创建一个新的容器并运行一个命令</div><div class="line">    save      Save one or more images to a tar archive (streamed to STDOUT by default) # 保存一个镜像为一个 tar 包[对应 load]</div><div class="line">    search    Search the Docker Hub for images         # 在 docker hub 中搜索镜像</div><div class="line">    service   Manage Docker services</div><div class="line">    start     Start one or more stopped containers     # 启动容器</div><div class="line">    stats     Display a live stream of container(s) resource usage statistics</div><div class="line">    stop      Stop one or more running containers      # 停止容器</div><div class="line">    swarm     Manage Docker Swarm</div><div class="line">    tag       Tag an image into a repository           # 给源中镜像打标签</div><div class="line">    top       Display the running processes of a container    # 查看容器中运行的进程信息</div><div class="line">    unpause   Unpause all processes within one or more containers    # 取消暂停容器</div><div class="line">    update    Update configuration of one or more containers</div><div class="line">    version   Show the Docker version information      # 查看 docker 版本号</div><div class="line">    volume    Manage Docker volumes</div><div class="line">    wait      Block until a container stops, then print its exit code    # 截取容器停止时的退出状态值</div><div class="line">Run 'docker COMMAND --help<span class="string">' for more information on a command.</span></div></pre></td></tr></table></figure></p>
+<p>查看docker子命令帮助<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker run --help</span></div><div class="line">-c, --cpu-shares=0         CPU shares (relative weight)                       <span class="comment"># 设置 cpu 使用权重</span></div><div class="line"><span class="_">-d</span>, --detach=<span class="literal">false</span>         Detached mode: Run container <span class="keyword">in</span> the background, <span class="built_in">print</span> new container id <span class="comment"># 后台运行容器</span></div><div class="line">-i, --interactive=<span class="literal">false</span>    Keep stdin open even <span class="keyword">if</span> not attached               <span class="comment"># 保持标准输出开启即使没有 attached</span></div><div class="line">--name=<span class="string">""</span>                  Assign a name to the container                     <span class="comment"># 设置容器名</span></div><div class="line">--link=[]                  Add link to another container (name:<span class="built_in">alias</span>)         <span class="comment"># 添加链接到另外一个容器</span></div><div class="line">--expose=[]                Expose a port from the container without publishing it to your host   <span class="comment"># 指定对外提供服务端口</span></div><div class="line">--net=<span class="string">"bridge"</span>             Set the Network mode <span class="keyword">for</span> the container             <span class="comment"># 设置容器网络模式</span></div><div class="line">-t, --tty=<span class="literal">false</span>            Allocate a pseudo-tty                              <span class="comment"># 分配伪终端</span></div><div class="line">-m, --memory=<span class="string">""</span>            Memory <span class="built_in">limit</span> (format: &lt;number&gt;&lt;optional unit&gt;, <span class="built_in">where</span> unit = b, k, m or g) <span class="comment"># 内存限制</span></div><div class="line">-P, --publish-all=<span class="literal">false</span>    Publish all exposed ports to the host interfaces   <span class="comment"># 自动映射容器对外提供服务的端口</span></div><div class="line">-p, --publish=[]           Publish a container<span class="string">'s port to the host             # 指定端口映射</span></div><div class="line">--rm=false                 Automatically remove the container when it exits (incompatible with -d) # </div><div class="line">如果容器退出自动移除和 -d 选项冲突</div><div class="line">-v, --volume=[]            Bind mount a volume (e.g., from the host: -v /host:/container, from docker: -v /container) #挂载卷</div><div class="line">--volumes-from=[]          Mount volumes from the specified container(s)      # 从指定容器挂载卷</div><div class="line">-w, --workdir=""           Working directory inside the container             # 指定容器工作目录</div></pre></td></tr></table></figure></p>
+<p>示例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker run -it -c 100 -m 512M -h test1 -d --name="docker-test1" centos:7 /bin/bash</span></div><div class="line">c9c2c4744e0d47732ef3b6b1b9ad3b6be406a2ba68e0d267cec496fcc2764f7a</div><div class="line">[root@localhost ~]<span class="comment"># docker attach docker-test1</span></div><div class="line">[root@<span class="built_in">test</span>1 /]<span class="comment"># pwd</span></div><div class="line">/</div><div class="line">[root@<span class="built_in">test</span>1 /]<span class="comment"># exit</span></div><div class="line"><span class="built_in">exit</span></div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># docker ps -a</span></div><div class="line">CONTAINER ID    IMAGE      COMMAND       CREATED         STATUS         PORTS        NAMES</div><div class="line">c9c2c4744e0d   centos:7   <span class="string">"/bin/bash"</span>   19 seconds ago    Up 17 seconds            docker-test1</div><div class="line">[root@localhost ~]<span class="comment"># docker ps -a</span></div><div class="line">CONTAINER ID    IMAGE      COMMAND       CREATED         STATUS               PORTS      NAMES</div><div class="line">c9c2c4744e0d  centos:7   <span class="string">"/bin/bash"</span>  2 minutes ago  Exited (0)14 seconds ago      docker-test1</div></pre></td></tr></table></figure></p>
+<p>★ docker的监控命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">ps命令：</div><div class="line">    <span class="_">-a</span></div><div class="line">images命令：</div><div class="line">    查看当前主机的镜像信息；    </div><div class="line">stats命令：</div><div class="line">    容器状态统计信息，实时监控容器的运行状态；   </div><div class="line">inspect命令：</div><div class="line">    查看镜像或容器的底层详细信息；</div><div class="line">        <span class="_">-f</span>, --format </div><div class="line">            &#123;&#123;.key1.key2....&#125;&#125;             </div><div class="line">top命令：</div><div class="line">    用于查看正在运行的容器中的进程的运行状态；    </div><div class="line">port命令：</div><div class="line">    查看端口映射；</div></pre></td></tr></table></figure></p>
+<p>示例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker ps</span></div><div class="line">CONTAINER ID   IMAGE       COMMAND         CREATED       STATUS     PORTS       NAMES</div><div class="line">905026f8a503   centos:7   <span class="string">"/bin/bash"</span>   27 seconds ago  Up 25 seconds        docker-test1</div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># docker inspect --format='&#123;&#123;.NetworkSettings.IPAddress&#125;&#125;' 905026f8a503</span></div><div class="line">172.17.0.2</div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># docker kill 905026f8a503</span></div><div class="line">905026f8a503</div><div class="line">[root@localhost ~]<span class="comment"># docker rm 905026f8a503</span></div><div class="line">905026f8a503</div></pre></td></tr></table></figure></p>
+<h4 id="创建镜像"><a href="#创建镜像" class="headerlink" title="创建镜像"></a>创建镜像</h4><p>★ 使用commit来创建镜像<br>先使用image启动容器，更新后提交结果到新的image<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker run -it centos:7 /bin/bash</span></div><div class="line">[root@867944dc2d5c /]<span class="comment"># yum install httpd</span></div></pre></td></tr></table></figure></p>
+<p>当结束后，我们使用exit来退出，现在我们的容器已经被我们改变了，使用docker commit命令来提交生成新的镜像。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker commit -m "added httpd service" -a "jack_zhou" 867944dc2d5c centos:httpd</span></div><div class="line">sha256:<span class="built_in">cd</span>98c20039d459513b36b4ab7cb874bb968e9d4e9d563b6ce6b27624eaf03a49</div></pre></td></tr></table></figure></p>
+<p>其中-m 来指定提交的说明信息，-a可以指定更新的用户信息，之后是创建容器时的容器ID，最后指定目标镜像的仓库名和tag信息。创建成功后会返回这个镜像的ID信息(开头的前12位)</p>
+<p>使用docker images 来查看新创建的镜像<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker images</span></div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">centos              httpd               <span class="built_in">cd</span>98c20039d4        3 minutes ago       316 MB</div><div class="line">docker.io/centos    7                   3fa822599e10        5 days ago          203.5 MB</div></pre></td></tr></table></figure></p>
+<p>之后，可以使用新的镜像来启动容器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker run -it centos:httpd /bin/bash</span></div><div class="line">[root@ffb8fea29dda /]<span class="comment"># uname -r</span></div><div class="line">3.10.0-327.el7.x86_64</div></pre></td></tr></table></figure></p>
+<p>★ Save images and Containers as tar包<br>可以使用Docker save和load命令创建一个tar包从先前的创建好的镜像，或使用Docker import和export容器。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker ps -a</span></div><div class="line">CONTAINER ID     IMAGE        COMMAND     CREATED         STATUS        PORTS               NAMES</div><div class="line">ffb8fea29dda  centos:httpd   <span class="string">"/bin/bash"</span>7 minutes ago  Exited (127) About a minute ago nostalgic_carson</div><div class="line">[root@localhost ~]<span class="comment"># docker export ffb8fea29dda &gt; httpd2.4.tar</span></div><div class="line">[root@localhost ~]<span class="comment"># ls</span></div><div class="line">httpd2.4.tar</div><div class="line">[root@localhost ~]<span class="comment"># docker import - httpd &lt; httpd2.4.tar</span></div><div class="line">sha256:853941bfa8c76a512faa74ccb24895470bf2a77effd1a882002ebc887f773170</div><div class="line">[root@localhost ~]<span class="comment"># docker impages</span></div><div class="line">docker: <span class="string">'impages'</span> is not a docker command.</div><div class="line">See <span class="string">'docker --help'</span>.</div><div class="line">[root@localhost ~]<span class="comment"># docker images</span></div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED           SIZE</div><div class="line">httpd               latest              853941bfa8c7        9 seconds ago    295.8 MB</div></pre></td></tr></table></figure></p>
+<p>如果你要共享这个镜像给其它人用，你可以上传这个tar包到web server服务上，其它人下载然后import下就可以用了<br>如果你更愿意使用一个已经提交的镜像，你可以使用save和load命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># docker save -o httpd2.tar httpd</span></div><div class="line">[root@localhost ~]<span class="comment"># ls</span></div><div class="line">httpd2.4.tar  httpd2.tar</div><div class="line"></div><div class="line">[root@localhost ~]<span class="comment"># docker load &lt; httpd2.tar </span></div><div class="line">0276c38cb96a: Loading layer   305 MB/305 MB</div><div class="line">Loaded image: httpd:latestr 557.1 kB/305 MB</div><div class="line">[root@localhost ~]<span class="comment"># docker images</span></div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">httpd               latest              853941bfa8c7        8 minutes ago      295.8 MB</div></pre></td></tr></table></figure></p>
+<p>这两种方式很相似，不同的是保存一个镜像将保持它的历史，导出一个容器将会清空历史<br>★ 使用Dockerfile来创建镜像<br>Dockerfile基本的语法：<br>&ensp;&ensp;&ensp;&ensp;使用#来注释<br>&ensp;&ensp;&ensp;&ensp;FROM 指令告诉Docker使用哪个镜像作为基础镜像（docker镜像源）<br>&ensp;&ensp;&ensp;&ensp;MAINTAINER 是维护者的信息<br>&ensp;&ensp;&ensp;&ensp;RUN 开头的指令会在创建中运行，比如安装一个软件包yum install …<br>&ensp;&ensp;&ensp;&ensp;ENTRYPOINT 指定要运行的命令<br>&ensp;&ensp;&ensp;&ensp;CMD 指定一个默认的运行命令，但也可以在运行Docker run命令后指定要运行的命令，会覆盖默认指定的命令<br>首先创建一个目录，在目录下创建一个Dockerfile文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]<span class="comment"># mkdir -p /docker/httpd</span></div><div class="line">[root@localhost ~]<span class="comment"># cd /docker/httpd/</span></div><div class="line">[root@localhost httpd]<span class="comment"># vim Dockerfile</span></div><div class="line">FROM centos:7</div><div class="line">ENTRYPOINT [<span class="string">"/bin/echo"</span>]                <span class="comment"># 指定要运行的命令</span></div><div class="line">[root@localhost httpd]<span class="comment"># ls</span></div><div class="line">Dockerfile</div><div class="line">[root@localhost httpd]<span class="comment"># docker build .</span></div><div class="line">Sending build context to Docker daemon 2.048 kB</div><div class="line">Step 1 : FROM centos:7</div><div class="line"> ---&gt; 3fa822599e10</div><div class="line">Step 2 : ENTRYPOINT /bin/<span class="built_in">echo</span></div><div class="line"> ---&gt; Running <span class="keyword">in</span> 9a54d3d9df83</div><div class="line"> ---&gt; c5325988fd56</div><div class="line">Removing intermediate container 9a54d3d9df83</div><div class="line">Successfully built c5325988fd56</div><div class="line">root@localhost ~]<span class="comment"># docker images</span></div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">&lt;none&gt;              &lt;none&gt;              c5325988fd56        41 seconds ago      203.5 MB</div><div class="line">docker.io/centos    7                   3fa822599e10        5 days ago          203.5 MB</div><div class="line">[root@localhost ~]<span class="comment"># docker run --rm c5325988fd56 Hi Docker!</span></div><div class="line">Hi Docker!</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[root@localhost httpd]<span class="comment"># vim Dockerfile </span></div><div class="line">FROM centos:7</div><div class="line"><span class="comment">#ENTRYPOINT ["/bin/echo"]</span></div><div class="line">CMD [<span class="string">"/bin/echo"</span> , <span class="string">"Hi Docker !"</span>]    <span class="comment"># 可以指定一个默认的运行命令，也可以在运行Docker run命令后指定要运行的命令</span></div><div class="line">[root@localhost httpd]<span class="comment"># docker build .</span></div><div class="line">Sending build context to Docker daemon 2.048 kB</div><div class="line">Step 1 : FROM centos:7</div><div class="line"> ---&gt; 3fa822599e10</div><div class="line">Step 2 : CMD /bin/<span class="built_in">echo</span> Hi Docker !</div><div class="line"> ---&gt; Running <span class="keyword">in</span> 0c7f163fb484</div><div class="line"> ---&gt; 8f5200cc96f3</div><div class="line">Removing intermediate container 0c7f163fb484</div><div class="line">Successfully built 8f5200cc96f3</div><div class="line">[root@localhost httpd]<span class="comment"># docker images</span></div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">&lt;none&gt;              &lt;none&gt;              8f5200cc96f3      About a minute ago   203.5MB</div><div class="line">[root@localhost httpd]<span class="comment"># docker run --rm 8f5200cc96f3</span></div><div class="line">Hi Docker !</div><div class="line">[root@localhost httpd]<span class="comment"># docker run 8f5200cc96f3 /bin/date</span></div><div class="line">Tue Dec  5 15:23:24 UTC 2017</div></pre></td></tr></table></figure>
+<p>给创建的镜像指定repository和tag<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@localhost httpd]<span class="comment"># docker build -t docker:hello .</span></div><div class="line">Sending build context to Docker daemon 2.048 kB</div><div class="line">Step 1 : FROM centos:7</div><div class="line"> ---&gt; 3fa822599e10</div><div class="line">Step 2 : CMD /bin/<span class="built_in">echo</span> Hi Docker !</div><div class="line"> ---&gt; Using cache</div><div class="line"> ---&gt; 8f5200cc96f3</div><div class="line">Successfully built 8f5200cc96f3</div><div class="line">[root@localhost httpd]<span class="comment"># docker images</span></div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">docker              hello               8f5200cc96f3        7 minutes ago       203.5 MB</div></pre></td></tr></table></figure></p>
+<h3 id="Docker-registry"><a href="#Docker-registry" class="headerlink" title="Docker registry"></a>Docker registry</h3><p>★ 相关概念<br>&ensp;&ensp;&ensp;&ensp;registry：保存docker镜像及镜像层次结构和元数据；<br>&ensp;&ensp;&ensp;&ensp;repository：由具有某个功能的镜像的所有相关版本构成的集合；<br>&ensp;&ensp;&ensp;&ensp;index：管理用户的账号、访问权限、镜像及镜像标签等等相关的；<br>&ensp;&ensp;&ensp;&ensp;graph：从registry中下载的Docker镜像需要保存在本地，此功能即由graph完成；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;/var/lib/docker/graph<br>★ registry有两种：<br>&ensp;&ensp;&ensp;&ensp;docker hub：<br>&ensp;&ensp;&ensp;&ensp;private registry：建议使用nginx反代：使用ssl，基于basic做用户认证；<br>&ensp;&ensp;&ensp;&ensp;docker端使用私有仓库：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(1) 配置文件 /etc/sysconfig/docker<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ADD_REGISTRY=’–add-registry 172.16.100.68:5000’<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;INSECURE_REGISTRY=’–insecure-registry 172.16.100.68:5000’<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(2) push镜像<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(a) tag命令：给要push到私有仓库的镜像打标签；<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;docker tag  IMAGE_ID  REGISRY_HOST:PORT/NAME[:TAG]<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(b) push命令：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;docker  push  REGISRY_HOST:PORT/NAME[:TAG]<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;(3) pull镜像<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;docker  pull  REGISRY_HOST:PORT/NAME[:TAG]</p>
+<h4 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h4><p>环境说明：使用nginx反代：使用ssl<br>&ensp;&ensp;&ensp;&ensp;docker.net.com  docker registy服务器的主机名称<br>&ensp;&ensp;&ensp;&ensp;ip: 172.16.3.153<br>☉ 安装依赖的软件包<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># yum install pcre-devel zlib-devel openssl openssl-devel -y</span></div></pre></td></tr></table></figure></p>
+<p>说明：<br>在Nginx编译需要PCRE，因为Nginx的Rewrite模块和HTTP核心模块会使用到PCRE正则表达式，需要安装pcre和pcre-devel<br>Zlib库提供了开发人员的压缩算法，在nginx的模块中需要使用gzip压缩，需要安装zlib和zlib-devel<br>在Nginx中如果需要为服务器提供安全则需要用到OpenSSL, 需要安装的是openssl和openssl-devel。<br>☉ 配置SSL<br>1.生成私钥文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># hostname</span></div><div class="line">docker.net.com</div><div class="line">[root@docker ~]<span class="comment"># cd /etc/pki/CA</span></div><div class="line">[root@docker CA]<span class="comment"># ls</span></div><div class="line">certs  crl  newcerts  private</div><div class="line">[root@docker CA]<span class="comment"># ls private/</span></div><div class="line">[root@docker CA]<span class="comment"># (umask 077;openssl genrsa -out private/cakey.pem 4096)</span></div><div class="line">Generating RSA private key, 4096 bit long modulus</div><div class="line">..++</div><div class="line">.......................................................................................</div><div class="line">....................................................................................................++e is 65537 (0x10001)</div><div class="line">[root@docker CA]<span class="comment"># ls private/</span></div><div class="line">cakey.pem</div></pre></td></tr></table></figure></p>
+<p>2.生成自签证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">[root@docker CA]<span class="comment"># openssl req -new -x509 -key private/cakey.pem -out cacert.pem</span></div><div class="line">You are about to be asked to enter information that will be incorporated</div><div class="line">into your certificate request.</div><div class="line">What you are about to enter is what is called a Distinguished Name or a DN.</div><div class="line">There are quite a few fields but you can leave some blank</div><div class="line">For some fields there will be a default value,</div><div class="line">If you enter <span class="string">'.'</span>, the field will be left blank.</div><div class="line">-----</div><div class="line">Country Name (2 letter code) [XX]:CN</div><div class="line">State or Province Name (full name) []:SZ</div><div class="line">Locality Name (eg, city) [Default City]:SZ</div><div class="line">Organization Name (eg, company) [Default Company Ltd]:net</div><div class="line">Organizational Unit Name (eg, section) []:net</div><div class="line">Common Name (eg, your name or your server<span class="string">'s hostname) []:docker.net.com</span></div><div class="line">Email Address []:</div><div class="line">[root@docker CA]# </div><div class="line">[root@docker CA]# ll</div><div class="line">total 4</div><div class="line">-rw-r--r--  1 root root 1984 Dec  6 20:30 cacert.pem</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 certs</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 crl</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 newcerts</div><div class="line">drwx------. 2 root root   22 Dec  6 20:28 private</div></pre></td></tr></table></figure></p>
+<p>3.为CA提供目录和文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@docker CA]<span class="comment"># touch index.txt</span></div><div class="line">[root@docker CA]<span class="comment"># echo 01 &gt; serial</span></div><div class="line">[root@docker CA]<span class="comment"># ls</span></div><div class="line">cacert.pem  certs  crl  index.txt  newcerts  private  serial</div></pre></td></tr></table></figure></p>
+<p>4.接下来要为nginx服务器签署CA请求<br>1）创建用于nginx通信时的私钥<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root@docker CA]<span class="comment"># mkdir /etc/pki/CA/ssl</span></div><div class="line">[root@docker CA]<span class="comment"># cd /etc/pki/CA/ssl/</span></div><div class="line">[root@docker ssl]<span class="comment"># (umask 077;openssl genrsa -out nginx.key 2048)</span></div><div class="line">Generating RSA private key, 2048 bit long modulus</div><div class="line">...........................................................+++</div><div class="line">.................................................................................+++</div><div class="line">e is 65537 (0x10001)</div><div class="line">[root@docker ssl]<span class="comment"># ll</span></div><div class="line">total 4</div><div class="line">-rw------- 1 root root 1675 Dec  6 20:36 nginx.key</div></pre></td></tr></table></figure></p>
+<p>2）利用生成的私钥生成证书签署请求：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[root@docker ssl]<span class="comment"># openssl req -new -key nginx.key -out nginx.csr</span></div><div class="line">You are about to be asked to enter information that will be incorporated</div><div class="line">into your certificate request.</div><div class="line">What you are about to enter is what is called a Distinguished Name or a DN.</div><div class="line">There are quite a few fields but you can leave some blank</div><div class="line">For some fields there will be a default value,</div><div class="line">If you enter <span class="string">'.'</span>, the field will be left blank.</div><div class="line">-----</div><div class="line">Country Name (2 letter code) [XX]:CN</div><div class="line">State or Province Name (full name) []:SZ</div><div class="line">Locality Name (eg, city) [Default City]:SZ</div><div class="line">Organization Name (eg, company) [Default Company Ltd]:net</div><div class="line">Organizational Unit Name (eg, section) []:net</div><div class="line">Common Name (eg, your name or your server<span class="string">'s hostname) []:docker.net.com</span></div><div class="line">Email Address []:</div><div class="line">Please enter the following 'extra<span class="string">' attributes</span></div><div class="line">to be sent with your certificate request</div><div class="line">A challenge password []:</div><div class="line">An optional company name []:</div><div class="line">[root@docker ssl]#</div></pre></td></tr></table></figure></p>
+<p>5.接下来CA要为nginx签发证书（因为这里都是在本地主机生成的CA和nginx服务，所以不需要传送）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">[root@docker ssl]<span class="comment"># openssl ca -in nginx.csr -out nginx.crt</span></div><div class="line">Using configuration from /etc/pki/tls/openssl.cnf</div><div class="line">Check that the request matches the signature</div><div class="line">Signature ok</div><div class="line">Certificate Details:</div><div class="line">        Serial Number: 1 (0x1)</div><div class="line">        Validity</div><div class="line">            Not Before: Dec  6 12:41:39 2017 GMT</div><div class="line">            Not After : Dec  6 12:41:39 2018 GMT</div><div class="line">        Subject:</div><div class="line">            countryName               = CN</div><div class="line">            stateOrProvinceName       = SZ</div><div class="line">            organizationName          = net</div><div class="line">            organizationalUnitName    = net</div><div class="line">            commonName                = docker.net.com</div><div class="line">        X509v3 extensions:</div><div class="line">            X509v3 Basic Constraints: </div><div class="line">                CA:FALSE</div><div class="line">            Netscape Comment: </div><div class="line">                OpenSSL Generated Certificate</div><div class="line">            X509v3 Subject Key Identifier: </div><div class="line">                16:80:81:71:7C:6B:A6:A8:E3:BE:43:12:41:83:48:74:7E:39:45:86</div><div class="line">            X509v3 Authority Key Identifier: </div><div class="line">                keyid:E9:19:AE:47:19:FE:83:D5:AD:E4:DC:92:94:5A:16:1D:86:FA:72:E2</div><div class="line"></div><div class="line">Certificate is to be certified until Dec  6 12:41:39 2018 GMT (365 days)</div><div class="line">Sign the certificate? [y/n]:y</div><div class="line"></div><div class="line"></div><div class="line">1 out of 1 certificate requests certified, commit? [y/n]y</div><div class="line">Write out database with 1 new entries</div><div class="line">Data Base Updated</div><div class="line">[root@docker ssl]<span class="comment"># </span></div><div class="line">[root@docker ssl]<span class="comment"># ls</span></div><div class="line">nginx.crt  nginx.csr  nginx.key</div></pre></td></tr></table></figure></p>
+<p>☉ 安装和部署nginx<br>1) 创建一个nginx用户<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># useradd -r nginx</span></div><div class="line">[root@docker ~]<span class="comment"># id nginx</span></div><div class="line">uid=996(nginx) gid=994(nginx) groups=994(nginx)</div></pre></td></tr></table></figure></p>
+<p>2)下载安装nginx<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># wget http://nginx.org/download/nginx-1.11.2.tar.gz</span></div><div class="line">[root@docker ~]<span class="comment"># ls</span></div><div class="line">nginx-1.11.2.tar.gz</div><div class="line">[root@docker ~]<span class="comment"># tar xf nginx-1.11.2.tar.gz </span></div><div class="line">[root@docker ~]<span class="comment"># ls</span></div><div class="line">anaconda-ks.cfg  nginx-1.11.2  nginx-1.11.2.tar.gz</div><div class="line">[root@docker ~]<span class="comment"># cd nginx-1.11.2</span></div><div class="line">[root@docker nginx-1.11.2]<span class="comment"># ls</span></div><div class="line">auto  CHANGES  CHANGES.ru  conf  configure  contrib  html  LICENSE  man  README  src</div><div class="line">[root@docker nginx-1.11.2]<span class="comment"># ./configure --user=nginx --group=nginx --prefix=/usr/local/ng</span></div><div class="line">inx/ --with-pcre --with-http_stub_status_module --with-http_ssl_module --with-http_addition_module --with-http_realip_module --with-http_flv_module</div><div class="line">[root@docker nginx-1.11.2]<span class="comment"># make &amp;&amp; make install</span></div></pre></td></tr></table></figure></p>
+<p>上述选项的解释：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">--user=USER 设定程序运行的用户环境nginx</div><div class="line">--group=GROUP 设定程序运行的组环境nginx</div><div class="line">--prefix=PATH 设定安装目录</div><div class="line">--with-pcre启用pcre库，Nginx的Rewrite模块和HTTP核心模块会使用到PCRE正则表达式</div><div class="line">--with-http_stub_status_module 是为了启用 nginx 的 NginxStatus 功能，用来监控 Nginx 的当前状态</div><div class="line">--with-http_ssl_module                     开启SSL模块，支持使用HTTPS协议的网页</div><div class="line">--with-http_realip_module                开启Real IP的支持，该模块用于从客户请求的头数据中读取Real Ip地址</div><div class="line">--with-http_addition_module           开启Addtion模块，该模块允许你追加或前置数据到相应的主体部分</div><div class="line">--with-http_flv_module模块ngx_http_flv_module 为Flash Video(FLV)文件提供服务端伪流媒体支持</div></pre></td></tr></table></figure></p>
+<p>3)编辑/usr/loacl/nginx/conf/nginx.conf文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># vim /usr/local/nginx/conf/nginx.conf</span></div><div class="line">[root@docker ~]<span class="comment"># cat /usr/local/nginx/conf/nginx.conf|grep -v -E "^[[:space:]]*#|^$"</span></div><div class="line">user  nginx;</div><div class="line">worker_processes  1;</div><div class="line">events &#123;</div><div class="line">    worker_connections  1024;</div><div class="line">&#125;</div><div class="line">http &#123;</div><div class="line">    include       mime.types;</div><div class="line">    default_type  application/octet-stream;</div><div class="line">    sendfile        on;</div><div class="line">    keepalive_timeout  65;</div><div class="line">        upstream registry &#123;</div><div class="line">        server 172.16.3.153:5000;</div><div class="line">        &#125;</div><div class="line">      </div><div class="line">    server &#123;</div><div class="line">        listen       443 ssl;</div><div class="line">        server_name  docker.net.com;</div><div class="line">        ssl_certificate      /etc/pki/CA/ssl/nginx.crt;</div><div class="line">        ssl_certificate_key  /etc/pki/CA/ssl/nginx.key;</div><div class="line">        ssl_session_cache    shared:SSL:1m;</div><div class="line">        ssl_session_timeout  5m;</div><div class="line">        ssl_ciphers  HIGH:!aNULL:!MD5;</div><div class="line">        ssl_prefer_server_ciphers  on;</div><div class="line">        location / &#123;</div><div class="line">            proxy_pass http://registry;</div><div class="line">            client_max_body_size   3000m;</div><div class="line">            proxy_set_header   Host   <span class="variable">$host</span>;</div><div class="line">            proxy_set_header   X-Forward-For  <span class="variable">$remote_addr</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>相关选项含义：<br>ssl_session_cache会话缓存用于保存SSL会话，这些缓存在工作进程间共享，可以使用ssl_session_cache指令进行配置。1M缓存可以存放大约4000个会话。<br>ssl_session_timeout缓存超时，默认的缓存超时是5分钟。<br>ssl_ciphers  HIGH:!aNULL:!MD5使用高强度的加密算法<br>ssl_prefer_server_ciphers  on依赖SSLv3和TLSv1协议的服务器密码将优先于客户端密码。即：在SSLv3或这是TLSv1握手时选择一个密码，通常是使用客户端的偏好。如果这个指令是启用的，那么服务器反而是使用服务器的偏好。<br>client_max_body_size即允许上传文件大小的最大值<br>proxy_set_header Host $host和proxy_set_header X-Forward-For $remote_addr的作用描述：<br>nginx为了实现反向代理的需求而增加了一个ngx_http_proxy_module模块。其中proxy_set_header指令就是该模块需要读取的配置文件。在这里，所有设置的值的含义和http请求同中的含义完全相同，除了Host外还有X-Forward-For。<br>Host的含义是表明请求的主机名，因为nginx作为反向代理使用，而如果后端真实的服务器设置有类似防盗链或者根据http请求头中的host字段来进行路由或判断功能的话，如果反向代理层的nginx不重写请求头中的host字段，将会导致请求失败【默认反向代理服务器会向后端真实服务器发送请求，并且请求头中的host字段应为proxy_pass指令设置的服务器】。<br>同理，X_Forward_For字段表示该条http请求是有谁发起的？如果反向代理服务器不重写该请求头的话，那么后端真实服务器在处理时会认为所有的请求都来自反向代理服务器，如果后端有防攻击策略的话，那么机器就被封掉了。因此，在配置用作反向代理的nginx中一般会增加两条配置，修改http的请求头：<br>proxy_set_header Host $host;<br>proxy_set_header X-Forward-For $remote_addr;<br>这里的$host和$remote_addr都是nginx的导出变量，可以再配置文件中直接使用。<br>4) 验证配置,启动nginx<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># /usr/local/nginx/sbin/nginx -t</span></div><div class="line">nginx: the configuration file /usr/<span class="built_in">local</span>/nginx//conf/nginx.conf syntax is ok</div><div class="line">nginx: configuration file /usr/<span class="built_in">local</span>/nginx//conf/nginx.conf <span class="built_in">test</span> is successful</div><div class="line">[root@docker ~]<span class="comment"># /usr/local/nginx/sbin/nginx</span></div><div class="line">[root@docker ~]<span class="comment"># ss -tnl</span></div><div class="line">State       Recv-Q Send-Q Local Address:Port               Peer Address:Port             </div><div class="line"> LISTEN      0      128              *:22                           *:*                  </div><div class="line">LISTEN      0      100      127.0.0.1:25                           *:*                  </div><div class="line">LISTEN      0      128              *:443                          *:*                  </div><div class="line">LISTEN      0      128             :::22                          :::*                  </div><div class="line">LISTEN      0      100            ::1:25                          :::*</div></pre></td></tr></table></figure></p>
+<p>☉ 配置,运行Docker<br>1)编辑/etc/sysconfig/docker文件,加上如下一行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># vim /etc/sysconfig/docker</span></div><div class="line"></div><div class="line"><span class="comment"># /etc/sysconfig/docker</span></div><div class="line"></div><div class="line"><span class="comment"># Modify these options if you want to change the way the docker daemon runs</span></div><div class="line">OPTIONS=<span class="string">'--selinux-enabled --log-driver=journald --signature-verification=false'</span></div><div class="line"><span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$&#123;DOCKER_CERT_PATH&#125;</span>"</span> ]; <span class="keyword">then</span></div><div class="line">    DOCKER_CERT_PATH=/etc/docker</div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line">DOCKER_OPTS=<span class="string">"--insecure-registry docker.net.com --tlsverify --tlscacert /etc/pki/CA/cacer</span></div><div class="line">t.pem"</div></pre></td></tr></table></figure></p>
+<p>2)把根证书复制到/etc/docker/certs.d/docker.net.com/目录下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># mkdir -p /etc/docker/certs.d/docker.net.com</span></div><div class="line">[root@docker ~]<span class="comment"># cp /etc/pki/CA/cacert.pem /etc/docker/certs.d/docker.net.com/ca-certific</span></div><div class="line">ates.crt</div></pre></td></tr></table></figure></p>
+<p>3)启动docker<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># systemctl start docker</span></div><div class="line">[root@docker ~]<span class="comment"># systemctl enable docker</span></div><div class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/l</div><div class="line">ib/systemd/system/docker.service.</div></pre></td></tr></table></figure></p>
+<p>☉ 运行私有仓库容器<br>通过获取官方registry镜像来运行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># docker pull registry</span></div><div class="line">Using default tag: latest</div><div class="line">Trying to pull repository docker.io/library/registry ... </div><div class="line">Pulling repository docker.io/library/registry</div><div class="line">Tag latest not found <span class="keyword">in</span> repository docker.io/library/registry</div><div class="line">[root@docker ~]<span class="comment"># docker pull registry</span></div><div class="line">Using default tag: latest</div><div class="line">Trying to pull repository docker.io/library/registry ... </div><div class="line">latest: Pulling from docker.io/library/registry</div><div class="line">ab7e51e37a18: Pull complete </div><div class="line">c8ad8919ce25: Pull complete </div><div class="line">5808405bc62f: Pull complete </div><div class="line">f6000d7b276c: Pull complete </div><div class="line">f792fdcd8ff6: Pull complete </div><div class="line">Digest: sha256:9d295999d330eba2552f9c78c9f59828af5c9a9c15a3fbd1351df03eaad04c6a</div><div class="line">[root@docker ~]<span class="comment"># docker images</span></div><div class="line">REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">docker.io/registry   latest              177391bcf802        5 days ago          33.26 MB</div></pre></td></tr></table></figure></p>
+<p>使用官方的 registry 镜像来启动本地的私有仓库。用户可以通过指定参数来配置私有仓库位置。<br>创建一个目录作为私有仓库的位置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># mkdir -pv /data/registry</span></div><div class="line">mkdir: created directory ‘/data’</div><div class="line">mkdir: created directory ‘/data/registry’</div></pre></td></tr></table></figure></p>
+<p>运行私有仓库容器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@docker ~]<span class="comment"># docker run -d -p 5000:5000 -v /data/registry:/tmp/registry --restart=alw</span></div><div class="line">ays docker.io/registry3a6584f4f80c7a5f0363a6525f1aa04798a0ccae0374827460378008accce657</div><div class="line">[root@docker ~]<span class="comment"># docker ps</span></div><div class="line">CONTAINER ID        IMAGE                COMMAND                  CREATED             STA</div><div class="line">TUS              PORTS                    NAMES3a6584f4f80c        docker.io/registry   <span class="string">"/entrypoint.sh /etc/"</span>   7 seconds ago       Up </div><div class="line">5 seconds        0.0.0.0:5000-&gt;5000/tcp   peaceful_engelbart</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/12/03/Docker基础/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/12/03/Docker基础理论知识/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Docker基础理论知识
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/12/10/Python环境/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Python环境</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

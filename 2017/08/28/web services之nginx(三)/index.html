@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>Nginx进阶三 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Nginx相关配置内容主要包括：◆ngx_http_fastcgi_module模块详解；◆lnmp环境的部署；◆定义fastcgi的缓存；◆ngx_http_ssl_module模块：◆配置nginx支持ssl的安全访问；◆ngx_http_referer_module模块：防盗链功能 ngx_http_fastcgi_module模块：构建lnmpThe ngx_http_fastcgi_mo">
+<meta name="keywords" content="Nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx进阶三">
+<meta property="og:url" content="http://yoursite.com/2017/08/28/web services之nginx(三)/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Nginx相关配置内容主要包括：◆ngx_http_fastcgi_module模块详解；◆lnmp环境的部署；◆定义fastcgi的缓存；◆ngx_http_ssl_module模块：◆配置nginx支持ssl的安全访问；◆ngx_http_referer_module模块：防盗链功能 ngx_http_fastcgi_module模块：构建lnmpThe ngx_http_fastcgi_mo">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp1.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp2.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp3.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp4.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp5.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp6.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp7.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp8.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp9.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp10.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp11.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/lnmp12.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/fastcgi-cache.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/fastcgi-cache1.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/https.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/https1.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/nginx-https.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/nginx-https1.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/nginx-https2.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/nginx-https3.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/https1.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx/nginx-referer.png">
+<meta property="og:updated_time" content="2017-09-16T07:05:17.087Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx进阶三">
+<meta name="twitter:description" content="Nginx相关配置内容主要包括：◆ngx_http_fastcgi_module模块详解；◆lnmp环境的部署；◆定义fastcgi的缓存；◆ngx_http_ssl_module模块：◆配置nginx支持ssl的安全访问；◆ngx_http_referer_module模块：防盗链功能 ngx_http_fastcgi_module模块：构建lnmpThe ngx_http_fastcgi_mo">
+<meta name="twitter:image" content="http://yoursite.com/images/nginx/lnmp.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.f6a68c.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="/images/avatar.png" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Jack_zhou</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="/images/avatar.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Jack_zhou</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-web services之nginx(三)" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx进阶三
+    </h1>
+  
+
+        
+        <a href="/2017/08/28/web services之nginx(三)/" class="archive-article-date">
+  	<time datetime="2017-08-28T01:00:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Nginx相关配置"><a href="#Nginx相关配置" class="headerlink" title="Nginx相关配置"></a>Nginx相关配置</h3><p>内容主要包括：<br>◆ngx_http_fastcgi_module模块详解；<br>◆lnmp环境的部署；<br>◆定义fastcgi的缓存；<br>◆ngx_http_ssl_module模块：<br>◆配置nginx支持ssl的安全访问；<br>◆ngx_http_referer_module模块：防盗链功能</p>
+<h3 id="ngx-http-fastcgi-module模块：构建lnmp"><a href="#ngx-http-fastcgi-module模块：构建lnmp" class="headerlink" title="ngx_http_fastcgi_module模块：构建lnmp"></a>ngx_http_fastcgi_module模块：构建lnmp</h3><p>The ngx_http_fastcgi_module module allows passing requests to a FastCGI server<br>★作用：<br>&ensp;&ensp;&ensp;&ensp;用于构建lnmp时，能够让nginx作为适配到fastcgi协议的客户端，从而能够连接至后端fpm的服务器，从而实现与fpm server进行通信<br><img src="\images\nginx\lnmp.png" alt="nginx"><br>★fastcgi_pass address;<br>&ensp;&ensp;&ensp;&ensp;address为fastcgi server的地址；<br>&ensp;&ensp;&ensp;&ensp;适用位置：location, if in location；<br>示例：<br>&ensp;&ensp;&ensp;&ensp;fastcgi_pass localhost:9000;<br>★fastcgi_index name;<br>&ensp;&ensp;&ensp;&ensp;fastcgi默认的主页资源;<br>★fastcgi_param parameter value [if_not_empty];<br>&ensp;&ensp;&ensp;&ensp;Sets a parameter that should be passed to the FastCGI server. The value can contain text, variables, and their combination.（传递给后端某一个服务器的变量的值，可以是字符串，也可以是变量，还可以是他们的组合）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">[root@centos7 nginx]<span class="comment"># cat fastcgi_params </span></div><div class="line"></div><div class="line">fastcgi_param  QUERY_STRING       <span class="variable">$query_string</span>;</div><div class="line">fastcgi_param  REQUEST_METHOD     <span class="variable">$request_method</span>;</div><div class="line">fastcgi_param  CONTENT_TYPE       <span class="variable">$content_type</span>;</div><div class="line">fastcgi_param  CONTENT_LENGTH     <span class="variable">$content_length</span>;</div><div class="line"></div><div class="line">fastcgi_param  SCRIPT_NAME        <span class="variable">$fastcgi_script_name</span>;</div><div class="line">fastcgi_param  REQUEST_URI        <span class="variable">$request_uri</span>;</div><div class="line">fastcgi_param  DOCUMENT_URI       <span class="variable">$document_uri</span>;</div><div class="line">fastcgi_param  DOCUMENT_ROOT      <span class="variable">$document_root</span>;</div><div class="line">fastcgi_param  SERVER_PROTOCOL    <span class="variable">$server_protocol</span>;</div><div class="line">fastcgi_param  REQUEST_SCHEME     <span class="variable">$scheme</span>;</div><div class="line">fastcgi_param  HTTPS              <span class="variable">$https</span> if_not_empty;</div><div class="line"></div><div class="line">fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;</div><div class="line">fastcgi_param  SERVER_SOFTWARE    nginx/<span class="variable">$nginx_version</span>;</div><div class="line"></div><div class="line">fastcgi_param  REMOTE_ADDR        <span class="variable">$remote_addr</span>;</div><div class="line">fastcgi_param  REMOTE_PORT        <span class="variable">$remote_port</span>;</div><div class="line">fastcgi_param  SERVER_ADDR        <span class="variable">$server_addr</span>;</div><div class="line">fastcgi_param  SERVER_PORT        <span class="variable">$server_port</span>;</div><div class="line">fastcgi_param  SERVER_NAME        <span class="variable">$server_name</span>;</div><div class="line"></div><div class="line"><span class="comment"># PHP only, required if PHP was built with --enable-force-cgi-redirect</span></div><div class="line">fastcgi_param  REDIRECT_STATUS    200;</div></pre></td></tr></table></figure></p>
+<p>⊙配置lnmp示例1<br><img src="\images\nginx\lnmp1.png" alt="nginx"><br>⊙配置示例2：通过/pm_status和/ping来获取fpm server状态信息；<br><img src="\images\nginx\lnmp2.png" alt="nginx"></p>
+<h3 id="部署lnmp环境"><a href="#部署lnmp环境" class="headerlink" title="部署lnmp环境"></a>部署lnmp环境</h3><p>1.首先安装相关的部署程序包<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># yum install php-fpm php-mysql php-gd php-mbstring php-mcrypt -y</span></div></pre></td></tr></table></figure></p>
+<p>2.php-fpm默认系统用户和组为apache，因为这里要使nginx与php-fpm相结合，所以我们需要修改php-fpm的配置文件/etc/php-fpm.d/www.conf 修改用户和组为nginx<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@centos7 php-fpm.d]<span class="comment"># ls</span></div><div class="line">www.conf</div><div class="line">[root@centos7 php-fpm.d]<span class="comment"># vim www.conf         # 修改配置文件</span></div><div class="line">user = nginx</div><div class="line">group = nginx</div><div class="line"></div><div class="line">pm.status_path = /pm_status                    <span class="comment"># 启用状态页</span></div><div class="line">ping.path = /ping                              <span class="comment"># 启用ping和pong接口</span></div><div class="line">ping.response = pong</div></pre></td></tr></table></figure></p>
+<p>3.创建/var/lib/php/session，并修改其属主和属组为nginx<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@centos7 php-fpm.d]<span class="comment"># mkdir /var/lib/php/session</span></div><div class="line">[root@centos7 php-fpm.d]<span class="comment"># chown -R nginx.nginx /var/lib/php/session/</span></div><div class="line">[root@centos7 php-fpm.d]<span class="comment"># ll -d /var/lib/php/session/</span></div><div class="line">drwxr-xr-x 2 nginx nginx 6 Sep 13 11:04 /var/lib/php/session/</div></pre></td></tr></table></figure></p>
+<p>4.启动服务，并查看其对应端口，nginx/80,mairadb/3306,php-fpm/9000<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># systemctl start nginx</span></div><div class="line">[root@centos7 ~]<span class="comment"># systemctl start php-fpm</span></div><div class="line">[root@centos7 ~]<span class="comment"># ss -tnl</span></div><div class="line">State       Recv-Q Send-Q Local Address:Port               Peer Address:Port              </div><div class="line">LISTEN      0      128      127.0.0.1:9000                         *:*                  </div><div class="line">LISTEN      0      128              *:80                           *:*                  </div><div class="line">LISTEN      0      128              *:22                           *:*                  </div><div class="line">LISTEN      0      100      127.0.0.1:25                           *:*                  </div><div class="line">LISTEN      0      128             :::22                          :::*                  </div><div class="line">LISTEN      0      100            ::1:25                          :::*        </div><div class="line">在mariadb服务器上启动mariadb服务</div><div class="line">[root@centos7 ~]<span class="comment"># systemctl start mariadb</span></div><div class="line">[root@centos7 ~]<span class="comment"># ss -tnl</span></div><div class="line">State       Recv-Q Send-Q Local Address:Port               Peer Address:Port              </div><div class="line">LISTEN      0      50               *:3306                         *:*                  </div><div class="line">LISTEN      0      128              *:22                           *:*                  </div><div class="line">LISTEN      0      100      127.0.0.1:25                           *:*                  </div><div class="line">LISTEN      0      128             :::22                          :::*                  </div><div class="line">LISTEN      0      100            ::1:25                          :::*</div></pre></td></tr></table></figure></p>
+<p>5.接下来我们就可以配置nginx使用php-fpm了，配置如下：<br>1）/etc/nginx/conf.d/default.conf中自带有fastcgi的定义，我们直接启用就可以，然后稍作修改<br><img src="\images\nginx\lnmp3.png" alt="nginx"><br>2）修改如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">location ~* \.php$ &#123;       <span class="comment"># 上图匹配所有以.php结尾的文件区分大小写，这里改为不区分大小写</span></div><div class="line">        root           /usr/share/nginx/html;          <span class="comment"># 默认为相对路径，这里最好改为绝对路径</span></div><div class="line">        fastcgi_pass   127.0.0.1:9000;</div><div class="line">        fastcgi_index  index.php;         <span class="comment"># 默认的主页面</span></div><div class="line">        <span class="comment"># 请求时传递的脚本参数到后端，这里我们要给它一个真正的root路径下的url</span></div><div class="line">        <span class="comment"># 这里的url一定要转换成对应的后端服务器的网页文件的位置</span></div><div class="line">        fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html/<span class="variable">$fastcgi_script_name</span>;</div><div class="line">        include        fastcgi_params;    <span class="comment"># 包含的另外一个配置文件</span></div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>3）修改完成之后，检测语法，并重载nginx服务，然后提供页面文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># nginx -t</span></div><div class="line">nginx: the configuration file /etc/nginx/nginx.conf syntax is ok</div><div class="line">nginx: configuration file /etc/nginx/nginx.conf <span class="built_in">test</span> is successful</div><div class="line">[root@centos7 ~]<span class="comment"># nginx -s reload</span></div><div class="line"></div><div class="line">[root@centos7 ~]<span class="comment"># cat &lt;&lt; EOF &gt;&gt; /usr/share/nginx/html/phpinfo.php</span></div><div class="line">&lt;?php</div><div class="line">       phpinfo();</div><div class="line">&gt; ?&gt;</div><div class="line">&gt; EOF</div><div class="line">[root@centos7 ~]<span class="comment"># cat /usr/share/nginx/html/phpinfo.php</span></div><div class="line">&lt;?php</div><div class="line">       phpinfo();</div><div class="line">?&gt;</div></pre></td></tr></table></figure></p>
+<p>用浏览器访问如下：<br><img src="\images\nginx\lnmp4.png" alt="nginx"><br>6.接下来我们部署一个php的应用程序wordpress<br>1）下载wordpress并解压，创建blog目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 解压wordpress用户程序</span></div><div class="line">[root@centos7 ~]<span class="comment"># tar xf wordpress-4.8.1.tar.gz </span></div><div class="line"><span class="comment"># 创建blog博客目录 ，移动解压的wordpress到创建 的blog目录下</span></div><div class="line">[root@centos7 ~]<span class="comment"># mkdir /usr/share/nginx/html/blog</span></div><div class="line">[root@centos7 ~]<span class="comment"># mv /root/wordpress/* /usr/share/nginx/html/blog/</span></div><div class="line">[root@centos7 ~]<span class="comment"># ls /usr/share/nginx/html/blog/</span></div><div class="line">index.php        wp-blog-header.php    wp-includes        wp-settings.php</div><div class="line">license.txt      wp-comments-post.php  wp-links-opml.php  wp-signup.php</div><div class="line">readme.html      wp-config-sample.php  wp-load.php        wp-trackback.php</div><div class="line">wp-activate.php  wp-content            wp-login.php       xmlrpc.php</div><div class="line">wp-admin         wp-cron.php           wp-mail.php</div></pre></td></tr></table></figure></p>
+<p>2）测试wordpress<br><img src="\images\nginx\lnmp5.png" alt="nginx"><br>提示客户端错误，原因为我们这里的默认主页面index.php虽然已经在location中定义，但是没有在server中定义，所以再次修改nginx的配置文件如下：<br><img src="\images\nginx\lnmp6.png" alt="nginx"><br>修改好之后，保存退出，检测语法重载之后，再次刷新页面，可以正常访问，如下图：<br><img src="\images\nginx\lnmp7.png" alt="nginx"><br>3）配置mariadb，创建wp数据库并授权用户wp_user远程访问<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; create database wp;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line">MariaDB [(none)]&gt; grant all on wp.* to <span class="string">'wp_user'</span>@<span class="string">'172.16.3.%'</span> identified by <span class="string">'12345678'</span>;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line">MariaDB [(none)]&gt; flush privileges;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line">MariaDB [(none)]&gt; select user,host,password from mysql.user;</div><div class="line">+---------+------------+-------------------------------------------+</div><div class="line">| user    | host       | password                                  |</div><div class="line">+---------+------------+-------------------------------------------+</div><div class="line">| root    | localhost  | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |</div><div class="line">| root    | centos7    | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |</div><div class="line">| root    | 127.0.0.1  | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |</div><div class="line">| root    | ::1        | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |</div><div class="line">| wp_user | 172.16.3.% | *84AAC12F54AB666ECFC2A83C676908C8BBC381B1 |</div><div class="line">+---------+------------+-------------------------------------------+</div><div class="line">5 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</div></pre></td></tr></table></figure></p>
+<p>4）安装wordpress<br><img src="\images\nginx\lnmp8.png" alt="nginx"><br><img src="\images\nginx\lnmp9.png" alt="nginx"><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div></pre></td><td class="code"><pre><div class="line">[root@centos7 blog]<span class="comment"># vi wp-config.php</span></div><div class="line">&lt;?php</div><div class="line">/**</div><div class="line"> * The base configuration <span class="keyword">for</span> WordPress</div><div class="line"> *</div><div class="line"> * The wp-config.php creation script uses this file during the</div><div class="line"> * installation. You don<span class="string">'t have to use the web site, you can</span></div><div class="line"> * copy this file to "wp-config.php" and fill in the values.</div><div class="line"> *</div><div class="line"> * This file contains the following configurations:</div><div class="line"> *</div><div class="line"> * * MySQL settings</div><div class="line"> * * Secret keys</div><div class="line"> * * Database table prefix</div><div class="line"> * * ABSPATH</div><div class="line"> *</div><div class="line"> * @link https://codex.wordpress.org/Editing_wp-config.php</div><div class="line"> *</div><div class="line"> * @package WordPress</div><div class="line"> */</div><div class="line"></div><div class="line">// ** MySQL settings - You can get this info from your web host ** //</div><div class="line">/** The name of the database for WordPress */</div><div class="line">define('DB_NAME<span class="string">', '</span>wp<span class="string">');</span></div><div class="line"></div><div class="line">/** MySQL database username */</div><div class="line">define('DB_USER<span class="string">', '</span>wp_user<span class="string">');</span></div><div class="line"></div><div class="line">/** MySQL database password */</div><div class="line">define('DB_PASSWORD<span class="string">', '</span>12345678<span class="string">');</span></div><div class="line"></div><div class="line">/** MySQL hostname */</div><div class="line">define('DB_HOST<span class="string">', '</span>172.16.3.26<span class="string">');</span></div><div class="line"></div><div class="line">/** Database Charset to use in creating database tables. */</div><div class="line">define('DB_CHARSET<span class="string">', '</span>utf8mb4<span class="string">');</span></div><div class="line"></div><div class="line">/** The Database Collate type. Don't change this <span class="keyword">if</span> <span class="keyword">in</span> doubt. */</div><div class="line">define(<span class="string">'DB_COLLATE'</span>, <span class="string">''</span>);</div><div class="line"></div><div class="line">/**<span class="comment">#@+</span></div><div class="line"> * Authentication Unique Keys and Salts.</div><div class="line"> *</div><div class="line"> * Change these to different unique phrases!</div><div class="line"> * You can generate these using the &#123;@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service&#125;</div><div class="line"> * You can change these at any point <span class="keyword">in</span> time to invalidate all existing cookies. This will force all users to have to <span class="built_in">log</span> <span class="keyword">in</span> again.</div><div class="line"> *</div><div class="line"> * @since 2.6.0</div><div class="line"> */</div><div class="line">define(<span class="string">'AUTH_KEY'</span>,         <span class="string">'WJ!D.b$=-?p^rPDl=k6yjpW8^%7K&#123;nWnJ!4+%ZO/&#123;,VWyPhpkQS:^+$V9I2-42#k'</span>);</div><div class="line">define(<span class="string">'SECURE_AUTH_KEY'</span>,  <span class="string">'oqE?pMs=`~16NKhcoX.AhLJ|Q&gt;5p5_lRnJ+&lt;J$VV5^KPoBOgor^ibV]=QC!I2[EV'</span>);</div><div class="line">define(<span class="string">'LOGGED_IN_KEY'</span>,    <span class="string">'B&#125;6Dd$$(/yCF&amp;+%0i8@u@9ls^.7?8#r&gt;1?oNou)]RFrkF.$;LY* 5xW#g?Jp4g!i'</span>);</div><div class="line">define(<span class="string">'NONCE_KEY'</span>,        <span class="string">'!=Rm00QclZ0[~N&amp;H&lt;6519;1gIB+!O:em&lt;1:Rl$IC~ZIu&amp;TN2`e:ox_T7z[o#(LgW'</span>);</div><div class="line">define(<span class="string">'AUTH_SALT'</span>,        <span class="string">'0,r6tuW$&amp;t`I3.iJo:[;iq|C&amp; 2&amp;[tnn.fAz$=:#X[TSSHWK;6.d37Y(:aCjcl@p'</span>);</div><div class="line">define(<span class="string">'SECURE_AUTH_SALT'</span>, <span class="string">'=%i^n.q9q:A&gt;@t&#123;`keD,uySvy=P~x$!NN8oys[6WIhU-KmU4&#125;#dW* m&gt;NOKyGGEr'</span>);</div><div class="line">define(<span class="string">'LOGGED_IN_SALT'</span>,   <span class="string">':`&amp;5uJ[ugEKcS?Bd*7?yeaJn-&#123;vZ-nR:hEm+CLU]]S@ AV=yS-`b,X&#125;n]QD+Ox6/'</span>);</div><div class="line">define(<span class="string">'NONCE_SALT'</span>,       <span class="string">'a-5qR2zwX&#123;3&lt;ds&gt;u:%I7cQB,v+MdG.,LD&amp;?gjxUQ3=8@6a Jds2?,]`TP+JyYD/.'</span>);</div><div class="line"></div><div class="line">/**<span class="comment">#@-*/</span></div><div class="line"></div><div class="line">/**</div><div class="line"> * WordPress Database Table prefix.</div><div class="line"> *</div><div class="line"> * You can have multiple installations <span class="keyword">in</span> one database <span class="keyword">if</span> you give each</div><div class="line"> * a unique prefix. Only numbers, letters, and underscores please!</div><div class="line"> */</div><div class="line"><span class="variable">$table_prefix</span>  = <span class="string">'wp_'</span>;</div><div class="line"></div><div class="line">/**</div><div class="line"> * For developers: WordPress debugging mode.</div><div class="line"> *</div><div class="line"> * Change this to <span class="literal">true</span> to <span class="built_in">enable</span> the display of notices during development.</div><div class="line"> * It is strongly recommended that plugin and theme developers use WP_DEBUG</div><div class="line"> * <span class="keyword">in</span> their development environments.</div><div class="line"> *</div><div class="line"> * For information on other constants that can be used <span class="keyword">for</span> debugging,</div><div class="line"> * visit the Codex.</div><div class="line"> *</div><div class="line"> * @link https://codex.wordpress.org/Debugging_in_WordPress</div><div class="line"> */</div><div class="line">define(<span class="string">'WP_DEBUG'</span>, <span class="literal">false</span>);</div><div class="line"></div><div class="line">/* That<span class="string">'s all, stop editing! Happy blogging. */</span></div><div class="line"></div><div class="line">/** Absolute path to the WordPress directory. */</div><div class="line">if ( !defined('ABSPATH<span class="string">') )</span></div><div class="line">	define('ABSPATH<span class="string">', dirname(__FILE__) . '</span>/<span class="string">');</span></div><div class="line"></div><div class="line">/** Sets up WordPress vars and included files. */</div><div class="line">require_once(ABSPATH . 'wp-settings.php<span class="string">');</span></div></pre></td></tr></table></figure></p>
+<p><img src="\images\nginx\lnmp10.png" alt="nginx"></p>
+<p>7.我们已经在php-fpm的配置文件中开启了测试功能（ping/pong）和状态页status，之前我们在httpd中是通过添加单独的匹配条件代理至后端的，那在nginx中我们应该怎样设置呢？如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">location ~* ^/(pm_status|ping)$ &#123;</div><div class="line">       fastcgi_pass    127.0.0.1:9000;</div><div class="line">       fastcgi_param   SCRIPT_FILENAME  <span class="variable">$fastcgi_script_name</span>;</div><div class="line">       include         fastcgi_params;</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<p>我们使用浏览器访问如下：<br><img src="\images\nginx\lnmp11.png" alt="nginx"><br><img src="\images\nginx\lnmp12.png" alt="nginx"><br>如上，就为简单部署成功了一个lnmp环境了</p>
+<h4 id="fastcgi的缓存"><a href="#fastcgi的缓存" class="headerlink" title="fastcgi的缓存"></a>fastcgi的缓存</h4><p>★fastcgi_cache_path path<br>☉格式和适用位置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Syntax: </span></div><div class="line">    fastcgi_cache_path path [levels=levels] [use_temp_path=on|off] keys_zone=name:size </div><div class="line">    [inactive=time] [max_size=size] [manager_files=number] [manager_sleep=time] </div><div class="line">    [manager_threshold=time] [loader_files=number] [loader_sleep=time] </div><div class="line">    [loader_threshold=time] [purger=on|off] [purger_files=number] [purger_sleep=time] </div><div class="line">    [purger_threshold=time];</div><div class="line">     </div><div class="line">  Default:—    </div><div class="line">  Context:http  <span class="comment"># 只能定义在http中</span></div></pre></td></tr></table></figure></p>
+<p>☉作用：<br>&ensp;&ensp;&ensp;&ensp;定义fastcgi的缓存；缓存位置为磁盘上的文件系统，由path所指定路径来定义；<br>☉参数：<br>◆levels=levels：缓存目录的层级数量，以及每一级的目录数量；<br>&ensp;&ensp;&ensp;&ensp;levels=ONE:TWO:THREE    例如：leves=1:2:2（每一级为16进制数）<br>◆keys_zone=name:size<br>&ensp;&ensp;&ensp;&ensp;k/v映射的内存空间的名称及大小<br>&ensp;&ensp;&ensp;&ensp;缓存的组织方式：缓存是哈希值，而且对应的缓存文件名通常是文件内容的哈希内容，并且缓存层级是按照定义的多级结构去存放文件的；<br>◆inactive=time：非活动时长；<br>◆max_size=size：磁盘上用于缓存数据的缓存空间上限；<br>★fastcgi_cache zone | off;<br>&ensp;&ensp;&ensp;&ensp;作用：调用指定的缓存空间来缓存数据；<br>&ensp;&ensp;&ensp;&ensp;适用位置：http, server, location<br>★fastcgi_cache_key string;<br>&ensp;&ensp;&ensp;&ensp;作用：定义用作缓存项的key的字符串，通常为uri当变量；<br>★fastcgi_cache_methods GET | HEAD | POST …;<br>&ensp;&ensp;&ensp;&ensp;作用：为哪些请求方法使用缓存；<br>★fastcgi_cache_min_uses number;<br>&ensp;&ensp;&ensp;&ensp;作用：缓存空间中的缓存项在inactive定义的非活动时间内至少要被访问到此处所指定的次数方可被认作活动项；<br>★fastcgi_cache_valid [code …] time;<br>&ensp;&ensp;&ensp;&ensp;作用：不同的响应码各自的缓存时长；</p>
+<h4 id="定义使用缓存："><a href="#定义使用缓存：" class="headerlink" title="定义使用缓存："></a>定义使用缓存：</h4><p>1.首先要创建一个缓存的文件目录，实际生产环境中可以放在固态磁盘上或者Raid0上，这样I/O能力很强；（注意文可能需要修改属主和属组为nginx）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># ls /var/cache/nginx/</span></div><div class="line">client_temp  fastcgi_temp  proxy_temp  scgi_temp  uwsgi_temp</div><div class="line">[root@centos7 ~]<span class="comment"># mkdir /var/cache/nginx/fastcgi_cache</span></div></pre></td></tr></table></figure></p>
+<p>2.因为缓存只能定义在http配置段，所以编辑主配置文件/etc/nginx/nginx.conf<br><img src="\images\nginx\fastcgi-cache.png" alt="nginx"><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">http &#123;</div><div class="line">    include       /etc/nginx/mime.types;</div><div class="line">    default_type  application/octet-stream;</div><div class="line"></div><div class="line">    log_format  main  <span class="string">'$remote_addr - $remote_user [$time_local] "$request" '</span></div><div class="line">                      <span class="string">'$status $body_bytes_sent "$http_referer" '</span></div><div class="line">                      <span class="string">'"$http_user_agent" "$http_x_forwarded_for"'</span>;</div><div class="line"></div><div class="line">    access_log  /var/<span class="built_in">log</span>/nginx/access.log  main;</div><div class="line">    </div><div class="line">    fastcgi_cache_path /var/cache/nginx/fastcgi_cache levels=1:2:1 keys_zone=fcgi:20m inactive=120s;</div><div class="line"></div><div class="line">    sendfile        on;</div></pre></td></tr></table></figure></p>
+<p>3.如上，已经定义好了，但是要想调用，要定义在在server或者location中，因为我们这里针对的是fastcgi协议所以定义在php的location中，如下<br><img src="\images\nginx\fastcgi-cache1.png" alt="nginx"><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span></div><div class="line">   <span class="comment">#</span></div><div class="line">   location ~* \.php$ &#123;</div><div class="line">       root           /usr/share/nginx/html;</div><div class="line">       fastcgi_pass   127.0.0.1:9000;</div><div class="line">       fastcgi_index  index.php;</div><div class="line">       fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html/<span class="variable">$fastcgi_script_name</span>;</div><div class="line">       include        fastcgi_params;</div><div class="line">       fastcgi_cache fcgi;</div><div class="line">       fastcgi_cache_key <span class="variable">$request_uri</span>;</div><div class="line">       fastcgi_cache_valid 200 302 10m;</div><div class="line">       fastcgi_cache_valid 301 1h;</div><div class="line">       fastcgi_cache_valid any 1m;</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<p>4.定义好之后保存退出，检测语法，重载；然后用浏览器访问wrokpress，查看缓存如下:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># nginx -t</span></div><div class="line">nginx: the configuration file /etc/nginx/nginx.conf syntax is ok</div><div class="line">nginx: configuration file /etc/nginx/nginx.conf <span class="built_in">test</span> is successful</div><div class="line">[root@centos7 ~]<span class="comment"># nginx -s reload</span></div><div class="line">[root@centos7 ~]<span class="comment"># tree /var/cache/nginx/fastcgi_cache/</span></div><div class="line">/var/cache/nginx/fastcgi_cache/</div><div class="line">`-- 6</div><div class="line">    `-- da</div><div class="line">        `-- 4</div><div class="line">            `-- f7aa5e7d8164aa09aacfe1de7eb14da6</div><div class="line"></div><div class="line">3 directories, 1 file</div></pre></td></tr></table></figure></p>
+<p>再访问<a href="http://172.16.3.67/phpinfo.php，查看缓存如下：" target="_blank" rel="external">http://172.16.3.67/phpinfo.php，查看缓存如下：</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># tree /var/cache/nginx/fastcgi_cache/</span></div><div class="line">/var/cache/nginx/fastcgi_cache/</div><div class="line">|-- 0</div><div class="line">|   `-- 15</div><div class="line">|       `-- 4</div><div class="line">|           `-- 918e9e96dec978b2ec01d531bef84150</div><div class="line">|-- 6</div><div class="line">|   `-- da</div><div class="line">|       `-- 4</div><div class="line">|           `-- f7aa5e7d8164aa09aacfe1de7eb14da6</div><div class="line">|-- c</div><div class="line">|   `-- ff</div><div class="line">|       `-- 5</div><div class="line">|           `-- fedd4be3b7248dae2180b5281a665ffc</div><div class="line">|-- e</div><div class="line">|   `-- fd</div><div class="line">|       `-- 5</div><div class="line">|           `-- 98413616be76ca2adb60d2de52405fde</div><div class="line">`-- f</div><div class="line">    `-- a6</div><div class="line">        `-- 5</div><div class="line">            `-- f507ec3769c639b6261e1eb529305a6f</div><div class="line"></div><div class="line">15 directories, 5 files</div></pre></td></tr></table></figure></p>
+<h4 id="fastcgi-的保持连接"><a href="#fastcgi-的保持连接" class="headerlink" title="fastcgi 的保持连接"></a>fastcgi 的保持连接</h4><p>★fastcgi_keep_conn on | off;<br>&ensp;&ensp;&ensp;&ensp;By default, a FastCGI server will close a connection right after sending the response. However, when this directive is set to the value on, nginx will instruct a FastCGI server to keep connections open.<br>☉作用：<br>&ensp;&ensp;&ensp;&ensp;在并发压力较大的时候，向后端php-fpm开启保持连接是很有必要的，可以减轻nginx的压力；</p>
+<h3 id="ngx-http-ssl-module模块"><a href="#ngx-http-ssl-module模块" class="headerlink" title="ngx_http_ssl_module模块"></a>ngx_http_ssl_module模块</h3><h4 id="支持nginx能够运行为https服务"><a href="#支持nginx能够运行为https服务" class="headerlink" title="支持nginx能够运行为https服务"></a>支持nginx能够运行为https服务</h4><p>★ssl on | off;<br>&ensp;&ensp;&ensp;&ensp;Enables the HTTPS protocol for the given virtual server.（是否在给定的虚拟主机上启用https协议）<br>★ssl_certificate file;<br>&ensp;&ensp;&ensp;&ensp;当前虚拟主机使用PEM格式的证书文件；<br>★ssl_certificate_key file;<br>&ensp;&ensp;&ensp;&ensp;当前虚拟主机上与其证书匹配的私钥文件；<br>★ssl_protocols [SSLv2] [SSLv3] [TLSv1] [TLSv1.1] [TLSv1.2];<br>&ensp;&ensp;&ensp;&ensp;支持ssl协议版本，默认为后三个；建议使用1.1版本<br>★ssl_session_cache off | none | [builtin[:size]] [shared:name:size];<br>&ensp;&ensp;&ensp;&ensp;builtin[:size]：使用OpenSSL内建的缓存，此缓存为每worker进程私有；<br>&ensp;&ensp;&ensp;&ensp;[shared:name:size]：在各worker进程之间使用一个共享的缓存；（性能更好一点，但是危险会更大一点）<br>★ssl_session_timeout time;<br>&ensp;&ensp;&ensp;&ensp;客户端一侧的连接可以复用ssl session cache中缓存 的ssl参数的有效时长；<br>配置示例：<br><img src="\images\nginx\https.png" alt="nginx"><br>把80端口重定向到443上，然后关闭80服务；<br><img src="\images\nginx\https1.png" alt="nginx"></p>
+<h4 id="配置使ngins支持https协议"><a href="#配置使ngins支持https协议" class="headerlink" title="配置使ngins支持https协议"></a>配置使ngins支持https协议</h4><p>1.在rpm包安装的nginx的配置文件中没有对ssl的相关配置，所以这里我们在/etc/nginx/conf.d下新定义一个虚拟主机使其支持ssl，配置如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@centos7 conf.d]<span class="comment"># pwd</span></div><div class="line">/etc/nginx/conf.d</div><div class="line">[root@centos7 conf.d]<span class="comment"># vim ssl.conf</span></div><div class="line">server &#123;</div><div class="line">        listen 443 ssl;                                    <span class="comment"># 指明ssl监听的端口443，和ssl协议</span></div><div class="line">        server_name   www1.jack.com                        <span class="comment"># 主机名</span></div><div class="line">        root /vnhosts/ssl/htdocs;</div><div class="line">        ssl on;                                             <span class="comment"># ssl的路径</span></div><div class="line">        ssl_certificate /etc/nginx/ssl/nginx.crt;          <span class="comment"># 虚拟机使用的证书文件的路径</span></div><div class="line">        ssl_certificate_key /etc/nginx/ssl/nginx.key;      <span class="comment"># 与其证书匹配的私钥文件路径</span></div><div class="line">        ssl_session_cache shared:sslcache:20m;             <span class="comment"># 定义使用共享缓存，名字为sslcache，大小为20M</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>2.为了测试，首先在自己的主机上创建私有CA，但是在互联网上公开使用时，一定要找公共CA去签署<br>1）生成私钥文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ~]<span class="comment"># cd /etc/pki/CA</span></div><div class="line">[root@centos7 CA]<span class="comment"># ls</span></div><div class="line">certs  crl  newcerts  private</div><div class="line">[root@centos7 CA]<span class="comment"># ls private/</span></div><div class="line">[root@centos7 CA]<span class="comment"># (umask 077;openssl genrsa -out private/cakey.pem 4096)</span></div><div class="line">Generating RSA private key, 4096 bit long modulus</div><div class="line">.........................................................................................................................++</div><div class="line">........++</div><div class="line">e is 65537 (0x10001)</div><div class="line">[root@centos7 CA]<span class="comment"># ls private/</span></div><div class="line">cakey.pem</div></pre></td></tr></table></figure></p>
+<p>2）生成自签证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">[root@centos7 CA]<span class="comment"># openssl req -new -x509 -key private/cakey.pem -out cacert.pem</span></div><div class="line">You are about to be asked to enter information that will be incorporated</div><div class="line">into your certificate request.</div><div class="line">What you are about to enter is what is called a Distinguished Name or a DN.</div><div class="line">There are quite a few fields but you can leave some blank</div><div class="line">For some fields there will be a default value,</div><div class="line">If you enter <span class="string">'.'</span>, the field will be left blank.</div><div class="line">-----</div><div class="line">Country Name (2 letter code) [XX]:CN</div><div class="line">State or Province Name (full name) []:JS</div><div class="line">Locality Name (eg, city) [Default City]:SZ</div><div class="line">Organization Name (eg, company) [Default Company Ltd]:Magedu        </div><div class="line">Organizational Unit Name (eg, section) []:ops</div><div class="line">Common Name (eg, your name or your server<span class="string">'s hostname) []:ca.magedu.com</span></div><div class="line">Email Address []:</div><div class="line">[root@centos7 CA]# ll</div><div class="line">total 4</div><div class="line">-rw-r--r--  1 root root 1988 Sep 13 15:57 cacert.pem</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 certs</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 crl</div><div class="line">drwxr-xr-x. 2 root root    6 Jun 29  2015 newcerts</div><div class="line">drwx------. 2 root root   22 Sep 13 15:12 private</div></pre></td></tr></table></figure></p>
+<p>3）为CA提供目录和文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@centos7 CA]<span class="comment"># touch index.txt</span></div><div class="line">[root@centos7 CA]<span class="comment"># echo 01 &gt; serial</span></div><div class="line">[root@centos7 CA]<span class="comment"># ls</span></div><div class="line">cacert.pem  certs  crl  index.txt  newcerts  private  serial</div></pre></td></tr></table></figure></p>
+<p>3.如上，创建CA完成，接下来要为nginx服务器签署CA请求<br>1）创建用于httpd通信时的私钥<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@centos7 CA]<span class="comment"># cd /etc/nginx/</span></div><div class="line">[root@centos7 nginx]<span class="comment"># ls</span></div><div class="line">conf.d          koi-utf  mime.types  nginx.conf   uwsgi_params</div><div class="line">fastcgi_params  koi-win  modules     scgi_params  win-utf</div><div class="line">[root@centos7 nginx]<span class="comment"># mkdir ssl</span></div><div class="line">[root@centos7 nginx]<span class="comment"># cd ssl</span></div><div class="line">[root@centos7 ssl]<span class="comment"># (umask 077;openssl genrsa -out nginx.key 2048)</span></div><div class="line">Generating RSA private key, 2048 bit long modulus</div><div class="line">...........................................................+++</div><div class="line">..................................................................+++</div><div class="line">e is 65537 (0x10001)</div><div class="line">[root@centos7 ssl]<span class="comment"># ll</span></div><div class="line">total 4</div><div class="line">-rw------- 1 root root 1675 Sep 13 16:04 nginx.key</div></pre></td></tr></table></figure></p>
+<p>2）利用生成的私钥生成证书签署请求：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ssl]<span class="comment"># openssl req -new -key nginx.key -out nginx.csr</span></div><div class="line">You are about to be asked to enter information that will be incorporated</div><div class="line">into your certificate request.</div><div class="line">What you are about to enter is what is called a Distinguished Name or a DN.</div><div class="line">There are quite a few fields but you can leave some blank</div><div class="line">For some fields there will be a default value,</div><div class="line">If you enter <span class="string">'.'</span>, the field will be left blank.</div><div class="line">-----</div><div class="line">Country Name (2 letter code) [XX]:CN</div><div class="line">State or Province Name (full name) []:JS</div><div class="line">Locality Name (eg, city) [Default City]:SZ</div><div class="line">Organization Name (eg, company) [Default Company Ltd]:Magedu</div><div class="line">Organizational Unit Name (eg, section) []:ops</div><div class="line">Common Name (eg, your name or your server<span class="string">'s hostname) []:www1.jack.com</span></div><div class="line">Email Address []:</div><div class="line"></div><div class="line">Please enter the following 'extra<span class="string">' attributes</span></div><div class="line">to be sent with your certificate request</div><div class="line">A challenge password []:</div><div class="line">An optional company name []:</div></pre></td></tr></table></figure></p>
+<p>4.接下来CA要为nginx签发证书（因为这里都是在本地主机生成的CA和httpd服务，所以不需要传送）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ssl]<span class="comment"># openssl ca -in nginx.csr -out nginx.crt</span></div><div class="line">Using configuration from /etc/pki/tls/openssl.cnf</div><div class="line">Check that the request matches the signature</div><div class="line">Signature ok</div><div class="line">Certificate Details:</div><div class="line">        Serial Number: 1 (0x1)</div><div class="line">        Validity</div><div class="line">            Not Before: Sep 13 08:17:43 2017 GMT</div><div class="line">            Not After : Sep 13 08:17:43 2018 GMT</div><div class="line">        Subject:</div><div class="line">            countryName               = CN</div><div class="line">            stateOrProvinceName       = JS</div><div class="line">            organizationName          = Magedu</div><div class="line">            organizationalUnitName    = ops</div><div class="line">            commonName                = www1.jack.com</div><div class="line">        X509v3 extensions:</div><div class="line">            X509v3 Basic Constraints: </div><div class="line">                CA:FALSE</div><div class="line">            Netscape Comment: </div><div class="line">                OpenSSL Generated Certificate</div><div class="line">            X509v3 Subject Key Identifier: </div><div class="line">                99:C6:37:F0:7E:0D:1C:49:B6:27:0B:FA:F5:84:D8:B4:AF:8F:5F:42</div><div class="line">            X509v3 Authority Key Identifier: </div><div class="line">                keyid:77:8B:87:A3:A6:41:A7:0F:BA:5F:58:93:45:10:17:CD:E3:F2:2D:75</div><div class="line"></div><div class="line">Certificate is to be certified until Sep 13 08:17:43 2018 GMT (365 days)</div><div class="line">Sign the certificate? [y/n]:y</div><div class="line"></div><div class="line"></div><div class="line">1 out of 1 certificate requests certified, commit? [y/n]y</div><div class="line">Write out database with 1 new entries</div><div class="line">Data Base Updated</div><div class="line">[root@centos7 ssl]<span class="comment"># ls</span></div><div class="line">nginx.crt <span class="comment"># 签署的证书 nginx.csr  nginx.key</span></div></pre></td></tr></table></figure></p>
+<p>5.如上，证书签署完成我们只需把生成的证书nginx.crt发送给客户端即可，现在我们检测语法nginx的语法，重载,查看ssl的443端口是否监听；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ssl]<span class="comment"># nginx -s reload</span></div><div class="line">[root@centos7 ssl]<span class="comment"># ss -tnl</span></div><div class="line">State       Recv-Q Send-Q Local Address:Port               Peer Address:Port              </div><div class="line">LISTEN      0      128      127.0.0.1:9000                         *:*                  </div><div class="line">LISTEN      0      128              *:80                           *:*                  </div><div class="line">LISTEN      0      128              *:22                           *:*                  </div><div class="line">LISTEN      0      100      127.0.0.1:25                           *:*                  </div><div class="line">LISTEN      0      128              *:443                          *:*                  </div><div class="line">LISTEN      0      128             :::22                          :::*                  </div><div class="line">LISTEN      0      100            ::1:25                          :::*</div></pre></td></tr></table></figure></p>
+<p>6.接下来我们为在nginx中定义的虚拟主机创建root的路径，并提供测试页面<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@centos7 ssl]<span class="comment"># mkdir /vnhosts/ssl/htdocs -pv</span></div><div class="line">mkdir: created directory <span class="string">'/vnhosts/ssl'</span></div><div class="line">mkdir: created directory <span class="string">'/vnhosts/ssl/htdocs'</span></div><div class="line">[root@centos7 ssl]<span class="comment"># vim /vnhosts/ssl/htdocs/index.html</span></div><div class="line">[root@centos7 ssl]<span class="comment"># cat /vnhosts/ssl/htdocs/index.html</span></div><div class="line">&lt;h1&gt;SSL&lt;/h1&gt;</div></pre></td></tr></table></figure></p>
+<p>在浏览器中访问如下：<br><img src="\images\nginx\nginx-https.png" alt="nginx"><br>提示证书颁发机构不被信任，因为我们是自建的CA机构，所以需要在浏览器中导入自建CA的证书文件/etc/pki/CA/cacert.pem，让浏览器信任我们自己创建的CA即可；<br><img src="\images\nginx\nginx-https1.png" alt="nginx"><br><img src="\images\nginx\nginx-https2.png" alt="nginx"><br>再次访问，可以正常访问，如下：<br><img src="\images\nginx\nginx-https3.png" alt="nginx"><br>因为我们现在在配置文件中定义了多个server，所以，如果不基于https协议访问，而使用http访问，还是会访问默认的主页面，如下：<br>7.处于安全考虑，如果我想让用户访问网站都是通过https协议访问（即实现从80端口跳转到443端口）的话，就需要在另一个server添加rewritw重写uri，如下：<br><img src="\images\nginx\https1.png" alt="nginx"><br>这就是，为什么我们在平时访问网站时，明明使用的是http协议，但它会自动跳转使用到https协议，只不过是用到了rewrite重写罢了！！！</p>
+<h3 id="ngx-http-referer-module模块"><a href="#ngx-http-referer-module模块" class="headerlink" title="ngx_http_referer_module模块"></a>ngx_http_referer_module模块</h3><h4 id="用于阻挡来源非法的域名请求-防盗链"><a href="#用于阻挡来源非法的域名请求-防盗链" class="headerlink" title="用于阻挡来源非法的域名请求(防盗链)"></a>用于阻挡来源非法的域名请求(防盗链)</h4><p>★valid_referers none | blocked | server_names | string …;<br>☉作用：<br>&ensp;&ensp;&ensp;&ensp;定义referer首部的合法可用值；<br>☉参数：<br>◆none：请求报文首部没有referer首部（也就是从浏览器中直接输入的）；<br>◆blocked：请求报文的referer首部没有值；<br>◆server_names：参数，其可以有值作为主机名或主机名模式；<br>&ensp;&ensp;&ensp;&ensp;arbitrary_string：直接字符串，但可使用 <em> 作通配符；<br>&ensp;&ensp;&ensp;&ensp;regular expression：被指定的正则表达式模式匹配到的字符串；要使用 ~ 打头，<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;例如：~.</em>.magedu.com；<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">valid_referers none blocked server_names</div><div class="line">               *.example.com example.* www.example.org/galleries/</div><div class="line">               ~\.google\.;</div><div class="line"> </div><div class="line"><span class="keyword">if</span> (<span class="variable">$invalid_referer</span>) &#123;</div><div class="line">    <span class="built_in">return</span> 403;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>演示：<br><img src="\images\nginx\nginx-referer.png" alt="nginx"><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">        listen 443 ssl;</div><div class="line">        server_name  www1.jack.com;</div><div class="line">        root /vnhosts/ssl/htdocs;</div><div class="line">        ssl on;</div><div class="line">        ssl_certificate /etc/nginx/ssl/nginx.crt;</div><div class="line">        ssl_certificate_key /etc/nginx/ssl/nginx.key;</div><div class="line">        ssl_session_cache shared:sslcache:20m;</div><div class="line"></div><div class="line">        valid_referers none block server_name *.jack.com ~\.magedu\. ~\.firefox\.;</div><div class="line">        <span class="keyword">if</span> (<span class="variable">$invalid_referer</span>) &#123;</div><div class="line">           <span class="built_in">return</span> 403;</div><div class="line">           <span class="comment">#rewrite ^/ https://www1.jack.com/</span></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>解析：<br>&ensp;&ensp;&ensp;&ensp;以上所有符合none，blocked，jack.com域名和域名中包含mgedu和firefox的站点都可以访问到当前站点的内容,如果来源域名不在这个列表中，那么$invalid_referer等于1，在if语句中返回一个403给用户，这样用户便会看到一个403的页面,如果使用下面的rewrite，那么盗链的内容都会被重写到www1.jack.com的主页面。<br>测试：<br>&ensp;&ensp;&ensp;&ensp;使用curl命令模拟从jack.com magedu.com 和baidu.com跳转而来，结果发现前两个跳转都可以正常访问到内容，而从baidu跳转过来的则不能访问<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@centos7 vnhosts]<span class="comment"># curl -k -e "http://www.jack.com" "https://www1.jack.com/index.html"</span></div><div class="line">&lt;h1&gt;SSL Host&lt;/h1&gt;</div><div class="line">[root@centos7 vnhosts]<span class="comment"># curl -k -e "http://www.magedu.com" "https://www1.jack.com/index.html"</span></div><div class="line">&lt;h1&gt;SSL Host&lt;/h1&gt;</div><div class="line">[root@centos7 vnhosts]<span class="comment"># curl -k -e "http://www.firefox.com" "https://www1.jack.com/index.html"</span></div><div class="line">&lt;h1&gt;SSL Host&lt;/h1&gt;</div><div class="line">[root@centos7 vnhosts]<span class="comment"># curl -k -e "http://www.baidu.com" "https://www1.jack.com/index.html"</span></div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;&lt;title&gt;403 Forbidden&lt;/title&gt;&lt;/head&gt;               <span class="comment"># 不能正常访问返回结果为403 Forbidden</span></div><div class="line">&lt;body bgcolor=<span class="string">"white"</span>&gt;</div><div class="line">&lt;center&gt;&lt;h1&gt;403 Forbidden&lt;/h1&gt;&lt;/center&gt;</div><div class="line">&lt;hr&gt;&lt;center&gt;nginx/1.12.1&lt;/center&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Nginx</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/08/28/web services之nginx(三)/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/08/27/web services之nginx(二)/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Nginx进阶二
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/08/29/web services之nginx(四)/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Nginx进阶四</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Jack_zhou
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),g=e(75),m=r(g),w=e(70);l(),(0,w.addLoadEvent)(function(){m.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),g=x[f],m=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&m&&void 0!==m[a],s&&a in x||(l=s?m[a]:e[a],x[a]=d&&"function"!=typeof m[a]?e[a]:h&&s?i(l,r):b&&m[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&g&&!g[a]&&u(g,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,g,m,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=g==h,M=!1,A=t.prototype,T=A[p]||A[v]||g&&A[g],L=T||j(g),N=g?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,g)if(O={values:E?L:j(h),keys:m?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),g=e(10),m=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),g(t),n=w(n,!0),g(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){g(t);for(var e,r=b(n=m(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=m(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(m(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:m(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){var n=t.getAttribute("target");n&&""!==n||t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.f6a68c.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">linux启动流程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">HAProxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Cluster</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MariaDB(MySQL)</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">NoSQL-MongoDB</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux安装</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Python3</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">NoSQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">TCPIP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">web services</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">varnish</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LAMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">command</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">kernel</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">shell脚本编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">压缩和归档</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vim</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">linux中文本处理工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">liunx文件共享服务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iptables</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system用户管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">system系统管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">软件包管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">网络管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">计划任务</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">运维工具</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">进程管理</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">MemCached</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">分布式存储</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">加密解密、数字签名、SSL、CA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Virtulization</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、请确保node版本大于6.2<br/>2、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            3、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: false
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
